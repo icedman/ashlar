@@ -1,3 +1,21 @@
+/*!
+Version: MPL 1.1/GPL 2.0/LGPL 2.1
+
+The contents of this file are subject to the Mozilla Public License Version
+1.1 (the "License"); you may not use this file except in compliance with
+the License. You may obtain a copy of the License at
+http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS" basis,
+WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+for the specific language governing rights and limitations under the
+License.
+
+Copyright 2007
+Marvin Sanchez
+code.google.com/p/ashlar
+*/
+
 #pragma once
 
 #include "common.h"
@@ -11,6 +29,9 @@ namespace Ash
 #define UNASSIGNED (-0xEE)
 #define ISASSIGNED(x) (x!=UNASSIGNED)
 
+	class Frame;
+
+	//! Alignment values
 	typedef enum
 	{
 		LEFT,
@@ -21,7 +42,8 @@ namespace Ash
 		MIDDLE
 	} Align;
 
-	typedef struct LayoutInfo
+	//! Layout information data structure
+	typedef struct FrameInfo
 	{
 		int x;
 		int y;
@@ -48,7 +70,7 @@ namespace Ash
 		bool floating;
 		bool display;
 		bool visible;
-		// calculations
+		// calculated values
 		int totalFlex;
 		int totalChildWidths;
 		int totalChildHeights;
@@ -57,33 +79,86 @@ namespace Ash
 		Rect rect;
 	} LayoutInfo;
 
-	class Frame;
+	typedef struct FrameStyle
+	{
+		// foreground
+		long color;
+		long fontId;
+		int fontStyle;
+		int fontSize;
+		// background
+		long backgroundColor;
+		long backgroundImageId;
+		int backgroundStyle;
+		int backgroundImageX;
+		int backgroundImageY;
+		// border
+		long borderColor;
+		long borderImageId;
+		int borderStyle;
+		int borderRadius;
+		int borderRadiusLeftTop;
+		int borderRadiusLeftBottom;
+		int borderRadiusRightTop;
+		int borderRadiusRightBottom;
+		// bevel
+		long bevelColor;
+		int bevelWidth;
+		int bevelStyle;
+		// shadow
+		long shadowColor;
+		int shadowStyle;
+		int shadowX;
+		int shadowY;
+		long fontShadowColor;
+		int fontShadowStyle;
+		int fontShadowX;
+		int fontShadowY;
+	} FrameStyle;
+
+	//! Frame calculation class
+	/*!
+	Simplifies layout information calculations
+	Unassigned values such as margins are evaluated
+	*/
+	class FrameTool
+	{
+	public:
+		static void SetDefaults(LayoutInfo &li);
+		static void GetMetrics(LayoutInfo &li, int &x, int &y, int &w, int &h);
+		static void GetMargins(LayoutInfo &li, int &l, int &t, int &r, int &b);
+		static void GetClientOffsets(LayoutInfo &li, int &l, int &t, int &r, int &b);
+	};
+
+	//! List of frames
 	typedef std::vector<Frame*> FrameList;
 
+	//! Base class for all frame objects
 	class Frame
 	{
 	public:
-		// Frame
-		virtual bool SetParent(Frame*);
-		virtual Frame* GetParent();
-		virtual Frame* GetRoot();
-		virtual bool AddFrame(Frame*);
-		virtual bool RemoveFrame(Frame*);
-		virtual bool GetRect(Rect*);
-		virtual bool GetBorderRect(Rect*);
-		virtual bool GetClientRect(Rect*);
-		virtual bool SetRect(const Rect*);
-		virtual const char* GetName() { return "Frame"; }
-		// Layout
-		virtual bool Layout();
+		virtual bool SetParent(Frame*);		//!< Sets the parent of a frame
+		virtual Frame* GetParent();			//!< Get parent of a frame
+		virtual Frame* GetRoot();				//!< Get root frame
+		virtual bool AddFrame(Frame*);		//!< Add child frame
+		virtual bool RemoveFrame(Frame*);	//!< Remove child frame
+		virtual bool GetRect(Rect*);			//!< Get frame rect
+		virtual bool GetBorderRect(Rect*);	//!< Get frame border rect
+		virtual bool GetContentRect(Rect*);	//!< Get frame's content rect
+		virtual bool SetRect(const Rect*);	//!< Set frame rect
+		virtual const char* GetName() { return "Frame"; } //!< Get frame name
+
+		virtual bool Layout(); //!< Layout method. Layout frames override this method
+		virtual bool OnEvent(int eventId, void *); //!< Event method. Event listeners override this method
+
+		FrameList* GetFrames() { return &frames; } //!< Get child frames list
 
 		Frame();
 		virtual ~Frame();
-		FrameList* GetFrames() { return &frames; }
 
 	public:
-		// Layout
-		LayoutInfo layoutInfo;
+		LayoutInfo layoutInfo; //!< Frame layout information
+		FrameStyle frameStyle; //!< Frame style information
 
 	private:
 		Frame *parentFrame;
