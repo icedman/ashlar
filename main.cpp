@@ -18,6 +18,11 @@ public:
 class Button : public Frame
 {
 public:
+	bool OnEvent(int eid, void *)
+	{
+		printf("hit %s\n", GetName());
+		return true;
+	}
 	const char* GetName() { return "button"; }
 };
 
@@ -27,13 +32,13 @@ public:
 	const char* GetName() { return "spacer"; }
 };
 
-class Toolbar : public VFrame
+class Toolbar : public HFrame
 {
 public:
 	const char* GetName() { return "toolbar"; }
 };
 
-class Client : public VFrame
+class Client : public HFrame
 {
 public:
 	const char* GetName() { return "client"; }
@@ -70,19 +75,25 @@ class MyWindow : public Window
 		//spacer.layoutInfo.padding = 0;
 		spacer.layoutInfo.flex = 1;
 		//spacer.SetRect(&Rect(Point(UNASSIGNED, UNASSIGNED), UNASSIGNED, 40));
-		clientArea.AddFrame(&box2);
-		clientArea.AddFrame(&box);
-		clientArea.AddFrame(&spacer);
-		box.AddFrame(&label);
-		box.AddFrame(&button);
-		box2.layoutInfo.flex = 2;
+		if (1) 
+		{
+			//clientArea.AddFrame(&box2);
+			clientArea.AddFrame(&box);
+			//clientArea.AddFrame(&spacer);
+			box.AddFrame(&label);
+			box.AddFrame(&button);
+			box2.layoutInfo.flex = 2;
+		}
 		clientArea.layoutInfo.align = CENTER;
-		clientArea.layoutInfo.verticalAlign = BOTTOM;
+		clientArea.layoutInfo.verticalAlign = MIDDLE;
 
 		Rect r;
 		GetWindowRect(m_hWnd, &r);
 		doc.SetRect(&r);
 		doc.Layout();
+
+		e1.Attach(ONMOUSEDOWN, &button);
+		mouseEvents.AddListener(&e1);
 		return 0;
 	}
 
@@ -105,11 +116,12 @@ class MyWindow : public Window
 
 	VOID OnLButtonDown(POINT p)
 	{
+		mouseEvents.OnMouseEvent(ONMOUSEDOWN, 1, p.x, p.y);
 	}
 
 	VOID Draw(HDC hdc, LPRECT rc)
 	{
-		renderEngine.SetTarget(hdc);
+		renderEngine.SetTargetDC(hdc);
 		renderEngine.Render(&doc);
 	}
 
@@ -118,12 +130,14 @@ private:
 	Label label;
 	Spacer spacer;
 	Button button;
-	VFrame box;
-	VFrame box2;
+	HFrame box;
+	HFrame box2;
 	Doc doc;
 	Toolbar toolbar;
 	Client clientArea;
 	RenderEngine renderEngine;
+	MouseEvents mouseEvents;
+	Event e1;
 };
 
 int main()

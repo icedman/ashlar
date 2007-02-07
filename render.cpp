@@ -1,3 +1,21 @@
+/*!
+Version: MPL 1.1/GPL 2.0/LGPL 2.1
+
+The contents of this file are subject to the Mozilla Public License Version
+1.1 (the "License"); you may not use this file except in compliance with
+the License. You may obtain a copy of the License at
+http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS" basis,
+WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+for the specific language governing rights and limitations under the
+License.
+
+Copyright 2007
+Marvin Sanchez
+code.google.com/p/ashlar
+*/
+
 #include "render.h"
 
 namespace Ash
@@ -16,14 +34,15 @@ namespace Ash
 
 		if (draw)
 		{
-			DrawRect(hdcTarget, &r, RGB(255,0,0));
+			DrawRect(&r, RGB(255,0,0));
 			pFrame->GetBorderRect(&r);
-			DrawRect(hdcTarget, &r, RGB(0,0,255));
+			DrawRect(&r, RGB(0,0,255));
 			printf("render %s %d (%d, %d)-(%d, %d)\n", pFrame->GetName(), pFrame, r.left, r.top, r.right, r.bottom);
 		} else {
 			printf("skip render %s %d (%d, %d)-(%d, %d)\n", pFrame->GetName(), pFrame, r.left, r.top, r.right, r.bottom);
 		}
 
+		// draw children
 		FrameList *frames = pFrame->GetFrames();
 		FrameList::iterator it = frames->begin();
 		while(it != frames->end())
@@ -35,7 +54,7 @@ namespace Ash
 		return true;
 	}
 
-	void RenderEngine::DrawRect(HDC hDc, const Rect* pRect, long color)
+	void RenderEngine::DrawRect(const Rect* pRect, long color)
 	{
 		LOGBRUSH lb; 
 		HGDIOBJ hPen, hPenOld; 
@@ -45,16 +64,16 @@ namespace Ash
 		lb.lbHatch = 0; 
 
 		hPen = ExtCreatePen(PS_SOLID, 1, &lb, 0, NULL); 
-		hPenOld = SelectObject(hDc, hPen);
+		hPenOld = SelectObject(hdcTarget, hPen);
 
 		POINT p;
-		MoveToEx(hDc, pRect->left, pRect->top, &p);
-		LineTo(hDc, pRect->right, pRect->top);
-		LineTo(hDc, pRect->right, pRect->bottom);
-		LineTo(hDc, pRect->left, pRect->bottom);
-		LineTo(hDc, pRect->left, pRect->top);
+		MoveToEx(hdcTarget, pRect->left, pRect->top, &p);
+		LineTo(hdcTarget, pRect->right, pRect->top);
+		LineTo(hdcTarget, pRect->right, pRect->bottom);
+		LineTo(hdcTarget, pRect->left, pRect->bottom);
+		LineTo(hdcTarget, pRect->left, pRect->top);
 
-		SelectObject(hDc, hPenOld);
+		SelectObject(hdcTarget, hPenOld);
 		DeleteObject(hPen);
 	}
 }

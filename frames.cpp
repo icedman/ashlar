@@ -1,12 +1,28 @@
+/*!
+Version: MPL 1.1/GPL 2.0/LGPL 2.1
+
+The contents of this file are subject to the Mozilla Public License Version
+1.1 (the "License"); you may not use this file except in compliance with
+the License. You may obtain a copy of the License at
+http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS" basis,
+WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+for the specific language governing rights and limitations under the
+License.
+
+Copyright 2007
+Marvin Sanchez
+code.google.com/p/ashlar
+*/
+
 #include "frames.h"
 
 namespace Ash
 {
-	// Frame
-	Frame::Frame() 
+	// FrameTool
+	void FrameTool::SetDefaults(LayoutInfo &layoutInfo)
 	{
-		parentFrame = 0;
-
 		// default layout
 		ZeroMemory(&layoutInfo, sizeof(LayoutInfo));
 		layoutInfo.x = UNASSIGNED;
@@ -18,13 +34,73 @@ namespace Ash
 		layoutInfo.marginRight = UNASSIGNED;
 		layoutInfo.marginTop = UNASSIGNED;
 		layoutInfo.marginBottom = UNASSIGNED;
+		layoutInfo.border = 0;
+		layoutInfo.borderLeft = UNASSIGNED;
+		layoutInfo.borderRight = UNASSIGNED;
+		layoutInfo.borderTop = UNASSIGNED;
+		layoutInfo.borderBottom = UNASSIGNED;
 		layoutInfo.padding = 4;
-		layoutInfo.paddingLeft = 10;
+		layoutInfo.paddingLeft = UNASSIGNED;
 		layoutInfo.paddingRight = UNASSIGNED;
 		layoutInfo.paddingTop = UNASSIGNED;
 		layoutInfo.paddingBottom = UNASSIGNED;
 		layoutInfo.display = true;
 		layoutInfo.visible = true;
+		layoutInfo.align = LEFT;
+		layoutInfo.align = TOP;
+	}
+
+	void FrameTool::GetMetrics(LayoutInfo &layoutInfo, int &x, int &y, int &w, int &h)
+	{
+		x = ISASSIGNED(layoutInfo.x) ? layoutInfo.x : layoutInfo.rect.left;
+		y = ISASSIGNED(layoutInfo.y) ? layoutInfo.y : layoutInfo.rect.top;
+		w = ISASSIGNED(layoutInfo.width) ? layoutInfo.width : layoutInfo.rect.Width();
+		h = ISASSIGNED(layoutInfo.height) ? layoutInfo.height : layoutInfo.rect.Height();
+	}
+
+	void FrameTool::GetMargins(LayoutInfo &layoutInfo, int &l, int &t, int &r, int &b)
+	{
+		int mg = ISASSIGNED(layoutInfo.margin) ? layoutInfo.margin : 0;
+		l = ISASSIGNED(layoutInfo.marginLeft) ? layoutInfo.marginLeft : mg;
+		r = ISASSIGNED(layoutInfo.marginRight) ? layoutInfo.marginRight : mg;
+		t = ISASSIGNED(layoutInfo.marginTop) ? layoutInfo.marginTop : mg;
+		b = ISASSIGNED(layoutInfo.marginBottom) ? layoutInfo.marginBottom : mg;
+	}
+
+	void FrameTool::GetClientOffsets(LayoutInfo &layoutInfo, int &l, int &t, int &r, int &b)
+	{
+		// margins
+		int mg = ISASSIGNED(layoutInfo.margin) ? layoutInfo.margin : 0;
+		int mgl = ISASSIGNED(layoutInfo.marginLeft) ? layoutInfo.marginLeft : mg;
+		int mgr = ISASSIGNED(layoutInfo.marginRight) ? layoutInfo.marginRight : mg;
+		int mgt = ISASSIGNED(layoutInfo.marginTop) ? layoutInfo.marginTop : mg;
+		int mgb = ISASSIGNED(layoutInfo.marginBottom) ? layoutInfo.marginBottom : mg;
+
+		// borders
+		int bd = ISASSIGNED(layoutInfo.border) ? layoutInfo.border : 0;
+		int bdl = ISASSIGNED(layoutInfo.borderLeft) ? layoutInfo.borderLeft : bd;
+		int bdr = ISASSIGNED(layoutInfo.borderRight) ? layoutInfo.borderRight : bd;
+		int bdt = ISASSIGNED(layoutInfo.borderTop) ? layoutInfo.borderTop : bd;
+		int bdb = ISASSIGNED(layoutInfo.borderBottom) ? layoutInfo.borderBottom : bd;
+
+		// padding
+		int pd = ISASSIGNED(layoutInfo.padding) ? layoutInfo.padding : 0;
+		int pdl = ISASSIGNED(layoutInfo.paddingLeft) ? layoutInfo.paddingLeft : pd;
+		int pdr = ISASSIGNED(layoutInfo.paddingRight) ? layoutInfo.paddingRight : pd;
+		int pdt = ISASSIGNED(layoutInfo.paddingTop) ? layoutInfo.paddingTop : pd;
+		int pdb = ISASSIGNED(layoutInfo.paddingBottom) ? layoutInfo.paddingBottom : pd;
+
+		l = mgl + bdl + pdl;
+		t = mgt + bdt + pdt;
+		r = mgr + bdr + pdr;
+		b = mgb + bdb + pdb;
+	}
+
+	// Frame
+	Frame::Frame() 
+	{
+		parentFrame = 0;
+		FrameTool::SetDefaults(layoutInfo);
 	}
 
 	Frame::~Frame()
@@ -78,6 +154,11 @@ namespace Ash
 		return true;
 	}
 
+	bool Frame::OnEvent(int eventId, void *)
+	{
+		return true;
+	}
+
 	bool Frame::GetRect(Rect *pRect)
 	{
 		(*pRect) = layoutInfo.rect;
@@ -87,11 +168,8 @@ namespace Ash
 	bool Frame::GetBorderRect(Rect *pRect)
 	{
 		(*pRect) = layoutInfo.rect;
-		int mg = ISASSIGNED(layoutInfo.margin) ? layoutInfo.margin : 0;
-		int mgl = ISASSIGNED(layoutInfo.marginLeft) ? layoutInfo.marginLeft : mg;
-		int mgr = ISASSIGNED(layoutInfo.marginRight) ? layoutInfo.marginRight : mg;
-		int mgt = ISASSIGNED(layoutInfo.marginTop) ? layoutInfo.marginTop : mg;
-		int mgb = ISASSIGNED(layoutInfo.marginBottom) ? layoutInfo.marginBottom : mg;
+		int mgl, mgt, mgr, mgb;
+		FrameTool::GetMargins(layoutInfo, mgl, mgt, mgr, mgb);
 		pRect->left += mgl;
 		pRect->top += mgt;
 		pRect->right -= mgr;
@@ -99,18 +177,24 @@ namespace Ash
 		return true;
 	}
 
-	bool Frame::GetClientRect(Rect *pRect)
+	bool Frame::GetContentRect(Rect *pRect)
 	{
+		// todo use layoutTool
 		GetBorderRect(pRect);
 		int pd = ISASSIGNED(layoutInfo.padding) ? layoutInfo.padding : 0;
 		int pdl = ISASSIGNED(layoutInfo.paddingLeft) ? layoutInfo.paddingLeft : pd;
 		int pdr = ISASSIGNED(layoutInfo.paddingRight) ? layoutInfo.paddingRight : pd;
 		int pdt = ISASSIGNED(layoutInfo.paddingTop) ? layoutInfo.paddingTop : pd;
 		int pdb = ISASSIGNED(layoutInfo.paddingBottom) ? layoutInfo.paddingBottom : pd;
-		pRect->left += pdl;
-		pRect->top += pdt;
-		pRect->right -= pdr;
-		pRect->bottom -= pdb;
+		int bd = ISASSIGNED(layoutInfo.border) ? layoutInfo.border : 0;
+		int bdl = ISASSIGNED(layoutInfo.borderLeft) ? layoutInfo.borderLeft : bd;
+		int bdr = ISASSIGNED(layoutInfo.borderRight) ? layoutInfo.borderRight : bd;
+		int bdt = ISASSIGNED(layoutInfo.borderTop) ? layoutInfo.borderTop : bd;
+		int bdb = ISASSIGNED(layoutInfo.borderBottom) ? layoutInfo.borderBottom : bd;
+		pRect->left += pdl + bdl;
+		pRect->top += pdt + bdt;
+		pRect->right -= (pdr + bdr);
+		pRect->bottom -= (pdb + bdb);
 		return true;
 	}
 
