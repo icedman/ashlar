@@ -19,7 +19,24 @@ code.google.com/p/ashlar
 #pragma once
 
 #include "frames.h"
+#include "document.h"
+
+using namespace Dom;
 
 namespace Layout
 {
+	class FrameBuilder
+	{
+	public:
+		bool Register(Frame* f);
+		void Unregister(Frame* f);
+
+		Frame* Build(DOMDocument *doc);
+		Frame* CreateFrame(Element *element);
+		Frame* CreateFrame(DOMString *tagName);
+
+		FrameList frameTemplates;
+		FrameList frameStack;
+		Frame* root;
+	};
 }

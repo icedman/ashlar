@@ -27,6 +27,7 @@ code.google.com/p/ashlar
 #include "frames.h"
 #include "layout.h"
 #include "table.h"
+#include "framebuilder.h"
 
 // rendering
 #include "render.h"

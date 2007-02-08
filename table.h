@@ -27,13 +27,13 @@ namespace Layout
 	{
 	public:
 		virtual bool Layout();
-		virtual const char* GetName() { return "Row"; }
+		virtual const char* GetName() { return "row"; }
 	};
 
 	class Table : public VFrame
 	{
 	public:
 		virtual bool Layout();
-		virtual const char* GetName() { return "Table"; }
+		virtual const char* GetName() { return "table"; }
 	};
 }

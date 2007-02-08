@@ -146,10 +146,11 @@ namespace Layout
 		virtual bool GetBorderRect(Rect*);	//!< Get frame border rect
 		virtual bool GetContentRect(Rect*);	//!< Get frame's content rect
 		virtual bool SetRect(const Rect*);	//!< Set frame rect
-		virtual const char* GetName() { return "Frame"; } //!< Get frame name
+		virtual const char* GetName() { return "frame"; } //!< Get frame name
 
 		virtual bool Layout(); //!< Layout method. Layout frames override this method
 		virtual bool OnEvent(int eventId, void *); //!< Event method. Event listeners override this method
+		virtual Frame* Create() { return new Frame(); }
 
 		FrameList* GetFrames() { return &frames; } //!< Get child frames list
 
@@ -157,6 +158,8 @@ namespace Layout
 
 		Frame();
 		virtual ~Frame();
+
+		void Dump();
 
 	public:
 		LayoutInfo layoutInfo; //!< Frame layout information
