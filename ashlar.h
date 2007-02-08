@@ -19,9 +19,22 @@ code.google.com/p/ashlar
 #pragma once
 
 #include "common.h"
+
+// layout
 #include "rect.h"
 #include "window.h"
 #include "frames.h"
 #include "layout.h"
+#include "table.h"
+
+// rendering
 #include "render.h"
+
+// events
 #include "events.h"
+
+// dom
+#include "domstring.h"
+#include "domnode.h"
+#include "element.h"
+#include "document.h"

@@ -1,5 +1,6 @@
 
 #include "ashlar.h"
+#include "list.h"
 
 using namespace Ash;
 
@@ -52,10 +53,17 @@ class MyWindow : public Window
 		HANDLE_MSG(WM_DESTROY, OnDestroy)
 		HANDLE_MSG(WM_SIZE, OnSize)
 		HANDLE_MSG(WM_LBUTTONDOWN, OnMouseEvent)
+		HANDLE_MSG(WM_ERASEBKGND, OnEraseBackground)
 		END_MSG_HANDLER;
+
+	LRESULT OnEraseBackground( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
+	{
+		return 0;
+	}
 
 	LRESULT OnCreate( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
 	{	
+		/*
 		toolbar.SetRect(&Rect(Point(UNASSIGNED, UNASSIGNED), UNASSIGNED, 40));
 		toolbar.layoutInfo.flex = 1;
 		clientArea.SetRect(&Rect(Point(UNASSIGNED, UNASSIGNED), UNASSIGNED, UNASSIGNED));
@@ -65,27 +73,48 @@ class MyWindow : public Window
 		doc.AddFrame(&clientArea);
 
 		label.SetRect(&Rect(Point(UNASSIGNED, UNASSIGNED), 200, 40));
-		button.SetRect(&Rect(Point(UNASSIGNED, UNASSIGNED), 60, 40));
-		/*
+		button.SetRect(&Rect(Point(UNASSIGNED, UNASSIGNED), 60, 30));
+		button.layoutInfo.border = 1;
+
+		if (0)
+		{
 		box.layoutInfo.x = 80;
 		box.layoutInfo.y = 80;
 		box.layoutInfo.floating = true;
-		*/
+		}
 		//spacer.layoutInfo.margin = 0;
 		//spacer.layoutInfo.padding = 0;
 		spacer.layoutInfo.flex = 1;
 		//spacer.SetRect(&Rect(Point(UNASSIGNED, UNASSIGNED), UNASSIGNED, 40));
 		if (1) 
 		{
-			//clientArea.AddFrame(&box2);
-			clientArea.AddFrame(&box);
-			//clientArea.AddFrame(&spacer);
-			box.AddFrame(&label);
-			box.AddFrame(&button);
-			box2.layoutInfo.flex = 2;
+		clientArea.AddFrame(&box2);
+		clientArea.AddFrame(&box);
+		//clientArea.AddFrame(&spacer);
+		box.AddFrame(&label);
+		box.AddFrame(&button);
+		box.layoutInfo.verticalAlign = MIDDLE;
+		box2.layoutInfo.flex = 2;
 		}
 		clientArea.layoutInfo.align = CENTER;
 		clientArea.layoutInfo.verticalAlign = MIDDLE;
+
+		*/
+
+		doc.layoutInfo.align = RIGHT;
+		doc.AddFrame(&toolbar);
+		doc.AddFrame(&box);
+		box.AddFrame(&button);
+		box2.AddFrame(&button2);
+		toolbar.AddFrame(&box2);
+		toolbar.layoutInfo.flex = 1;
+	
+		button.layoutInfo.border = 1;
+		button.layoutInfo.width = 80;
+		button.layoutInfo.height = 40;
+		button2.layoutInfo.border = 1;
+		button2.layoutInfo.width = 80;
+		button2.layoutInfo.height = 40;
 
 		Rect r;
 		GetWindowRect(m_hWnd, &r);
@@ -101,10 +130,12 @@ class MyWindow : public Window
 	{
 		Rect r;
 		GetClientRect(m_hWnd, &r);
-		r.right -= 1;
-		r.bottom -= 1;
 		doc.SetRect(&r);
 		doc.Layout();
+
+		HDC hdc = GetWindowDC(m_hWnd);
+		renderEngine.InitBuffer(hdc, &r);
+		ReleaseDC(m_hWnd, hdc);
 		return 0;
 	}
 
@@ -121,8 +152,9 @@ class MyWindow : public Window
 
 	VOID Draw(HDC hdc, LPRECT rc)
 	{
-		renderEngine.SetTargetDC(hdc);
+		renderEngine.Clear(RGB(255, 255, 255));
 		renderEngine.Render(&doc);
+		renderEngine.Blit(hdc);
 	}
 
 private:
@@ -130,6 +162,7 @@ private:
 	Label label;
 	Spacer spacer;
 	Button button;
+	Button button2;
 	HFrame box;
 	HFrame box2;
 	Doc doc;
@@ -140,9 +173,10 @@ private:
 	Event e1;
 };
 
+#if 1
+
 int main()
 {
-
 	MyWindow win;
 
 	win.RegisterClass(0, _T("Ashlar"));
@@ -158,3 +192,23 @@ int main()
 
 	return 0;
 }
+
+#else
+
+int main()
+{
+	DOMDocument doc;
+	Element *html = doc.createElement(&DOMString("html"));
+	Element *body = doc.createElement(&DOMString("body"));
+	body->SetAttribute(&DOMString("background"), &DOMString("#ffffff"));
+	doc.AppendChild(html);
+	html->AppendChild(body);
+	doc.Text();
+
+	doc.FreeNodes(&doc);
+
+	doc.Text();
+	return 0;
+}
+
+#endif

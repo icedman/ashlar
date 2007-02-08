@@ -32,15 +32,12 @@ namespace Ash
 	class Frame;
 
 	//! Alignment values
-	typedef enum
-	{
-		LEFT,
-		RIGHT,
-		CENTER,
-		TOP,
-		BOTTOM,
-		MIDDLE
-	} Align;
+	const unsigned short LEFT = 0;
+	const unsigned short RIGHT = 1;
+	const unsigned short CENTER = 2;
+	const unsigned short TOP = 0;
+	const unsigned short BOTTOM = 1;
+	const unsigned short MIDDLE = 2;
 
 	//! Layout information data structure
 	typedef struct FrameInfo
@@ -125,16 +122,18 @@ namespace Ash
 	{
 	public:
 		static void SetDefaults(LayoutInfo &li);
+		static void SetDefaults(FrameStyle &fs);
 		static void GetMetrics(LayoutInfo &li, int &x, int &y, int &w, int &h);
 		static void GetMargins(LayoutInfo &li, int &l, int &t, int &r, int &b);
-		static void GetClientOffsets(LayoutInfo &li, int &l, int &t, int &r, int &b);
+		static void GetBorders(LayoutInfo &li, int &l, int &t, int &r, int &b);
+		static void GetContentOffsets(LayoutInfo &li, int &l, int &t, int &r, int &b);
 	};
 
 	//! List of frames
 	typedef std::vector<Frame*> FrameList;
 
 	//! Base class for all frame objects
-	class Frame
+	class Frame : Node<Frame>
 	{
 	public:
 		virtual bool SetParent(Frame*);		//!< Sets the parent of a frame
@@ -152,6 +151,8 @@ namespace Ash
 		virtual bool OnEvent(int eventId, void *); //!< Event method. Event listeners override this method
 
 		FrameList* GetFrames() { return &frames; } //!< Get child frames list
+
+		static void FreeFrames(Frame *frame, bool freeSelf = false);
 
 		Frame();
 		virtual ~Frame();

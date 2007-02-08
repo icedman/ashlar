@@ -36,7 +36,7 @@ namespace Ash
 
 		// get client offsets (margin + border + padding)
 		int ol, ot, or, ob;
-		lt.GetClientOffsets(layoutInfo, ol, ot, or, ob);
+		lt.GetContentOffsets(layoutInfo, ol, ot, or, ob);
 
 		// adjust to offsets
 		xx += ol;
@@ -79,7 +79,7 @@ namespace Ash
 				} else {
 					// expand height
 					int ol, ot, or, ob;
-					lt.GetClientOffsets(*li, ol, ot, or, ob);
+					lt.GetContentOffsets(*li, ol, ot, or, ob);
 					fh = li->maxChildHeight + ot + ob;
 				}
 			}
@@ -91,7 +91,7 @@ namespace Ash
 				{
 					// expand width
 					int ol, ot, or, ob;
-					lt.GetClientOffsets(*li, ol, ot, or, ob);
+					lt.GetContentOffsets(*li, ol, ot, or, ob);
 					fw = li->totalChildWidths + ol + or;
 				}
 			}
@@ -221,7 +221,7 @@ namespace Ash
 
 		// get client offsets (margin + border + padding)
 		int ol, ot, or, ob;
-		lt.GetClientOffsets(layoutInfo, ol, ot, or, ob);
+		lt.GetContentOffsets(layoutInfo, ol, ot, or, ob);
 
 		// adjust to offsets
 		xx += ol;
@@ -229,7 +229,7 @@ namespace Ash
 		ww -= (ol + or);
 		hh -= (ot + ob);
 		ww = ww > 0 ? ww : 0;
-		hh = hh > 0 ? hh : 0;
+		hh = hh > 0 ? hh : 0; 
 
 		// clear calculations
 		layoutInfo.totalFlex = 0;
@@ -264,7 +264,7 @@ namespace Ash
 				} else {
 					// expand width
 					int ol, ot, or, ob;
-					lt.GetClientOffsets(*li, ol, ot, or, ob);
+					lt.GetContentOffsets(*li, ol, ot, or, ob);
 					fw = li->maxChildWidth + ol + or;
 				}
 			}
@@ -276,7 +276,7 @@ namespace Ash
 				{
 					// expand height
 					int ol, ot, or, ob;
-					lt.GetClientOffsets(*li, ol, ot, or, ob);
+					lt.GetContentOffsets(*li, ol, ot, or, ob);
 					fh = li->totalChildHeights + ot + ob;
 				}
 			}
