@@ -1,4 +1,4 @@
-/*!
+/*
 Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
 The contents of this file are subject to the Mozilla Public License Version
@@ -21,7 +21,9 @@ code.google.com/p/ashlar
 #include "domstring.h"
 #include "list.h"
 
-namespace Ash
+using namespace Ash;
+
+namespace Dom
 {
 	const unsigned short UNKNOWN_NODE = 0;
 	const unsigned short ELEMENT_NODE = 1;
@@ -85,7 +87,7 @@ namespace Ash
 		virtual DOMNode* Create() { return new DOMNode(); }
 		virtual DOMString* Value() { return &nodeValue; }
 
-		static void FreeNodes(DOMNode*, bool freeSelf = false);
+		static void FreeNodes(DOMNode*, bool freeSelf = true);
 
 	public:
 		DOMString nodeName;

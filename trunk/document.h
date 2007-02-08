@@ -1,4 +1,4 @@
-/*!
+/*
 Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
 The contents of this file are subject to the Mozilla Public License Version
@@ -19,10 +19,11 @@ code.google.com/p/ashlar
 #pragma once
 
 #include "element.h"
+#include "xmlparser.h"
 
-namespace Ash
+namespace Dom
 {
-
+	//! DOM Document class
 	class DOMDocument : public Element
 	{
 	public:
@@ -35,6 +36,5 @@ namespace Ash
 		Comment* createComment();
 		Element* createElement(DOMString *tagName);
 		TextNode* createTextNode();
-
 	};
 }

@@ -1,4 +1,4 @@
-/*!
+/*
 Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
 The contents of this file are subject to the Mozilla Public License Version
@@ -19,6 +19,7 @@ code.google.com/p/ashlar
 #pragma once
 
 #include "common.h"
+#include "list.h"
 
 // layout
 #include "rect.h"
@@ -38,3 +39,5 @@ code.google.com/p/ashlar
 #include "domnode.h"
 #include "element.h"
 #include "document.h"
+#include "xmlparser.h"
+#include "docbuilder.h"

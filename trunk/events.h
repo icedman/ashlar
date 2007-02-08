@@ -1,4 +1,4 @@
-/*!
+/*
 Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
 The contents of this file are subject to the Mozilla Public License Version
@@ -19,10 +19,12 @@ code.google.com/p/ashlar
 #pragma once
 
 #include "frames.h"
+#include "list.h"
 
-#include <vector>
+using namespace Ash;
+using namespace Layout;
 
-namespace Ash
+namespace Events
 {
 	typedef enum
 	{
@@ -34,7 +36,7 @@ namespace Ash
 	} EventIds;
 
 	//! Event class
-	class Event
+	class Event : public Node<Event>
 	{
 	public:
 
@@ -48,19 +50,12 @@ namespace Ash
 		Frame  *frame;
 	};
 
-	typedef std::vector<Event*> EventList;
-
 	//! Events manager
-	class EventManager
+	class EventManager : public List<Event>
 	{
 	public:
 		bool AddListener(Event *);
 		bool RemoveListener(Event *);
-
-		EventList* GetEventList() { return &events; }
-
-	protected:
-		EventList events;
 	};
 
 	//! Mouse events manager

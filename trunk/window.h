@@ -1,4 +1,4 @@
-/*!
+/*
 Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
 The contents of this file are subject to the Mozilla Public License Version
@@ -106,7 +106,7 @@ namespace Ash
 			::UpdateWindow(m_hWnd);
 		}
 
-		VOID ShowWindow(int cmd=SW_SHOW)
+		VOID ShowWindow(int cmd = SW_SHOW)
 		{
 			::ShowWindow(m_hWnd,cmd);
 		}

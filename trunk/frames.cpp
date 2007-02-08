@@ -1,4 +1,4 @@
-/*!
+/*
 Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
 The contents of this file are subject to the Mozilla Public License Version
@@ -18,7 +18,7 @@ code.google.com/p/ashlar
 
 #include "frames.h"
 
-namespace Ash
+namespace Layout
 {
 	// FrameTool
 	void FrameTool::SetDefaults(LayoutInfo &layoutInfo)
@@ -144,13 +144,14 @@ namespace Ash
 
 	bool Frame::AddFrame(Frame* pFrame)
 	{
-		frames.push_back(pFrame);
+		frames.Push(pFrame);
 		pFrame->SetParent(this);
 		return true;
 	}
 
 	bool Frame::RemoveFrame(Frame* pFrame)
 	{
+		/*
 		FrameList::iterator it = frames.begin();
 		while(it != frames.end()) {
 			if (*it == pFrame) {
@@ -159,6 +160,18 @@ namespace Ash
 				break;
 			}
 			it++;
+		}
+		*/
+		Frame *frame = frames.GetFirst();
+		while(frame)
+		{
+			if (frame == pFrame)
+			{
+				frames.Remove(frame);
+				frame->SetParent(0);
+				break;
+			}
+			frame = frame->next;
 		}
 		return true;
 	}
@@ -215,15 +228,10 @@ namespace Ash
 
 	void Frame::FreeFrames(Frame *frame, bool freeSelf)
 	{
-		FrameList::iterator it;
-		while(frame->frames.size())
+		while(Frame *f = frame->frames.GetFirst())
 		{
-			it = frame->frames.begin();
-			if (it != frame->frames.end())
-			{
-				Frame *f = *it;
-				FreeFrames(f);
-			}
+			frame->frames.Remove(f);
+			FreeFrames(f);
 		}
 
 		if (freeSelf)

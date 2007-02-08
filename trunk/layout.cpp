@@ -1,4 +1,4 @@
-/*!
+/*
 Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
 The contents of this file are subject to the Mozilla Public License Version
@@ -18,7 +18,7 @@ code.google.com/p/ashlar
 
 #include "layout.h"
 
-namespace Ash
+namespace Layout
 {
 	// HFrame
 	bool HFrame::Layout()
@@ -26,8 +26,6 @@ namespace Ash
 		Frame::Layout();
 
 		FrameList *frames = GetFrames();
-		FrameList::iterator it;
-
 		FrameTool lt;
 
 		// set default values for unassigned metrics
@@ -59,10 +57,9 @@ namespace Ash
 		- set preferred metrics for child frames
 		- do precalculations for second pass
 		*/
-		it = frames->begin();
-		while(it != frames->end())
+		Frame *f = frames->GetFirst();
+		while(f)
 		{
-			Frame *f = *it;
 			LayoutInfo *li = &f->layoutInfo;
 
 			// get default metrics
@@ -104,7 +101,7 @@ namespace Ash
 				int fx = ISASSIGNED(li->x)? li->x : xx;
 				int fy = ISASSIGNED(li->y)? li->y : yy;
 				li->rect.Set(fx, fy, fx + fw, fy + fh);
-				it++;
+				f = f->next;
 				continue;
 			}
 
@@ -125,7 +122,7 @@ namespace Ash
 				hasFlex = true;
 			}
 			xx += fw;
-			it++;
+			f = f->next;
 		}
 
 		/*
@@ -137,15 +134,14 @@ namespace Ash
 		int flexSpace = ww - layoutInfo.totalChildWidths;
 		xx = 0;
 		yy = 0;
-		it = frames->begin();
-		while(it != frames->end())
+		f = frames->GetFirst();
+		while(f)
 		{
-			Frame *f = *it;
 			LayoutInfo *li = &f->layoutInfo;
 			if (li->floating || !li->display)
 			{
 				f->Layout();
-				it++;
+				f = f->next;
 				continue;
 			}
 
@@ -199,7 +195,7 @@ namespace Ash
 			} else {
 				f->Layout();
 			}
-			it++;
+			f = f->next;
 		}
 
 		return true;
@@ -211,8 +207,6 @@ namespace Ash
 		Frame::Layout();
 
 		FrameList *frames = GetFrames();
-		FrameList::iterator it;
-
 		FrameTool lt;
 
 		// set default values for unassigned metrics
@@ -244,10 +238,9 @@ namespace Ash
 		- set preferred metrics for child frames
 		- do precalculations for second pass
 		*/
-		it = frames->begin();
-		while(it != frames->end())
+		Frame *f = frames->GetFirst();
+		while(f)
 		{
-			Frame *f = *it;
 			LayoutInfo *li = &f->layoutInfo;
 
 			// get default metrics
@@ -289,7 +282,7 @@ namespace Ash
 				int fx = ISASSIGNED(li->x)? li->x : xx;
 				int fy = ISASSIGNED(li->y)? li->y : yy;
 				li->rect.Set(fx, fy, fx + fw, fy + fh);
-				it++;
+				f = f->next;
 				continue;
 			}
 
@@ -310,7 +303,7 @@ namespace Ash
 				hasFlex = true;
 			}
 			yy += fh;
-			it++;
+			f = f->next;
 		}
 
 		/*
@@ -322,15 +315,14 @@ namespace Ash
 		int flexSpace = hh - layoutInfo.totalChildHeights;
 		xx = 0;
 		yy = 0;
-		it = frames->begin();
-		while(it != frames->end())
+		f = frames->GetFirst();
+		while(f)
 		{
-			Frame *f = *it;
 			LayoutInfo *li = &f->layoutInfo;
 			if (li->floating || !li->display)
 			{
 				f->Layout();
-				it++;
+				f = f->next;
 				continue;
 			}
 
@@ -384,7 +376,7 @@ namespace Ash
 			} else {
 				f->Layout();
 			}
-			it++;
+			f = f->next;
 		}
 
 		return true;

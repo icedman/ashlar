@@ -1,4 +1,4 @@
-/*!
+/*
 Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
 The contents of this file are subject to the Mozilla Public License Version
@@ -16,11 +16,9 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#pragma once
-
 #include "domnode.h"
 
-namespace Ash
+namespace Dom
 {
 	// NamedNodeMap
 	DOMNode* NamedNodeMap::GetNamedItem(DOMString *nodeName)
@@ -64,7 +62,8 @@ namespace Ash
 
 	DOMNode::DOMNode(DOMString *name)
 	{
-		DOMNode();
+		nodeType = UNKNOWN_NODE;
+		parentNode = 0;
 		nodeName = *name;
 	}
 
