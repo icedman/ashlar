@@ -77,7 +77,7 @@ namespace Dom
 		return node;
 	}
 
-	void Element::Text()
+	void Element::Dump()
 	{
 		int level = 0;
 		DOMNode *n = ParentNode();
@@ -103,7 +103,7 @@ namespace Dom
 		n = FirstChild();
 		while(n)
 		{
-			((Element*)n)->Text();
+			((Element*)n)->Dump();
 			n = n->NextSibling();
 		}
 	}

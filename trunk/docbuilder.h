@@ -37,7 +37,7 @@ namespace Dom
 		void OnComment(const XML_Char *comment);
 		void OnCDataSection(DOMString *cdata);
 
-		DOMDocument* GetDocument() { return (DOMDocument*)nodes.GetAt(0); }
-		NodeList nodes;
+		DOMDocument* GetDocument() { return (DOMDocument*)nodeStack.GetAt(0); }
+		NodeList nodeStack;
 	};
 }

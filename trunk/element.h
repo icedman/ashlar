@@ -29,7 +29,7 @@ namespace Dom
 		Element();
 		Element(DOMString *tagName);
 
-		DOMString* tagName() { return &nodeName; }
+		DOMString* TagName() { return &nodeName; }
 
 		DOMString* GetAttribute(DOMString *name);
 		DOMNode* GetAttributeNode(DOMString *name);
@@ -40,7 +40,7 @@ namespace Dom
 		DOMNode* SetAttribute(DOMString *name, DOMString *value = 0, bool isId = false);
 		DOMNode* SetAttributeNode(DOMNode *node, bool isId = false);
 
-		virtual void Text();
+		void Dump();
 	};
 
 	//! DOM Attribute class

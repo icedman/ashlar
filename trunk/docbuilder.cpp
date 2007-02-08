@@ -26,23 +26,23 @@ namespace Dom
 			return false;
 
 		DOMDocument *d = new DOMDocument();
-		nodes.Clear();
-		nodes.Push(d);
+		nodeStack.Clear();
+		nodeStack.Push(d);
 		return true;
 	}
 
 	void DOMBuilder::Shutdown()
 	{
 		XmlParser::Shutdown();
-		nodes.Clear();
+		nodeStack.Clear();
 	}
 
 	void DOMBuilder::OnStartElement(const XML_Char *name, const XML_Char **attr)
 	{
-		DOMNode *node = nodes.GetLast();
+		DOMNode *node = nodeStack.GetLast();
 		Element *child = new Element(&DOMString(name));
 		node->AppendChild(child);
-		nodes.Push(child);
+		nodeStack.Push(child);
 
 		// attributes
 		for (int i = 0; attr[i]; i += 2) {
@@ -53,12 +53,12 @@ namespace Dom
 
 	void DOMBuilder::OnEndElement(const XML_Char *name)
 	{
-		nodes.Pop();
+		nodeStack.Pop();
 	}
 
 	void DOMBuilder::OnComment(const XML_Char *comment)
 	{
-		DOMNode *node = nodes.GetLast();
+		DOMNode *node = nodeStack.GetLast();
 		Comment *child = new Comment();
 		child->nodeValue = comment;
 		node->AppendChild(child);
@@ -66,7 +66,7 @@ namespace Dom
 
 	void DOMBuilder::OnCDataSection(DOMString *cdata)
 	{
-		DOMNode *node = nodes.GetLast();
+		DOMNode *node = nodeStack.GetLast();
 		CDataSection *child = new CDataSection();
 		child->nodeValue = *cdata;
 		node->AppendChild(child);

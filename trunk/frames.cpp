@@ -154,12 +154,12 @@ namespace Layout
 		/*
 		FrameList::iterator it = frames.begin();
 		while(it != frames.end()) {
-			if (*it == pFrame) {
-				frames.erase(it);
-				pFrame->SetParent(0);
-				break;
-			}
-			it++;
+		if (*it == pFrame) {
+		frames.erase(it);
+		pFrame->SetParent(0);
+		break;
+		}
+		it++;
 		}
 		*/
 		Frame *frame = frames.GetFirst();
@@ -236,5 +236,26 @@ namespace Layout
 
 		if (freeSelf)
 			delete frame;
+	}
+
+	void Frame::Dump()
+	{
+		int level = 0;
+		Frame *f = parentFrame;
+		while(f)
+		{
+			f = f->parentFrame;
+			level++;
+		}
+
+		for(int i = 0; i<level; i++) printf("  ");
+		printf("%s\n", GetName());
+
+		f = frames.GetFirst();
+		while(f)
+		{
+			f->Dump();
+			f = f->next;
+		}
 	}
 };

@@ -29,7 +29,7 @@ using namespace Events;
 class Doc : public VFrame
 {
 public:
-	const char* GetName() { return "doc"; }
+	const char* GetName() { return "window"; }
 };
 
 class Label : public Frame
@@ -84,76 +84,57 @@ class MyWindow : public Window
 	}
 
 	LRESULT OnCreate( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
-	{	
-		/*
-		toolbar.SetRect(&Rect(Point(UNASSIGNED, UNASSIGNED), UNASSIGNED, 40));
-		toolbar.layoutInfo.flex = 1;
-		clientArea.SetRect(&Rect(Point(UNASSIGNED, UNASSIGNED), UNASSIGNED, UNASSIGNED));
-		clientArea.layoutInfo.flex = 1;
+	{
+		doc = 0;
+		domdoc = 0;
 
-		doc.AddFrame(&toolbar);
-		doc.AddFrame(&clientArea);
+		DOMBuilder p;
+		p.Initialize();
 
-		label.SetRect(&Rect(Point(UNASSIGNED, UNASSIGNED), 200, 40));
-		button.SetRect(&Rect(Point(UNASSIGNED, UNASSIGNED), 60, 30));
-		button.layoutInfo.border = 1;
-
-		if (0)
+		FILE *fp = fopen("ashlar.xul", "r");
+		while(!feof(fp))
 		{
-		box.layoutInfo.x = 80;
-		box.layoutInfo.y = 80;
-		box.layoutInfo.floating = true;
+			char buffer[1024];
+			unsigned short len = fread(buffer, 1, 1024, fp);
+			int isFinal = feof(fp);
+			p.Parse(buffer, len, isFinal);
 		}
-		//spacer.layoutInfo.margin = 0;
-		//spacer.layoutInfo.padding = 0;
-		spacer.layoutInfo.flex = 1;
-		//spacer.SetRect(&Rect(Point(UNASSIGNED, UNASSIGNED), UNASSIGNED, 40));
-		if (1) 
+		fclose(fp);
+
+		domdoc = p.GetDocument();
+		p.Shutdown();
+
+		if (!domdoc)
 		{
-		clientArea.AddFrame(&box2);
-		clientArea.AddFrame(&box);
-		//clientArea.AddFrame(&spacer);
-		box.AddFrame(&label);
-		box.AddFrame(&button);
-		box.layoutInfo.verticalAlign = MIDDLE;
-		box2.layoutInfo.flex = 2;
+			return 0;
 		}
-		clientArea.layoutInfo.align = CENTER;
-		clientArea.layoutInfo.verticalAlign = MIDDLE;
 
-		*/
+		FrameBuilder fb;
+		fb.Register(new Frame());
+		fb.Register(new HFrame());
+		fb.Register(new VFrame());
+		fb.Register(new Doc());
+		fb.Register(new Label());
+		fb.Register(new Button());
+		fb.Build(domdoc);
 
-		doc.layoutInfo.align = RIGHT;
-		doc.AddFrame(&toolbar);
-		doc.AddFrame(&box);
-		box.AddFrame(&button);
-		box2.AddFrame(&button2);
-		toolbar.AddFrame(&box2);
-		toolbar.layoutInfo.flex = 1;
+		doc = (Doc*)fb.root;
+		if (!doc)
+			return 0;
 
-		button.layoutInfo.border = 1;
-		button.layoutInfo.width = 80;
-		button.layoutInfo.height = 40;
-		button2.layoutInfo.border = 1;
-		button2.layoutInfo.width = 80;
-		button2.layoutInfo.height = 40;
-
-		Rect r;
-		GetWindowRect(m_hWnd, &r);
-		doc.SetRect(&r);
-		doc.Layout();
-
-		e1.Attach(ONMOUSEDOWN, &button);
-		mouseEvents.AddListener(&e1);
+		doc->Dump();
 		return 0;
 	}
 
 	LRESULT OnSize( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
 	{
+		if (!doc)
+			return 0;
+
 		Rect r;
 		GetClientRect(m_hWnd, &r);
-		doc.SetRect(&r);
-		doc.Layout();
+		doc->SetRect(&r);
+		doc->Layout();
 
 		HDC hdc = GetWindowDC(m_hWnd);
 		renderEngine.InitBuffer(hdc, &r);
@@ -169,33 +150,27 @@ class MyWindow : public Window
 
 	VOID OnLButtonDown(POINT p)
 	{
-		mouseEvents.OnMouseEvent(ONMOUSEDOWN, 1, p.x, p.y);
+		// mouseEvents.OnMouseEvent(ONMOUSEDOWN, 1, p.x, p.y);
 	}
 
 	VOID Draw(HDC hdc, LPRECT rc)
 	{
+		if (!doc)
+			return;
+
 		renderEngine.Clear(RGB(255, 255, 255));
-		renderEngine.Render(&doc);
+		renderEngine.Render(doc);
 		renderEngine.Blit(hdc);
 	}
 
 private:
 
-	Label label;
-	Spacer spacer;
-	Button button;
-	Button button2;
-	HFrame box;
-	HFrame box2;
-	Doc doc;
-	Toolbar toolbar;
-	Client clientArea;
+	Doc *doc;
+	DOMDocument *domdoc;
 	RenderEngine renderEngine;
-	MouseEvents mouseEvents;
-	Event e1;
 };
 
-#if 0
+#if 1
 
 int main()
 {
@@ -219,28 +194,7 @@ int main()
 
 int main()
 {
-	DOMBuilder p;
-	p.Initialize();
 
-	FILE *fp = fopen("ashlar.xul", "r");
-	while(!feof(fp))
-	{
-		char buffer[1024];
-		unsigned short len = fread(buffer, 1, 1024, fp);
-		int isFinal = feof(fp);
-		p.Parse(buffer, len, isFinal);
-	}
-	fclose(fp);
-
-	DOMDocument *doc = p.GetDocument();
-	if (doc)
-	{
-		doc->Text();
-		printf("!\n");
-		DOMNode::FreeNodes(doc);
-	}
-
-	p.Shutdown();
 	return 0;
 }
 

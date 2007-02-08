@@ -20,4 +20,67 @@ code.google.com/p/ashlar
 
 namespace Layout
 {
+	bool FrameBuilder::Register(Frame* f)
+	{
+		return frameTemplates.Push(f);
+	}
+
+	void FrameBuilder::Unregister(Frame* f)
+	{
+		frameTemplates.Remove(f);
+	}
+
+	Frame* FrameBuilder::Build(DOMDocument *doc)
+	{
+		root = 0;
+		CreateFrame(doc);
+		return root;
+	}
+
+	Frame* FrameBuilder::CreateFrame(Element *element)
+	{
+		Frame *frame = CreateFrame(element->TagName());
+		if (frame)
+		{
+			if (!root)
+				root = frame;
+
+			Frame *parent = frameStack.GetLast();
+			if (parent)
+			{
+				parent->AddFrame(frame);
+			}
+
+			frameStack.Push(frame);
+		}
+
+		Element *e = (Element*)element->FirstChild();
+		while(e)
+		{
+			CreateFrame(e);
+			e = (Element*)e->NextSibling();
+		}
+
+		if (frame)
+		{
+			frameStack.Pop();
+		}
+
+		return 0;
+	}
+
+	Frame* FrameBuilder::CreateFrame(DOMString *tagName)
+	{
+		Frame *f = frameTemplates.GetFirst();
+		while(f)
+		{
+			if (strcmp(f->GetName(), tagName->c_str()) == 0)
+			{
+				return f->Create();
+			}
+			f = f->next;
+		}
+		return 0;
+	}
+
 }

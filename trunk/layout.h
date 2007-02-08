@@ -27,7 +27,8 @@ namespace Layout
 	{
 	public:
 		virtual bool Layout();
-		virtual const char* GetName() { return "HFrame"; }
+		virtual const char* GetName() { return "hbox"; }
+		virtual Frame* Create() { return new HFrame(); }
 	};
 
 	//! Vertical flow frame
@@ -35,7 +36,8 @@ namespace Layout
 	{
 	public:
 		virtual bool Layout();
-		virtual const char* GetName() { return "VFrame"; }
+		virtual const char* GetName() { return "vbox"; }
+		virtual Frame* Create() { return new VFrame(); }
 	};
 
 }

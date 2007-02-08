@@ -134,12 +134,10 @@ namespace Dom
 	{
 		cdata.clear();
 		inCdata = false;
-		printf("<![CDATA[\n");
 	}
 
 	void XmlParser::OnEndCDataSection()
 	{
-		printf("%s\n]]>\n", cdata.c_str());
 		OnCDataSection(&cdata);
 		cdata.clear();
 		inCdata = false;
@@ -147,6 +145,7 @@ namespace Dom
 
 	void XmlParser::OnCDataSection(DOMString *cdata)
 	{
+		printf("<![CDATA[\n%s\n]]>\n", cdata->c_str());
 	}
 
 	void XmlParser::OnCharacterData(const XML_Char *data, int len)
@@ -162,7 +161,7 @@ namespace Dom
 	void XmlParser::OnDefault(const XML_Char *data, int len)
 	{
 		return;
-		
+
 		// skip
 		std::string s(data, len);
 		printf("%s\n", s.c_str());
@@ -173,11 +172,11 @@ namespace Dom
 		printf("<?xml version=\"%s\"", version);
 		if (encoding)
 		{
-			 printf(" encoding=\"%s\"", encoding);
+			printf(" encoding=\"%s\"", encoding);
 		}
 		if (standalone != -1)
 		{
-			 printf(" standalone=\"%d\"", standalone);
+			printf(" standalone=\"%d\"", standalone);
 		}
 		printf("?>\n");
 	}
