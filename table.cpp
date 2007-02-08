@@ -16,12 +16,8 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#pragma once
+#include "table.h"
 
-#include <string>
-
-namespace Dom
+namespace Layout
 {
-	//! DOM String, using std::string
-	typedef std::string DOMString;
 }

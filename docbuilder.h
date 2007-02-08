@@ -18,10 +18,26 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <string>
+#include "document.h"
+#include "xmlparser.h"
 
 namespace Dom
 {
-	//! DOM String, using std::string
-	typedef std::string DOMString;
+	//! DOM Tree builder
+	/*!
+	Builds a DOM model during parsing of an xml file
+	*/
+	class DOMBuilder : public XmlParser
+	{
+	public:
+		bool Initialize();
+		void Shutdown();
+		void OnStartElement(const XML_Char *name, const XML_Char **atts);
+		void OnEndElement(const XML_Char *name);
+		void OnComment(const XML_Char *comment);
+		void OnCDataSection(DOMString *cdata);
+
+		DOMDocument* GetDocument() { return (DOMDocument*)nodes.GetAt(0); }
+		NodeList nodes;
+	};
 }

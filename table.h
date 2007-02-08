@@ -18,10 +18,22 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <string>
+#include "layout.h"
 
-namespace Dom
+namespace Layout
 {
-	//! DOM String, using std::string
-	typedef std::string DOMString;
+
+	class Row : public HFrame
+	{
+	public:
+		virtual bool Layout();
+		virtual const char* GetName() { return "Row"; }
+	};
+
+	class Table : public VFrame
+	{
+	public:
+		virtual bool Layout();
+		virtual const char* GetName() { return "Table"; }
+	};
 }

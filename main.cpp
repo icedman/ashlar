@@ -1,8 +1,30 @@
+/*
+Version: MPL 1.1/GPL 2.0/LGPL 2.1
+
+The contents of this file are subject to the Mozilla Public License Version
+1.1 (the "License"); you may not use this file except in compliance with
+the License. You may obtain a copy of the License at
+http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS IS" basis,
+WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+for the specific language governing rights and limitations under the
+License.
+
+Copyright 2007
+Marvin Sanchez
+code.google.com/p/ashlar
+*/
+
+// Note: this is a demo program. Leaks!
 
 #include "ashlar.h"
-#include "list.h"
 
 using namespace Ash;
+using namespace Dom;
+using namespace Layout;
+using namespace Render;
+using namespace Events;
 
 class Doc : public VFrame
 {
@@ -108,7 +130,7 @@ class MyWindow : public Window
 		box2.AddFrame(&button2);
 		toolbar.AddFrame(&box2);
 		toolbar.layoutInfo.flex = 1;
-	
+
 		button.layoutInfo.border = 1;
 		button.layoutInfo.width = 80;
 		button.layoutInfo.height = 40;
@@ -173,14 +195,14 @@ private:
 	Event e1;
 };
 
-#if 1
+#if 0
 
 int main()
 {
 	MyWindow win;
 
 	win.RegisterClass(0, _T("Ashlar"));
-	win.Create(_T("Ashlar"), _T("Ashlar Prototype"), 0, 0, 600, 400, WS_SIZEBOX | WS_SYSMENU);
+	win.Create(_T("Ashlar"), _T("Ashlar Prototype"), 0, 0, 200, 200, WS_SIZEBOX | WS_SYSMENU);
 	win.ShowWindow(SW_SHOW);
 
 	MSG msg;
@@ -197,17 +219,28 @@ int main()
 
 int main()
 {
-	DOMDocument doc;
-	Element *html = doc.createElement(&DOMString("html"));
-	Element *body = doc.createElement(&DOMString("body"));
-	body->SetAttribute(&DOMString("background"), &DOMString("#ffffff"));
-	doc.AppendChild(html);
-	html->AppendChild(body);
-	doc.Text();
+	DOMBuilder p;
+	p.Initialize();
 
-	doc.FreeNodes(&doc);
+	FILE *fp = fopen("ashlar.xul", "r");
+	while(!feof(fp))
+	{
+		char buffer[1024];
+		unsigned short len = fread(buffer, 1, 1024, fp);
+		int isFinal = feof(fp);
+		p.Parse(buffer, len, isFinal);
+	}
+	fclose(fp);
 
-	doc.Text();
+	DOMDocument *doc = p.GetDocument();
+	if (doc)
+	{
+		doc->Text();
+		printf("!\n");
+		DOMNode::FreeNodes(doc);
+	}
+
+	p.Shutdown();
 	return 0;
 }
 

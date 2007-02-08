@@ -1,4 +1,4 @@
-/*!
+/*
 Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
 The contents of this file are subject to the Mozilla Public License Version
@@ -20,10 +20,11 @@ code.google.com/p/ashlar
 
 #include "common.h"
 #include "rect.h"
+#include "list.h"
 
-#include <vector>
+using namespace Ash;
 
-namespace Ash
+namespace Layout
 {
 
 #define UNASSIGNED (-0xEE)
@@ -130,10 +131,10 @@ namespace Ash
 	};
 
 	//! List of frames
-	typedef std::vector<Frame*> FrameList;
+	typedef List<Frame> FrameList;
 
 	//! Base class for all frame objects
-	class Frame : Node<Frame>
+	class Frame : public Node<Frame>
 	{
 	public:
 		virtual bool SetParent(Frame*);		//!< Sets the parent of a frame

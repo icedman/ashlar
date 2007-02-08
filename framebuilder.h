@@ -18,10 +18,8 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <string>
+#include "frames.h"
 
-namespace Dom
+namespace Layout
 {
-	//! DOM String, using std::string
-	typedef std::string DOMString;
 }

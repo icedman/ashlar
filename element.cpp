@@ -1,6 +1,4 @@
-
-
-/*!
+/*
 Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
 The contents of this file are subject to the Mozilla Public License Version
@@ -20,8 +18,19 @@ code.google.com/p/ashlar
 
 #include "document.h"
 
-namespace Ash
+namespace Dom
 {
+
+	Element::Element()
+	{
+		nodeType = ELEMENT_NODE;
+	}
+
+	Element::Element(DOMString *tagName)
+	{
+		nodeType = ELEMENT_NODE;
+		nodeName = *tagName;
+	}
 
 	DOMString* Element::GetAttribute(DOMString *name)
 	{
@@ -70,18 +79,28 @@ namespace Ash
 
 	void Element::Text()
 	{
-		printf("%s %d\n", nodeName.c_str(), nodeType);
+		int level = 0;
+		DOMNode *n = ParentNode();
+		while(n)
+		{
+			n = n->ParentNode();
+			level++;
+		}
+
+		for(int i = 0; i<level; i++) printf("  ");
+		printf("%s[%d] %s\n", nodeName.c_str(), nodeType, nodeValue.c_str());
 		if (HasAttributes())
 		{
 			DOMNode *n = attributes.GetFirst();
 			while(n)
 			{
-				printf("   %s %s\n", n->nodeName.c_str(), n->nodeValue.c_str());
+				for(int i = 0; i<level; i++) printf("  ");
+				printf(" > %s = %s\n", n->nodeName.c_str(), n->nodeValue.c_str());
 				n = n->next;
 			}
 		}
 
-		DOMNode *n = FirstChild();
+		n = FirstChild();
 		while(n)
 		{
 			((Element*)n)->Text();
@@ -98,7 +117,9 @@ namespace Ash
 
 	Attribute::Attribute(DOMString *name, DOMString *value, bool id)
 	{
-		Attribute();
+		nodeType = ATTRIBUTE_NODE;
+		isId = false;
+
 		nodeName = *name;
 		if (value)
 		{

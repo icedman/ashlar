@@ -1,4 +1,4 @@
-/*!
+/*
 Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
 The contents of this file are subject to the Mozilla Public License Version
@@ -20,7 +20,7 @@ code.google.com/p/ashlar
 #include <cairo-win32.h>
 #include <math.h>
 
-namespace Ash
+namespace Render
 {
 	bool RenderEngine::InitBuffer(HDC hdcTarget, const Rect* pRect)
 	{
@@ -98,11 +98,11 @@ namespace Ash
 
 		// render children
 		FrameList *frames = pFrame->GetFrames();
-		FrameList::iterator it = frames->begin();
-		while(it != frames->end())
+		Frame *f = frames->GetFirst();
+		while(f)
 		{
-			Render(*it);
-			it++;
+			Render(f);
+			f = f->next;
 		}
 
 		return true;

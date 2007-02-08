@@ -1,4 +1,4 @@
-/*!
+/*
 Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
 The contents of this file are subject to the Mozilla Public License Version
@@ -18,7 +18,7 @@ code.google.com/p/ashlar
 
 #include "events.h"
 
-namespace Ash
+namespace Events
 {
 	Event::Event(int eid, Frame *pFrame)
 	{
@@ -34,29 +34,19 @@ namespace Ash
 
 	bool EventManager::AddListener(Event* pEvent)
 	{
-		events.push_back(pEvent);
-		return true;
+		return Push(pEvent);
 	}
 
 	bool EventManager::RemoveListener(Event* pEvent)
 	{
-		EventList::iterator it = events.begin();
-		while(it != events.end()) {
-			if (*it == pEvent) {
-				events.erase(it);
-				break;
-			}
-			it++;
-		}
-		return true;
+		return Remove(pEvent);
 	}
 
 	bool MouseEvents::OnMouseEvent(int eventId, int button, int x, int y)
 	{
-		EventList::iterator it = events.begin();
-		while(it != events.end())
+		Event *e = GetFirst();
+		while(e)
 		{
-			Event *e = *it;
 			Frame *f = e->frame;
 			Rect r;
 			f->GetBorderRect(&r);
@@ -65,7 +55,7 @@ namespace Ash
 			{
 				f->OnEvent(eventId, (void*)&p);
 			}
-			it++;
+			e = e->next;
 		}
 		return true;
 	}

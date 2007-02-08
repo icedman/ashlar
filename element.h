@@ -1,4 +1,4 @@
-/*!
+/*
 Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
 The contents of this file are subject to the Mozilla Public License Version
@@ -20,13 +20,14 @@ code.google.com/p/ashlar
 
 #include "domnode.h"
 
-namespace Ash
+namespace Dom
 {
+	//! DOM Element class
 	class Element : public DOMNode
 	{
 	public:
-		Element() { nodeType = ELEMENT_NODE; }
-		Element(DOMString *tagName) { Element(); nodeName = *tagName; }
+		Element();
+		Element(DOMString *tagName);
 
 		DOMString* tagName() { return &nodeName; }
 
@@ -42,6 +43,7 @@ namespace Ash
 		virtual void Text();
 	};
 
+	//! DOM Attribute class
 	class Attribute : public DOMNode
 	{
 	public:
@@ -51,6 +53,7 @@ namespace Ash
 		bool isId;
 	};
 
+	//! DOM Text Node class
 	class TextNode : public Element
 	{
 	public:
@@ -67,12 +70,14 @@ namespace Ash
 		// substringData
 	};
 
+	//! DOM Character Data section class
 	class CDataSection : public TextNode
 	{
 	public:
 		CDataSection();
 	};
 
+	//! DOM Comment class
 	class Comment : public TextNode
 	{
 	public:
