@@ -19,6 +19,7 @@ code.google.com/p/ashlar
 #pragma once
 
 #include "frames.h"
+#include <cairo.h>
 
 namespace Ash
 {
@@ -26,10 +27,39 @@ namespace Ash
 	class RenderEngine
 	{
 	public:
-		bool SetTargetDC(HDC hDc) { hdcTarget = hDc; return true; }
+		RenderEngine()
+		{
+			cairo = 0;
+			surface = 0;
+			hdc = 0;
+			hBmp = 0;
+		}
+
+		~RenderEngine()
+		{
+			DestroyBuffer();
+		}
+
+		bool InitBuffer(HDC hdc, const Rect *pRect);
+		void DestroyBuffer();
+		void Clear(long color);
+		void Blit(HDC hdc = 0);
+
 		bool Render(Frame *);
 		void DrawRect(const Rect* pRect, long color);
+		void DrawFrame(Frame* pFrame);
+
+		void GetColor(long color, double &r, double &g, double &b, double &a);
+		void RoundToDevicePixels(const Rect *pRect, double &l, double &t, double &r, double &b);
+
 	private:
+		HDC hdc;
+		HGDIOBJ hOld;
+		HBITMAP hBmp;
 		HDC hdcTarget;
+		Rect rect;
+
+		cairo_t *cairo;
+		cairo_surface_t *surface;
 	};
 }

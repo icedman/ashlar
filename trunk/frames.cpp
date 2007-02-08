@@ -50,6 +50,12 @@ namespace Ash
 		layoutInfo.align = TOP;
 	}
 
+	void FrameTool::SetDefaults(FrameStyle &frameStyle)
+	{
+		// default style
+		ZeroMemory(&frameStyle, sizeof(FrameStyle));
+	}
+
 	void FrameTool::GetMetrics(LayoutInfo &layoutInfo, int &x, int &y, int &w, int &h)
 	{
 		x = ISASSIGNED(layoutInfo.x) ? layoutInfo.x : layoutInfo.rect.left;
@@ -67,7 +73,16 @@ namespace Ash
 		b = ISASSIGNED(layoutInfo.marginBottom) ? layoutInfo.marginBottom : mg;
 	}
 
-	void FrameTool::GetClientOffsets(LayoutInfo &layoutInfo, int &l, int &t, int &r, int &b)
+	void FrameTool::GetBorders(LayoutInfo &layoutInfo, int &l, int &t, int &r, int &b)
+	{
+		int bd = ISASSIGNED(layoutInfo.border) ? layoutInfo.border : 0;
+		l = ISASSIGNED(layoutInfo.borderLeft) ? layoutInfo.borderLeft : bd;
+		r = ISASSIGNED(layoutInfo.borderRight) ? layoutInfo.borderRight : bd;
+		t = ISASSIGNED(layoutInfo.borderTop) ? layoutInfo.borderTop : bd;
+		b = ISASSIGNED(layoutInfo.borderBottom) ? layoutInfo.borderBottom : bd;
+	}
+
+	void FrameTool::GetContentOffsets(LayoutInfo &layoutInfo, int &l, int &t, int &r, int &b)
 	{
 		// margins
 		int mg = ISASSIGNED(layoutInfo.margin) ? layoutInfo.margin : 0;
@@ -179,22 +194,12 @@ namespace Ash
 
 	bool Frame::GetContentRect(Rect *pRect)
 	{
-		// todo use layoutTool
-		GetBorderRect(pRect);
-		int pd = ISASSIGNED(layoutInfo.padding) ? layoutInfo.padding : 0;
-		int pdl = ISASSIGNED(layoutInfo.paddingLeft) ? layoutInfo.paddingLeft : pd;
-		int pdr = ISASSIGNED(layoutInfo.paddingRight) ? layoutInfo.paddingRight : pd;
-		int pdt = ISASSIGNED(layoutInfo.paddingTop) ? layoutInfo.paddingTop : pd;
-		int pdb = ISASSIGNED(layoutInfo.paddingBottom) ? layoutInfo.paddingBottom : pd;
-		int bd = ISASSIGNED(layoutInfo.border) ? layoutInfo.border : 0;
-		int bdl = ISASSIGNED(layoutInfo.borderLeft) ? layoutInfo.borderLeft : bd;
-		int bdr = ISASSIGNED(layoutInfo.borderRight) ? layoutInfo.borderRight : bd;
-		int bdt = ISASSIGNED(layoutInfo.borderTop) ? layoutInfo.borderTop : bd;
-		int bdb = ISASSIGNED(layoutInfo.borderBottom) ? layoutInfo.borderBottom : bd;
-		pRect->left += pdl + bdl;
-		pRect->top += pdt + bdt;
-		pRect->right -= (pdr + bdr);
-		pRect->bottom -= (pdb + bdb);
+		int ol, ot, or, ob;
+		FrameTool::GetContentOffsets(layoutInfo, ol, ot, or, ob);
+		pRect->left += ol;
+		pRect->top += ot;
+		pRect->right -= or;
+		pRect->bottom -= ob;
 		return true;
 	}
 
@@ -206,5 +211,22 @@ namespace Ash
 		layoutInfo.height = pRect->Height();
 		layoutInfo.rect = (*pRect);
 		return true;
+	}
+
+	void Frame::FreeFrames(Frame *frame, bool freeSelf)
+	{
+		FrameList::iterator it;
+		while(frame->frames.size())
+		{
+			it = frame->frames.begin();
+			if (it != frame->frames.end())
+			{
+				Frame *f = *it;
+				FreeFrames(f);
+			}
+		}
+
+		if (freeSelf)
+			delete frame;
 	}
 };

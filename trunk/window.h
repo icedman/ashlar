@@ -20,6 +20,9 @@ code.google.com/p/ashlar
 
 #include "common.h"
 
+#include <tchar.h>
+#include <windows.h>
+
 namespace Ash
 {
 

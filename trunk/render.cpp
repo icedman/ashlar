@@ -17,11 +17,67 @@ code.google.com/p/ashlar
 */
 
 #include "render.h"
+#include <cairo-win32.h>
+#include <math.h>
 
 namespace Ash
 {
+	bool RenderEngine::InitBuffer(HDC hdcTarget, const Rect* pRect)
+	{
+		rect = (*pRect);
+
+		DestroyBuffer();
+
+		hdc = CreateCompatibleDC(hdcTarget);
+		hBmp = CreateCompatibleBitmap(hdcTarget, pRect->Width(), pRect->Height());
+		hOld = SelectObject(hdc, hBmp);
+
+		surface = cairo_win32_surface_create(hdc);
+		cairo = cairo_create(surface);
+		return true;
+	}
+
+	void RenderEngine::DestroyBuffer()
+	{
+		if (hdc)
+		{
+			cairo_destroy(cairo);
+			cairo_surface_destroy(surface);
+			SelectObject(hdc, hOld);
+			DeleteDC(hdc);
+			DeleteObject(hBmp);
+		}
+	}
+
+	void RenderEngine::Clear(long color)
+	{
+		if (!hdc)
+		{
+			return;
+		}
+
+		HBRUSH hbrush = CreateSolidBrush(color);
+		FillRect(hdc, &rect, hbrush);
+		DeleteObject(hbrush);
+	}
+
+	void RenderEngine::Blit(HDC hdcTarget)
+	{
+		if (!hdc)
+		{
+			return;
+		}
+
+		BitBlt(hdcTarget, rect.left, rect.top, rect.Width(), rect.Height(), hdc, 0, 0, SRCCOPY);
+	}
+
 	bool RenderEngine::Render(Frame *pFrame)
 	{
+		if (!hdc)
+		{
+			return false;
+		}
+
 		LayoutInfo *li = &pFrame->layoutInfo;
 		bool draw = true;
 
@@ -34,15 +90,13 @@ namespace Ash
 
 		if (draw)
 		{
-			DrawRect(&r, RGB(255,0,0));
-			pFrame->GetBorderRect(&r);
-			DrawRect(&r, RGB(0,0,255));
+			DrawFrame(pFrame);
 			printf("render %s %d (%d, %d)-(%d, %d)\n", pFrame->GetName(), pFrame, r.left, r.top, r.right, r.bottom);
 		} else {
 			printf("skip render %s %d (%d, %d)-(%d, %d)\n", pFrame->GetName(), pFrame, r.left, r.top, r.right, r.bottom);
 		}
 
-		// draw children
+		// render children
 		FrameList *frames = pFrame->GetFrames();
 		FrameList::iterator it = frames->begin();
 		while(it != frames->end())
@@ -56,24 +110,79 @@ namespace Ash
 
 	void RenderEngine::DrawRect(const Rect* pRect, long color)
 	{
-		LOGBRUSH lb; 
-		HGDIOBJ hPen, hPenOld; 
+		cairo_t *cr = cairo;
 
-		lb.lbStyle = BS_SOLID; 
-		lb.lbColor = color; 
-		lb.lbHatch = 0; 
+		double x, y, x2, y2;
+		RoundToDevicePixels(pRect, x, y, x2, y2);
+		// todo: adjust odd coordinates by 0.5? khtml
 
-		hPen = ExtCreatePen(PS_SOLID, 1, &lb, 0, NULL); 
-		hPenOld = SelectObject(hdcTarget, hPen);
+		cairo_set_line_width (cr, 1);
+		cairo_move_to(cr, x, y);
+		cairo_line_to(cr, x2 - 5, y);
+		cairo_curve_to(cr, x2 - 5, y, x2, y, x2, y + 5);
+		cairo_line_to(cr, x2, y2);
+		cairo_line_to(cr, x, y2);
+		cairo_close_path(cr);
 
-		POINT p;
-		MoveToEx(hdcTarget, pRect->left, pRect->top, &p);
-		LineTo(hdcTarget, pRect->right, pRect->top);
-		LineTo(hdcTarget, pRect->right, pRect->bottom);
-		LineTo(hdcTarget, pRect->left, pRect->bottom);
-		LineTo(hdcTarget, pRect->left, pRect->top);
+		cairo_set_source_rgba(cr, 1, 0, 0, 0.5);
+		cairo_stroke (cr);
+	}
 
-		SelectObject(hdcTarget, hPenOld);
-		DeleteObject(hPen);
+	void RenderEngine::DrawFrame(Frame* f)
+	{
+		cairo_t *cr = cairo;
+		Rect r;
+		LayoutInfo *li = &f->layoutInfo;
+		FrameStyle *fs = &f->frameStyle;
+
+		double x, y, x2, y2;
+
+		// draw border
+		f->GetBorderRect(&r);
+		RoundToDevicePixels(&r, x, y, x2, y2);
+
+		cairo_set_line_width (cr, li->border);
+		cairo_move_to(cr, x, y);
+		cairo_line_to(cr, x2, y);
+		cairo_line_to(cr, x2, y2);
+		cairo_line_to(cr, x, y2);
+		cairo_close_path(cr);
+
+		cairo_set_source_rgba(cr, 0, 0, 1, 1);
+		cairo_stroke (cr);
+
+		//
+		f->GetRect(&r);
+		DrawRect(&r, 0);
+	}
+
+	void RenderEngine::RoundToDevicePixels(const Rect *pRect, double &l, double &t, double &r, double &b)
+	{
+		// todo: where is round()?
+
+		double x = pRect->left;
+		double y = pRect->top;
+
+		// left - top
+		cairo_user_to_device(cairo, &x, &y);
+		x = floor(x);
+		y = floor(y);
+		cairo_device_to_user(cairo, &x, &y);
+		l = x;
+		t = y;
+
+		// right - bottom
+		x = pRect->Width();
+		y = pRect->Height();
+		cairo_user_to_device_distance(cairo, &x, &y);
+		x = floor(x);
+		y = floor(y);
+		cairo_device_to_user_distance(cairo, &x, &y);
+		r = l + x;
+		b = t + y;
+	}
+
+	void RenderEngine::GetColor(long color, double &r, double &g, double &b, double &a)
+	{
 	}
 }

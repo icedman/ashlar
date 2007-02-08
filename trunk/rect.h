@@ -2,6 +2,9 @@
 
 #include "common.h"
 
+// POINT & RECT
+#include <windows.h>
+
 namespace Ash {
 
 	class Point : public POINT

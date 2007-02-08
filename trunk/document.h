@@ -18,14 +18,23 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#define STRICT
-#define WIN32_LEAN_AND_MEAN
+#include "element.h"
 
-#include <stdio.h>
+namespace Ash
+{
 
-#ifdef _DEBUG
-#include <crtdbg.h>
-#define LEAK_TRACE { _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF); }
-#else
-#define LEAK_TRACE
-#endif
+	class DOMDocument : public Element
+	{
+	public:
+		DOMDocument();
+		DOMDocument(DOMString *name);
+		~DOMDocument();
+		
+		Attribute* createAttribute(DOMString *name);
+		CDataSection* createCDataSection();
+		Comment* createComment();
+		Element* createElement(DOMString *tagName);
+		TextNode* createTextNode();
+
+	};
+}
