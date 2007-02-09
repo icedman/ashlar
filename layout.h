@@ -22,7 +22,7 @@ code.google.com/p/ashlar
 
 namespace Layout
 {
-	//! Horizontal flow frame
+	//! Horizontal flow frame (xul:hbox)
 	class HFrame : public Frame
 	{
 	public:
@@ -31,13 +31,21 @@ namespace Layout
 		virtual Frame* Create() { return new HFrame(); }
 	};
 
-	//! Vertical flow frame
+	//! Vertical flow frame (xul:vbox)
 	class VFrame : public Frame
 	{
 	public:
 		virtual bool Layout();
 		virtual const char* GetName() { return "vbox"; }
 		virtual Frame* Create() { return new VFrame(); }
+	};
+
+	//! xul:box
+	class Box : public HFrame
+	{
+	public:
+		virtual const char* GetName() { return "box"; }
+		virtual Frame* Create() { return new Box(); }
 	};
 
 }

@@ -18,26 +18,34 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include "document.h"
-#include "xmlparser.h"
+#include "element.h"
 
 namespace Dom
 {
-	//! DOM Tree builder
-	/*!
-	Builds a DOM model during parsing of an xml file
-	*/
-	class DOMBuilder : public XmlParser
+
+	class SafeNode
 	{
 	public:
-		bool Initialize();
-		void Shutdown();
-		void OnStartElement(const XML_Char *name, const XML_Char **atts);
-		void OnEndElement(const XML_Char *name);
-		void OnComment(const XML_Char *comment);
-		void OnCharacterData(const XML_Char *data, int len);
+		SafeNode();
+		SafeNode(Element *e);
+		~SafeNode();
 
-		DOMDocument* GetDocument() { return (DOMDocument*)nodeStack.GetAt(0); }
-		NodeList nodeStack;
+		bool Attach(Element *e);
+		bool Attach(NodeList *n);
+		void Free();
+		void FreeNodes();
+
+		SafeNode* Item(int index);
+		SafeNode* GetElement(DOMString *tagName);
+		SafeNode* GetAttribute(DOMString *name);
+		DOMString* Value();
+		int ValueInt(int defaultValue);
+		Element* Node() { return element; }
+
+	private:
+		SafeNode *explorer;
+		Element *element;
+		NodeList *nodes;
 	};
+
 }

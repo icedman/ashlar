@@ -22,6 +22,6 @@ code.google.com/p/ashlar
 
 namespace Dom
 {
-	//! DOM String, using std::string
+	//! DOM String, using stl
 	typedef std::string DOMString;
 }

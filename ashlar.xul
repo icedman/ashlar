@@ -5,11 +5,23 @@
 	<vbox flex="1" align="right">
 		<hbox flex="1">
 			<box>
-				<button label="button"/>
+				<button label="button" width="80" height="40">
+					<style>
+						<layout>
+							<width>120</width>
+						</layout>
+						<background>
+							<gradient style="linear">
+								<color>#000000</color>
+								<color>#ffffff</color>
+							</gradient>
+						</background>
+					</style>
+				</button>
 			</box>
 		</hbox>
 		<box>
-			<button label="button">
+			<button label="button" width="60" height="40">
 				<onClick>
 <![CDATA[
 	alert("hello world!");

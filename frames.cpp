@@ -17,105 +17,15 @@ code.google.com/p/ashlar
 */
 
 #include "frames.h"
+#include "framestyle.h"
 
 namespace Layout
 {
-	// FrameTool
-	void FrameTool::SetDefaults(LayoutInfo &layoutInfo)
-	{
-		// default layout
-		ZeroMemory(&layoutInfo, sizeof(LayoutInfo));
-		layoutInfo.x = UNASSIGNED;
-		layoutInfo.y = UNASSIGNED;
-		layoutInfo.width = UNASSIGNED;
-		layoutInfo.height = UNASSIGNED;
-		layoutInfo.margin = 4;
-		layoutInfo.marginLeft = UNASSIGNED;
-		layoutInfo.marginRight = UNASSIGNED;
-		layoutInfo.marginTop = UNASSIGNED;
-		layoutInfo.marginBottom = UNASSIGNED;
-		layoutInfo.border = 0;
-		layoutInfo.borderLeft = UNASSIGNED;
-		layoutInfo.borderRight = UNASSIGNED;
-		layoutInfo.borderTop = UNASSIGNED;
-		layoutInfo.borderBottom = UNASSIGNED;
-		layoutInfo.padding = 4;
-		layoutInfo.paddingLeft = UNASSIGNED;
-		layoutInfo.paddingRight = UNASSIGNED;
-		layoutInfo.paddingTop = UNASSIGNED;
-		layoutInfo.paddingBottom = UNASSIGNED;
-		layoutInfo.display = true;
-		layoutInfo.visible = true;
-		layoutInfo.align = LEFT;
-		layoutInfo.align = TOP;
-	}
-
-	void FrameTool::SetDefaults(FrameStyle &frameStyle)
-	{
-		// default style
-		ZeroMemory(&frameStyle, sizeof(FrameStyle));
-	}
-
-	void FrameTool::GetMetrics(LayoutInfo &layoutInfo, int &x, int &y, int &w, int &h)
-	{
-		x = ISASSIGNED(layoutInfo.x) ? layoutInfo.x : layoutInfo.rect.left;
-		y = ISASSIGNED(layoutInfo.y) ? layoutInfo.y : layoutInfo.rect.top;
-		w = ISASSIGNED(layoutInfo.width) ? layoutInfo.width : layoutInfo.rect.Width();
-		h = ISASSIGNED(layoutInfo.height) ? layoutInfo.height : layoutInfo.rect.Height();
-	}
-
-	void FrameTool::GetMargins(LayoutInfo &layoutInfo, int &l, int &t, int &r, int &b)
-	{
-		int mg = ISASSIGNED(layoutInfo.margin) ? layoutInfo.margin : 0;
-		l = ISASSIGNED(layoutInfo.marginLeft) ? layoutInfo.marginLeft : mg;
-		r = ISASSIGNED(layoutInfo.marginRight) ? layoutInfo.marginRight : mg;
-		t = ISASSIGNED(layoutInfo.marginTop) ? layoutInfo.marginTop : mg;
-		b = ISASSIGNED(layoutInfo.marginBottom) ? layoutInfo.marginBottom : mg;
-	}
-
-	void FrameTool::GetBorders(LayoutInfo &layoutInfo, int &l, int &t, int &r, int &b)
-	{
-		int bd = ISASSIGNED(layoutInfo.border) ? layoutInfo.border : 0;
-		l = ISASSIGNED(layoutInfo.borderLeft) ? layoutInfo.borderLeft : bd;
-		r = ISASSIGNED(layoutInfo.borderRight) ? layoutInfo.borderRight : bd;
-		t = ISASSIGNED(layoutInfo.borderTop) ? layoutInfo.borderTop : bd;
-		b = ISASSIGNED(layoutInfo.borderBottom) ? layoutInfo.borderBottom : bd;
-	}
-
-	void FrameTool::GetContentOffsets(LayoutInfo &layoutInfo, int &l, int &t, int &r, int &b)
-	{
-		// margins
-		int mg = ISASSIGNED(layoutInfo.margin) ? layoutInfo.margin : 0;
-		int mgl = ISASSIGNED(layoutInfo.marginLeft) ? layoutInfo.marginLeft : mg;
-		int mgr = ISASSIGNED(layoutInfo.marginRight) ? layoutInfo.marginRight : mg;
-		int mgt = ISASSIGNED(layoutInfo.marginTop) ? layoutInfo.marginTop : mg;
-		int mgb = ISASSIGNED(layoutInfo.marginBottom) ? layoutInfo.marginBottom : mg;
-
-		// borders
-		int bd = ISASSIGNED(layoutInfo.border) ? layoutInfo.border : 0;
-		int bdl = ISASSIGNED(layoutInfo.borderLeft) ? layoutInfo.borderLeft : bd;
-		int bdr = ISASSIGNED(layoutInfo.borderRight) ? layoutInfo.borderRight : bd;
-		int bdt = ISASSIGNED(layoutInfo.borderTop) ? layoutInfo.borderTop : bd;
-		int bdb = ISASSIGNED(layoutInfo.borderBottom) ? layoutInfo.borderBottom : bd;
-
-		// padding
-		int pd = ISASSIGNED(layoutInfo.padding) ? layoutInfo.padding : 0;
-		int pdl = ISASSIGNED(layoutInfo.paddingLeft) ? layoutInfo.paddingLeft : pd;
-		int pdr = ISASSIGNED(layoutInfo.paddingRight) ? layoutInfo.paddingRight : pd;
-		int pdt = ISASSIGNED(layoutInfo.paddingTop) ? layoutInfo.paddingTop : pd;
-		int pdb = ISASSIGNED(layoutInfo.paddingBottom) ? layoutInfo.paddingBottom : pd;
-
-		l = mgl + bdl + pdl;
-		t = mgt + bdt + pdt;
-		r = mgr + bdr + pdr;
-		b = mgb + bdb + pdb;
-	}
-
 	// Frame
 	Frame::Frame() 
 	{
 		parentFrame = 0;
-		FrameTool::SetDefaults(layoutInfo);
+		FrameTool::SetDefaults(frameStyle);
 	}
 
 	Frame::~Frame()
@@ -151,17 +61,6 @@ namespace Layout
 
 	bool Frame::RemoveFrame(Frame* pFrame)
 	{
-		/*
-		FrameList::iterator it = frames.begin();
-		while(it != frames.end()) {
-		if (*it == pFrame) {
-		frames.erase(it);
-		pFrame->SetParent(0);
-		break;
-		}
-		it++;
-		}
-		*/
 		Frame *frame = frames.GetFirst();
 		while(frame)
 		{
@@ -189,15 +88,15 @@ namespace Layout
 
 	bool Frame::GetRect(Rect *pRect)
 	{
-		(*pRect) = layoutInfo.rect;
+		(*pRect) = frameStyle.layout.rect;
 		return true;
 	}
 
 	bool Frame::GetBorderRect(Rect *pRect)
 	{
-		(*pRect) = layoutInfo.rect;
+		(*pRect) = frameStyle.layout.rect;
 		int mgl, mgt, mgr, mgb;
-		FrameTool::GetMargins(layoutInfo, mgl, mgt, mgr, mgb);
+		FrameTool::GetBorders(frameStyle.margin, mgl, mgt, mgr, mgb);
 		pRect->left += mgl;
 		pRect->top += mgt;
 		pRect->right -= mgr;
@@ -208,7 +107,7 @@ namespace Layout
 	bool Frame::GetContentRect(Rect *pRect)
 	{
 		int ol, ot, or, ob;
-		FrameTool::GetContentOffsets(layoutInfo, ol, ot, or, ob);
+		FrameTool::GetContentOffsets(frameStyle, ol, ot, or, ob);
 		pRect->left += ol;
 		pRect->top += ot;
 		pRect->right -= or;
@@ -218,11 +117,11 @@ namespace Layout
 
 	bool Frame::SetRect(const Rect* pRect)
 	{
-		layoutInfo.x = pRect->left;
-		layoutInfo.y = pRect->top;
-		layoutInfo.width = pRect->Width();
-		layoutInfo.height = pRect->Height();
-		layoutInfo.rect = (*pRect);
+		frameStyle.layout.x = pRect->left;
+		frameStyle.layout.y = pRect->top;
+		frameStyle.layout.width = pRect->Width();
+		frameStyle.layout.height = pRect->Height();
+		frameStyle.layout.rect = (*pRect);
 		return true;
 	}
 

@@ -16,7 +16,7 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-// Note: this is a demo program. Leaks!
+// Note: this is a demo program. it leaks!
 
 #include "ashlar.h"
 
@@ -30,41 +30,52 @@ class Doc : public VFrame
 {
 public:
 	const char* GetName() { return "window"; }
+	Frame* Create() { return new Doc(); }
 };
 
 class Label : public Frame
 {
 public:
 	const char* GetName() { return "label"; }
+	Frame* Create() { return new Label(); }
 };
 
 class Button : public Frame
 {
 public:
+	Button()
+	{
+		frameStyle.border.width = 1;
+	}
+
 	bool OnEvent(int eid, void *)
 	{
 		printf("hit %s\n", GetName());
 		return true;
 	}
 	const char* GetName() { return "button"; }
+	Frame* Create() { return new Button(); }
 };
 
 class Spacer : public Frame
 {
 public:
 	const char* GetName() { return "spacer"; }
+	Frame* Create() { return new Spacer(); }
 };
 
 class Toolbar : public HFrame
 {
 public:
 	const char* GetName() { return "toolbar"; }
+	Frame* Create() { return new Toolbar(); }
 };
 
 class Client : public HFrame
 {
 public:
 	const char* GetName() { return "client"; }
+	Frame* Create() { return new Client(); }
 };
 
 class MyWindow : public Window
@@ -76,6 +87,7 @@ class MyWindow : public Window
 		HANDLE_MSG(WM_SIZE, OnSize)
 		HANDLE_MSG(WM_LBUTTONDOWN, OnMouseEvent)
 		HANDLE_MSG(WM_ERASEBKGND, OnEraseBackground)
+		HANDLE_MSG(WM_KEYDOWN, OnKeyEvent)
 		END_MSG_HANDLER;
 
 	LRESULT OnEraseBackground( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
@@ -109,6 +121,8 @@ class MyWindow : public Window
 			return 0;
 		}
 
+		domdoc->Dump();
+
 		FrameBuilder fb;
 		fb.Register(new Frame());
 		fb.Register(new HFrame());
@@ -123,6 +137,20 @@ class MyWindow : public Window
 			return 0;
 
 		doc->Dump();
+
+		if (0)
+		{
+			/*
+			hack:
+			layout doesn't compute properly at a few passes when frames have no widths & heights and also no flex values
+			*/
+			Rect r;
+			GetClientRect(m_hWnd, &r);
+			doc->SetRect(&r);
+			for(int i=0;i<8;i++)
+				doc->Layout();
+		}
+
 		return 0;
 	}
 
@@ -153,6 +181,7 @@ class MyWindow : public Window
 		// mouseEvents.OnMouseEvent(ONMOUSEDOWN, 1, p.x, p.y);
 	}
 
+
 	VOID Draw(HDC hdc, LPRECT rc)
 	{
 		if (!doc)
@@ -177,7 +206,7 @@ int main()
 	MyWindow win;
 
 	win.RegisterClass(0, _T("Ashlar"));
-	win.Create(_T("Ashlar"), _T("Ashlar Prototype"), 0, 0, 200, 200, WS_SIZEBOX | WS_SYSMENU);
+	win.Create(_T("Ashlar"), _T("Ashlar Prototype"), 400, 200, 200, 200, WS_SIZEBOX | WS_SYSMENU);
 	win.ShowWindow(SW_SHOW);
 
 	MSG msg;
