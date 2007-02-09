@@ -74,7 +74,6 @@ namespace Dom
 	XmlParser::XmlParser()
 	{
 		parser = 0;
-		inCdata = 0;
 	}
 
 	XmlParser::~XmlParser()
@@ -85,8 +84,6 @@ namespace Dom
 
 	bool XmlParser::Initialize()
 	{
-		inCdata = 0;
-
 		if (parser)
 		{
 			XML_ParserReset(parser, 0);
@@ -131,17 +128,10 @@ namespace Dom
 	}
 
 	void XmlParser::OnStartCDataSection()
-	{
-		cdata.clear();
-		inCdata = false;
-	}
+	{}
 
 	void XmlParser::OnEndCDataSection()
-	{
-		OnCDataSection(&cdata);
-		cdata.clear();
-		inCdata = false;
-	}
+	{}
 
 	void XmlParser::OnCDataSection(DOMString *cdata)
 	{
@@ -149,9 +139,7 @@ namespace Dom
 	}
 
 	void XmlParser::OnCharacterData(const XML_Char *data, int len)
-	{
-		cdata.append(data, len);
-	}
+	{}
 
 	void XmlParser::OnComment(const XML_Char *comment)
 	{

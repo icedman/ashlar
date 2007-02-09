@@ -47,8 +47,5 @@ namespace Dom
 
 	public:
 		XML_Parser parser;
-
-		DOMString cdata;
-		bool inCdata;
 	};
 }

@@ -32,8 +32,8 @@ namespace Layout
 		void Unregister(Frame* f);
 
 		Frame* Build(DOMDocument *doc);
+		Frame* BuildFrames(Element *element);
 		Frame* CreateFrame(Element *element);
-		Frame* CreateFrame(DOMString *tagName);
 
 		FrameList frameTemplates;
 		FrameList frameStack;

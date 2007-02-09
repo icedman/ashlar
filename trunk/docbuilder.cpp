@@ -64,11 +64,9 @@ namespace Dom
 		node->AppendChild(child);
 	}
 
-	void DOMBuilder::OnCDataSection(DOMString *cdata)
+	void DOMBuilder::OnCharacterData(const XML_Char *data, int len)
 	{
 		DOMNode *node = nodeStack.GetLast();
-		CDataSection *child = new CDataSection();
-		child->nodeValue = *cdata;
-		node->AppendChild(child);
+		node->nodeValue.append(data, len);
 	}
 }

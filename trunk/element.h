@@ -19,6 +19,9 @@ code.google.com/p/ashlar
 #pragma once
 
 #include "domnode.h"
+#include "frames.h"
+
+using namespace Layout;
 
 namespace Dom
 {
@@ -40,7 +43,13 @@ namespace Dom
 		DOMNode* SetAttribute(DOMString *name, DOMString *value = 0, bool isId = false);
 		DOMNode* SetAttributeNode(DOMNode *node, bool isId = false);
 
+		Frame* Attach(Frame* frame);
+
 		void Dump();
+
+	private:
+		Frame* frame;
+
 	};
 
 	//! DOM Attribute class
@@ -49,6 +58,7 @@ namespace Dom
 	public:
 		Attribute();
 		Attribute(DOMString *name, DOMString *value = 0, bool id = false);
+		DOMString* Value() { return &nodeValue; }
 
 		bool isId;
 	};
@@ -61,6 +71,7 @@ namespace Dom
 		DOMString* Data() { return &nodeValue; }
 		unsigned long Length() { return nodeValue.length(); }
 		virtual DOMNode* Create() { return new TextNode(); }
+		DOMString* Value() { return &nodeValue; }
 
 		// appendData
 		// replaceData

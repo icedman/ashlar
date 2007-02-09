@@ -17,6 +17,7 @@ code.google.com/p/ashlar
 */
 
 #include "document.h"
+#include "framestyle.h"
 
 namespace Dom
 {
@@ -48,7 +49,18 @@ namespace Dom
 
 	NodeList* Element::GetElementsByTagName(DOMString *tagName)
 	{
-		return 0;
+		NodeList *n = new NodeList();
+		DOMNode *e = FirstChild();
+		while(e)
+		{
+			DOMString *t = &e->nodeName;
+			if (strcmp(t->c_str(), tagName->c_str()) == 0)
+			{
+				n->Push(e);
+			}
+			e = e->NextSibling();
+		}
+		return n;
 	}
 
 	NodeList* Element::GetElementsById(DOMString *tagName)
@@ -106,6 +118,13 @@ namespace Dom
 			((Element*)n)->Dump();
 			n = n->NextSibling();
 		}
+	}
+
+	Frame* Element::Attach(Frame* pFrame)
+	{
+		frame = pFrame;
+		FrameTool::SetStyleFromXml(frame->frameStyle, this);
+		return frame;
 	}
 
 	// Attribute

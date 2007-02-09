@@ -17,6 +17,7 @@ code.google.com/p/ashlar
 */
 
 #include "layout.h"
+#include "framestyle.h"
 
 namespace Layout
 {
@@ -30,11 +31,11 @@ namespace Layout
 
 		// set default values for unassigned metrics
 		int xx, yy, ww, hh;
-		lt.GetMetrics(layoutInfo, xx, yy, ww, hh);
+		lt.GetMetrics(frameStyle.layout, xx, yy, ww, hh);
 
 		// get client offsets (margin + border + padding)
 		int ol, ot, or, ob;
-		lt.GetContentOffsets(layoutInfo, ol, ot, or, ob);
+		lt.GetContentOffsets(frameStyle, ol, ot, or, ob);
 
 		// adjust to offsets
 		xx += ol;
@@ -45,11 +46,11 @@ namespace Layout
 		hh = hh > 0 ? hh : 0;
 
 		// clear calculations
-		layoutInfo.totalFlex = 0;
-		layoutInfo.totalChildWidths = 0;
-		layoutInfo.totalChildHeights = 0;
-		layoutInfo.maxChildWidth = 0;
-		layoutInfo.maxChildHeight = 0;
+		frameStyle.layout.totalFlex = 0;
+		frameStyle.layout.totalChildWidths = 0;
+		frameStyle.layout.totalChildHeights = 0;
+		frameStyle.layout.maxChildWidth = 0;
+		frameStyle.layout.maxChildHeight = 0;
 		bool hasFlex = false;
 
 		/*
@@ -60,7 +61,8 @@ namespace Layout
 		Frame *f = frames->GetFirst();
 		while(f)
 		{
-			LayoutInfo *li = &f->layoutInfo;
+			LayoutInfo *li = &f->frameStyle.layout;
+			FrameStyle *fs = &f->frameStyle;
 
 			// get default metrics
 			int fw = li->width;
@@ -76,7 +78,7 @@ namespace Layout
 				} else {
 					// expand height
 					int ol, ot, or, ob;
-					lt.GetContentOffsets(*li, ol, ot, or, ob);
+					lt.GetContentOffsets(*fs, ol, ot, or, ob);
 					fh = li->maxChildHeight + ot + ob;
 				}
 			}
@@ -88,7 +90,7 @@ namespace Layout
 				{
 					// expand width
 					int ol, ot, or, ob;
-					lt.GetContentOffsets(*li, ol, ot, or, ob);
+					lt.GetContentOffsets(*fs, ol, ot, or, ob);
 					fw = li->totalChildWidths + ol + or;
 				}
 			}
@@ -106,19 +108,19 @@ namespace Layout
 			}
 
 			// precalculations for second pass
-			layoutInfo.totalChildWidths += fw;
-			layoutInfo.totalChildHeights += fh;
-			if (layoutInfo.maxChildWidth == 0 || layoutInfo.maxChildWidth < fw)
+			frameStyle.layout.totalChildWidths += fw;
+			frameStyle.layout.totalChildHeights += fh;
+			if (frameStyle.layout.maxChildWidth == 0 || frameStyle.layout.maxChildWidth < fw)
 			{
-				layoutInfo.maxChildWidth = fw;
+				frameStyle.layout.maxChildWidth = fw;
 			}
-			if (layoutInfo.maxChildHeight == 0 || layoutInfo.maxChildHeight < fh)
+			if (frameStyle.layout.maxChildHeight == 0 || frameStyle.layout.maxChildHeight < fh)
 			{
-				layoutInfo.maxChildHeight = fh;
+				frameStyle.layout.maxChildHeight = fh;
 			}
 			if (!ISASSIGNED(li->width) && li->flex > 0)
 			{
-				layoutInfo.totalFlex += li->flex;
+				frameStyle.layout.totalFlex += li->flex;
 				hasFlex = true;
 			}
 			xx += fw;
@@ -131,13 +133,13 @@ namespace Layout
 		- align child frames
 		- flow child frames
 		*/
-		int flexSpace = ww - layoutInfo.totalChildWidths;
+		int flexSpace = ww - frameStyle.layout.totalChildWidths;
 		xx = 0;
 		yy = 0;
 		f = frames->GetFirst();
 		while(f)
 		{
-			LayoutInfo *li = &f->layoutInfo;
+			LayoutInfo *li = &f->frameStyle.layout;
 			if (li->floating || !li->display)
 			{
 				f->Layout();
@@ -147,10 +149,10 @@ namespace Layout
 
 			// verticalAlign
 			int verticalAlignOffset = 0;
-			if (layoutInfo.verticalAlign == MIDDLE)
+			if (frameStyle.layout.verticalAlign == MIDDLE)
 			{
 				verticalAlignOffset = (hh >> 1) - (li->rect.Height() >> 1);
-			} else if (layoutInfo.verticalAlign == BOTTOM) {
+			} else if (frameStyle.layout.verticalAlign == BOTTOM) {
 				verticalAlignOffset = hh - li->rect.Height();
 			}
 
@@ -158,10 +160,10 @@ namespace Layout
 			int alignOffset = 0;
 			if (!hasFlex)
 			{
-				if (layoutInfo.align == CENTER)
+				if (frameStyle.layout.align == CENTER)
 				{
 					alignOffset = (flexSpace >> 1);
-				} else if (layoutInfo.align == RIGHT) {
+				} else if (frameStyle.layout.align == RIGHT) {
 					alignOffset = flexSpace;
 				}
 			}
@@ -173,24 +175,24 @@ namespace Layout
 				// fill parent space for expanded
 				if (li->rect.Height() == 0 && !ISASSIGNED(li->height))
 				{
-					li->rect.bottom += layoutInfo.maxChildHeight;
+					li->rect.bottom += frameStyle.layout.maxChildHeight;
 				}
 			}
 			if (li->flex > 0 && !ISASSIGNED(li->width))
 			{
 				// flex item
-				double pf = (double)li->flex / layoutInfo.totalFlex;
+				double pf = (double)li->flex / frameStyle.layout.totalFlex;
 				int nw = pf * flexSpace;
 				li->rect.right = li->rect.left + nw;
 
 				// temporarily adjust rect before calling layout
-				LayoutInfo tmp = f->layoutInfo;
+				LayoutInfo tmp = f->frameStyle.layout;
 				f->SetRect(&li->rect);
 				li->width = nw;
 
 				f->Layout();
 
-				f->layoutInfo = tmp;
+				f->frameStyle.layout = tmp;
 				xx += nw;
 			} else {
 				f->Layout();
@@ -211,11 +213,10 @@ namespace Layout
 
 		// set default values for unassigned metrics
 		int xx, yy, ww, hh;
-		lt.GetMetrics(layoutInfo, xx, yy, ww, hh);
-
+		lt.GetMetrics(frameStyle.layout, xx, yy, ww, hh);
 		// get client offsets (margin + border + padding)
 		int ol, ot, or, ob;
-		lt.GetContentOffsets(layoutInfo, ol, ot, or, ob);
+		lt.GetContentOffsets(frameStyle, ol, ot, or, ob);
 
 		// adjust to offsets
 		xx += ol;
@@ -226,11 +227,11 @@ namespace Layout
 		hh = hh > 0 ? hh : 0; 
 
 		// clear calculations
-		layoutInfo.totalFlex = 0;
-		layoutInfo.totalChildWidths = 0;
-		layoutInfo.totalChildHeights = 0;
-		layoutInfo.maxChildWidth = 0;
-		layoutInfo.maxChildHeight = 0;
+		frameStyle.layout.totalFlex = 0;
+		frameStyle.layout.totalChildWidths = 0;
+		frameStyle.layout.totalChildHeights = 0;
+		frameStyle.layout.maxChildWidth = 0;
+		frameStyle.layout.maxChildHeight = 0;
 		bool hasFlex = false;
 
 		/*
@@ -241,7 +242,8 @@ namespace Layout
 		Frame *f = frames->GetFirst();
 		while(f)
 		{
-			LayoutInfo *li = &f->layoutInfo;
+			LayoutInfo *li = &f->frameStyle.layout;
+			FrameStyle *fs = &f->frameStyle;
 
 			// get default metrics
 			int fw = li->width;
@@ -257,7 +259,7 @@ namespace Layout
 				} else {
 					// expand width
 					int ol, ot, or, ob;
-					lt.GetContentOffsets(*li, ol, ot, or, ob);
+					lt.GetContentOffsets(*fs, ol, ot, or, ob);
 					fw = li->maxChildWidth + ol + or;
 				}
 			}
@@ -269,7 +271,7 @@ namespace Layout
 				{
 					// expand height
 					int ol, ot, or, ob;
-					lt.GetContentOffsets(*li, ol, ot, or, ob);
+					lt.GetContentOffsets(*fs, ol, ot, or, ob);
 					fh = li->totalChildHeights + ot + ob;
 				}
 			}
@@ -287,19 +289,19 @@ namespace Layout
 			}
 
 			// precalculations for second pass
-			layoutInfo.totalChildWidths += fw;
-			layoutInfo.totalChildHeights += fh;
-			if (layoutInfo.maxChildWidth == 0 || layoutInfo.maxChildWidth < fw)
+			frameStyle.layout.totalChildWidths += fw;
+			frameStyle.layout.totalChildHeights += fh;
+			if (frameStyle.layout.maxChildWidth == 0 || frameStyle.layout.maxChildWidth < fw)
 			{
-				layoutInfo.maxChildWidth = fw;
+				frameStyle.layout.maxChildWidth = fw;
 			}
-			if (layoutInfo.maxChildHeight == 0 || layoutInfo.maxChildHeight < fh)
+			if (frameStyle.layout.maxChildHeight == 0 || frameStyle.layout.maxChildHeight < fh)
 			{
-				layoutInfo.maxChildHeight = fh;
+				frameStyle.layout.maxChildHeight = fh;
 			}
 			if (!ISASSIGNED(li->height) && li->flex > 0)
 			{
-				layoutInfo.totalFlex += li->flex;
+				frameStyle.layout.totalFlex += li->flex;
 				hasFlex = true;
 			}
 			yy += fh;
@@ -312,13 +314,13 @@ namespace Layout
 		- align child frames
 		- flow child frames
 		*/
-		int flexSpace = hh - layoutInfo.totalChildHeights;
+		int flexSpace = hh - frameStyle.layout.totalChildHeights;
 		xx = 0;
 		yy = 0;
 		f = frames->GetFirst();
 		while(f)
 		{
-			LayoutInfo *li = &f->layoutInfo;
+			LayoutInfo *li = &f->frameStyle.layout;
 			if (li->floating || !li->display)
 			{
 				f->Layout();
@@ -328,10 +330,10 @@ namespace Layout
 
 			// align
 			int alignOffset = 0;
-			if (layoutInfo.align == CENTER)
+			if (frameStyle.layout.align == CENTER)
 			{
 				alignOffset = (ww >> 1) - (li->rect.Width() >> 1);
-			} else if (layoutInfo.align == RIGHT) {
+			} else if (frameStyle.layout.align == RIGHT) {
 				alignOffset = ww - li->rect.Width();
 			}
 
@@ -339,10 +341,10 @@ namespace Layout
 			int verticalAlignOffset = 0;
 			if (!hasFlex)
 			{
-				if (layoutInfo.verticalAlign == MIDDLE)
+				if (frameStyle.layout.verticalAlign == MIDDLE)
 				{
 					verticalAlignOffset = (flexSpace >> 1);
-				} else if (layoutInfo.verticalAlign == BOTTOM) {
+				} else if (frameStyle.layout.verticalAlign == BOTTOM) {
 					verticalAlignOffset = flexSpace;
 				}
 			}
@@ -354,24 +356,24 @@ namespace Layout
 				// fill parent space for expanded
 				if (li->rect.Width() == 0 && !ISASSIGNED(li->width))
 				{
-					li->rect.right += layoutInfo.maxChildWidth;
+					li->rect.right += frameStyle.layout.maxChildWidth;
 				}
 			}
 			if (li->flex > 0 && !ISASSIGNED(li->height))
 			{
 				// flex item
-				double pf = (double)li->flex / layoutInfo.totalFlex;
+				double pf = (double)li->flex / frameStyle.layout.totalFlex;
 				int nh = pf * flexSpace;
 				li->rect.bottom = li->rect.top + nh;
 
 				// temporarily adjust rect before calling layout
-				LayoutInfo tmp = f->layoutInfo;
+				LayoutInfo tmp = f->frameStyle.layout;
 				f->SetRect(&li->rect);
 				li->height = nh;
 
 				f->Layout();
 
-				f->layoutInfo = tmp;
+				f->frameStyle.layout = tmp;
 				yy += nh;
 			} else {
 				f->Layout();

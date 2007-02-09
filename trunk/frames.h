@@ -21,114 +21,13 @@ code.google.com/p/ashlar
 #include "common.h"
 #include "rect.h"
 #include "list.h"
+#include "framestyle.h"
 
 using namespace Ash;
 
 namespace Layout
 {
-
-#define UNASSIGNED (-0xEE)
-#define ISASSIGNED(x) (x!=UNASSIGNED)
-
 	class Frame;
-
-	//! Alignment values
-	const unsigned short LEFT = 0;
-	const unsigned short RIGHT = 1;
-	const unsigned short CENTER = 2;
-	const unsigned short TOP = 0;
-	const unsigned short BOTTOM = 1;
-	const unsigned short MIDDLE = 2;
-
-	//! Layout information data structure
-	typedef struct FrameInfo
-	{
-		int x;
-		int y;
-		int width;
-		int height;
-		int flex;
-		int align;
-		int verticalAlign;
-		int margin;
-		int marginLeft;
-		int marginTop;
-		int marginRight;
-		int marginBottom;
-		int border;
-		int borderLeft;
-		int borderTop;
-		int borderRight;
-		int borderBottom;
-		int padding;
-		int paddingLeft;
-		int paddingTop;
-		int paddingRight;
-		int paddingBottom;
-		bool floating;
-		bool display;
-		bool visible;
-		// calculated values
-		int totalFlex;
-		int totalChildWidths;
-		int totalChildHeights;
-		int maxChildWidth;
-		int maxChildHeight;
-		Rect rect;
-	} LayoutInfo;
-
-	typedef struct FrameStyle
-	{
-		// foreground
-		long color;
-		long fontId;
-		int fontStyle;
-		int fontSize;
-		// background
-		long backgroundColor;
-		long backgroundImageId;
-		int backgroundStyle;
-		int backgroundImageX;
-		int backgroundImageY;
-		// border
-		long borderColor;
-		long borderImageId;
-		int borderStyle;
-		int borderRadius;
-		int borderRadiusLeftTop;
-		int borderRadiusLeftBottom;
-		int borderRadiusRightTop;
-		int borderRadiusRightBottom;
-		// bevel
-		long bevelColor;
-		int bevelWidth;
-		int bevelStyle;
-		// shadow
-		long shadowColor;
-		int shadowStyle;
-		int shadowX;
-		int shadowY;
-		long fontShadowColor;
-		int fontShadowStyle;
-		int fontShadowX;
-		int fontShadowY;
-	} FrameStyle;
-
-	//! Frame calculation class
-	/*!
-	Simplifies layout information calculations
-	Unassigned values such as margins are evaluated
-	*/
-	class FrameTool
-	{
-	public:
-		static void SetDefaults(LayoutInfo &li);
-		static void SetDefaults(FrameStyle &fs);
-		static void GetMetrics(LayoutInfo &li, int &x, int &y, int &w, int &h);
-		static void GetMargins(LayoutInfo &li, int &l, int &t, int &r, int &b);
-		static void GetBorders(LayoutInfo &li, int &l, int &t, int &r, int &b);
-		static void GetContentOffsets(LayoutInfo &li, int &l, int &t, int &r, int &b);
-	};
 
 	//! List of frames
 	typedef List<Frame> FrameList;
@@ -162,7 +61,6 @@ namespace Layout
 		void Dump();
 
 	public:
-		LayoutInfo layoutInfo; //!< Frame layout information
 		FrameStyle frameStyle; //!< Frame style information
 
 	private:

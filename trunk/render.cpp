@@ -78,7 +78,7 @@ namespace Render
 			return false;
 		}
 
-		LayoutInfo *li = &pFrame->layoutInfo;
+		LayoutInfo *li = &pFrame->frameStyle.layout;
 		bool draw = true;
 
 		// skip invisible
@@ -91,9 +91,9 @@ namespace Render
 		if (draw)
 		{
 			DrawFrame(pFrame);
-			printf("render %s %d (%d, %d)-(%d, %d)\n", pFrame->GetName(), pFrame, r.left, r.top, r.right, r.bottom);
+			printf("render %s (%d, %d)-(%d, %d)\n", pFrame->GetName(), r.left, r.top, r.right, r.bottom);
 		} else {
-			printf("skip render %s %d (%d, %d)-(%d, %d)\n", pFrame->GetName(), pFrame, r.left, r.top, r.right, r.bottom);
+			printf("skip render %s (%d, %d)-(%d, %d)\n", pFrame->GetName(), r.left, r.top, r.right, r.bottom);
 		}
 
 		// render children
@@ -132,7 +132,7 @@ namespace Render
 	{
 		cairo_t *cr = cairo;
 		Rect r;
-		LayoutInfo *li = &f->layoutInfo;
+		LayoutInfo *li = &f->frameStyle.layout;
 		FrameStyle *fs = &f->frameStyle;
 
 		double x, y, x2, y2;
@@ -141,7 +141,8 @@ namespace Render
 		f->GetBorderRect(&r);
 		RoundToDevicePixels(&r, x, y, x2, y2);
 
-		cairo_set_line_width (cr, li->border);
+		cairo_set_line_width (cr, fs->border.width);
+		/*
 		cairo_move_to(cr, x, y);
 		cairo_line_to(cr, x2, y);
 		cairo_line_to(cr, x2, y2);
@@ -150,8 +151,21 @@ namespace Render
 
 		cairo_set_source_rgba(cr, 0, 0, 1, 1);
 		cairo_stroke (cr);
+		*/
 
-		//
+		cairo_pattern_t *pat;
+		pat = cairo_pattern_create_linear (x, y,  x, y2);
+		cairo_pattern_add_color_stop_rgba (pat, 1, 0, 0, 0, 1);
+		cairo_pattern_add_color_stop_rgba (pat, 0, 1, 1, 1, 1);
+		cairo_move_to(cr, x, y);
+		cairo_line_to(cr, x2, y);
+		cairo_line_to(cr, x2, y2);
+		cairo_line_to(cr, x, y2);
+		cairo_close_path(cr);
+		cairo_set_source (cr, pat);
+		cairo_fill (cr);
+		cairo_pattern_destroy (pat);
+
 		f->GetRect(&r);
 		DrawRect(&r, 0);
 	}

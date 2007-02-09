@@ -17,6 +17,7 @@ code.google.com/p/ashlar
 */
 
 #include "framebuilder.h"
+#include "framestyle.h"
 
 namespace Layout
 {
@@ -33,13 +34,13 @@ namespace Layout
 	Frame* FrameBuilder::Build(DOMDocument *doc)
 	{
 		root = 0;
-		CreateFrame(doc);
+		BuildFrames(doc);
 		return root;
 	}
 
-	Frame* FrameBuilder::CreateFrame(Element *element)
+	Frame* FrameBuilder::BuildFrames(Element *element)
 	{
-		Frame *frame = CreateFrame(element->TagName());
+		Frame *frame = CreateFrame(element);
 		if (frame)
 		{
 			if (!root)
@@ -57,7 +58,7 @@ namespace Layout
 		Element *e = (Element*)element->FirstChild();
 		while(e)
 		{
-			CreateFrame(e);
+			BuildFrames(e);
 			e = (Element*)e->NextSibling();
 		}
 
@@ -69,14 +70,14 @@ namespace Layout
 		return 0;
 	}
 
-	Frame* FrameBuilder::CreateFrame(DOMString *tagName)
+	Frame* FrameBuilder::CreateFrame(Element *e)
 	{
 		Frame *f = frameTemplates.GetFirst();
 		while(f)
 		{
-			if (strcmp(f->GetName(), tagName->c_str()) == 0)
+			if (strcmp(f->GetName(), e->TagName()->c_str()) == 0)
 			{
-				return f->Create();
+				return e->Attach(f->Create());
 			}
 			f = f->next;
 		}
