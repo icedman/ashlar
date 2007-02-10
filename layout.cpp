@@ -27,15 +27,14 @@ namespace Layout
 		Frame::Layout();
 
 		FrameList *frames = GetFrames();
-		FrameTool lt;
 
 		// set default values for unassigned metrics
 		int xx, yy, ww, hh;
-		lt.GetMetrics(frameStyle.layout, xx, yy, ww, hh);
+		GetMetrics(frameStyle.layout, xx, yy, ww, hh);
 
 		// get client offsets (margin + border + padding)
 		int ol, ot, or, ob;
-		lt.GetContentOffsets(frameStyle, ol, ot, or, ob);
+		GetContentOffsets(frameStyle, ol, ot, or, ob);
 
 		// adjust to offsets
 		xx += ol;
@@ -78,7 +77,7 @@ namespace Layout
 				} else {
 					// expand height
 					int ol, ot, or, ob;
-					lt.GetContentOffsets(*fs, ol, ot, or, ob);
+					GetContentOffsets(*fs, ol, ot, or, ob);
 					fh = li->maxChildHeight + ot + ob;
 				}
 			}
@@ -90,7 +89,7 @@ namespace Layout
 				{
 					// expand width
 					int ol, ot, or, ob;
-					lt.GetContentOffsets(*fs, ol, ot, or, ob);
+					GetContentOffsets(*fs, ol, ot, or, ob);
 					fw = li->totalChildWidths + ol + or;
 				}
 			}
@@ -209,14 +208,13 @@ namespace Layout
 		Frame::Layout();
 
 		FrameList *frames = GetFrames();
-		FrameTool lt;
 
 		// set default values for unassigned metrics
 		int xx, yy, ww, hh;
-		lt.GetMetrics(frameStyle.layout, xx, yy, ww, hh);
+		GetMetrics(frameStyle.layout, xx, yy, ww, hh);
 		// get client offsets (margin + border + padding)
 		int ol, ot, or, ob;
-		lt.GetContentOffsets(frameStyle, ol, ot, or, ob);
+		GetContentOffsets(frameStyle, ol, ot, or, ob);
 
 		// adjust to offsets
 		xx += ol;
@@ -259,7 +257,7 @@ namespace Layout
 				} else {
 					// expand width
 					int ol, ot, or, ob;
-					lt.GetContentOffsets(*fs, ol, ot, or, ob);
+					GetContentOffsets(*fs, ol, ot, or, ob);
 					fw = li->maxChildWidth + ol + or;
 				}
 			}
@@ -271,7 +269,7 @@ namespace Layout
 				{
 					// expand height
 					int ol, ot, or, ob;
-					lt.GetContentOffsets(*fs, ol, ot, or, ob);
+					GetContentOffsets(*fs, ol, ot, or, ob);
 					fh = li->totalChildHeights + ot + ob;
 				}
 			}

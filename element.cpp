@@ -17,7 +17,7 @@ code.google.com/p/ashlar
 */
 
 #include "document.h"
-#include "framestyle.h"
+#include "styledom.h"
 
 namespace Dom
 {
@@ -53,8 +53,7 @@ namespace Dom
 		DOMNode *e = FirstChild();
 		while(e)
 		{
-			DOMString *t = &e->nodeName;
-			if (strcmp(t->c_str(), tagName->c_str()) == 0)
+			if (e->nodeName == *tagName)
 			{
 				n->Push(e);
 			}
@@ -123,7 +122,7 @@ namespace Dom
 	Frame* Element::Attach(Frame* pFrame)
 	{
 		frame = pFrame;
-		FrameTool::SetStyleFromXml(frame->frameStyle, this);
+		Layout::SetStyleFromXml(frame->frameStyle, this);
 		return frame;
 	}
 

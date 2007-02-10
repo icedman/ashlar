@@ -108,66 +108,26 @@ namespace Render
 		return true;
 	}
 
-	void RenderEngine::DrawRect(const Rect* pRect, long color)
+	void RenderEngine::BeginFill()
 	{
-		cairo_t *cr = cairo;
-
-		double x, y, x2, y2;
-		RoundToDevicePixels(pRect, x, y, x2, y2);
-		// todo: adjust odd coordinates by 0.5? khtml
-
-		cairo_set_line_width (cr, 1);
-		cairo_move_to(cr, x, y);
-		cairo_line_to(cr, x2 - 5, y);
-		cairo_curve_to(cr, x2 - 5, y, x2, y, x2, y + 5);
-		cairo_line_to(cr, x2, y2);
-		cairo_line_to(cr, x, y2);
-		cairo_close_path(cr);
-
-		cairo_set_source_rgba(cr, 1, 0, 0, 0.5);
-		cairo_stroke (cr);
 	}
 
-	void RenderEngine::DrawFrame(Frame* f)
+	void RenderEngine::EndFill()
 	{
-		cairo_t *cr = cairo;
-		Rect r;
-		LayoutInfo *li = &f->frameStyle.layout;
-		FrameStyle *fs = &f->frameStyle;
+		cairo_fill(cairo);
+		if (fill)
+		{
+			cairo_pattern_destroy (fill);
+			fill = 0;
+		}
+	}
 
-		double x, y, x2, y2;
-
-		// draw border
-		f->GetBorderRect(&r);
-		RoundToDevicePixels(&r, x, y, x2, y2);
-
-		cairo_set_line_width (cr, fs->border.width);
-		/*
-		cairo_move_to(cr, x, y);
-		cairo_line_to(cr, x2, y);
-		cairo_line_to(cr, x2, y2);
-		cairo_line_to(cr, x, y2);
-		cairo_close_path(cr);
-
-		cairo_set_source_rgba(cr, 0, 0, 1, 1);
-		cairo_stroke (cr);
-		*/
-
-		cairo_pattern_t *pat;
-		pat = cairo_pattern_create_linear (x, y,  x, y2);
-		cairo_pattern_add_color_stop_rgba (pat, 1, 0, 0, 0, 1);
-		cairo_pattern_add_color_stop_rgba (pat, 0, 1, 1, 1, 1);
-		cairo_move_to(cr, x, y);
-		cairo_line_to(cr, x2, y);
-		cairo_line_to(cr, x2, y2);
-		cairo_line_to(cr, x, y2);
-		cairo_close_path(cr);
-		cairo_set_source (cr, pat);
-		cairo_fill (cr);
-		cairo_pattern_destroy (pat);
-
-		f->GetRect(&r);
-		DrawRect(&r, 0);
+	long RenderEngine::GetColor(long color, double &r, double &g, double &b)
+	{
+		r = (double)GetRValue(color) / 255;
+		g = (double)GetGValue(color) / 255;
+		b = (double)GetBValue(color) / 255;
+		return color;
 	}
 
 	void RenderEngine::RoundToDevicePixels(const Rect *pRect, double &l, double &t, double &r, double &b)
@@ -196,7 +156,106 @@ namespace Render
 		b = t + y;
 	}
 
-	void RenderEngine::GetColor(long color, double &r, double &g, double &b, double &a)
+	void RenderEngine::DrawFrame(Frame* f)
 	{
+		Rect r;
+		LayoutInfo *li = &f->frameStyle.layout;
+		FrameStyle *fs = &f->frameStyle;
+		Gradient *gr = &fs->gradient;
+
+		double x, y, x2, y2;
+
+		// draw border
+		f->GetBorderRect(&r);
+		RoundToDevicePixels(&r, x, y, x2, y2);
+
+		cairo_save(cairo);
+		BeginFill();
+		DrawBorder(&fs->borderStyle, x, y, x2, y2, true);
+		DrawGradient(&fs->gradient, x, y, x2, y2);
+		DrawRect(x, y, x2, y2);
+		DrawBorder(&fs->borderStyle, x, y, x2, y2, false);
+		EndFill();
+		cairo_restore(cairo);
+	}
+
+	void RenderEngine::DrawRect(double x, double y, double x2, double y2)
+	{
+		cairo_move_to(cairo, x, y);
+		cairo_line_to(cairo, x2, y);
+		cairo_line_to(cairo, x2, y2);
+		cairo_line_to(cairo, x, y2);
+		cairo_close_path(cairo);
+	}
+
+	void RenderEngine::DrawBorder(BorderStyle *br, double  x, double y, double x2, double y2, bool clip)
+	{
+		cairo_set_source_rgba(cairo, 1, 0.2, 0.2, 1);
+		cairo_set_line_width(cairo, 1);
+
+		// left top
+		cairo_move_to(cairo, x + br->radiusLeftTop, y);
+		cairo_line_to(cairo, x2 - br->radiusRightTop , y);
+		// right top
+		if (br->radiusRightTop)
+		{
+			cairo_curve_to(cairo, x2 - br->radiusRightTop , y, x2 - 1, y + 1, x2, y + br->radiusRightTop);
+		}
+		// right bottom
+		cairo_line_to(cairo, x2, y2 - br->radiusRightBottom);
+		if (br->radiusRightBottom)
+		{
+			cairo_curve_to(cairo, x2, y2 - br->radiusRightBottom, x2 - 1, y2 - 1, x2 - br->radiusRightBottom, y2);
+		}
+		// left bottom
+		cairo_line_to(cairo, x + br->radiusLeftBottom, y2);
+		if (br->radiusLeftTop)
+		{
+			cairo_curve_to(cairo, x + br->radiusLeftBottom, y2, x + 1, y2 - 1, x, y2 - br->radiusLeftBottom);
+			cairo_line_to(cairo, x, y + br->radiusLeftTop);
+			cairo_curve_to(cairo, x, y + br->radiusLeftTop, x + 1, y + 1, x + br->radiusLeftTop, y);
+		} 
+
+		cairo_close_path(cairo);
+		if (clip)
+			cairo_clip(cairo);
+		cairo_stroke(cairo);
+		if (clip)
+			cairo_new_path(cairo);
+	}
+
+	void RenderEngine::DrawGradient(Gradient *gr, double x, double y, double x2, double y2)
+	{
+		double w = x2 - x;
+		double h = y2 - y;
+
+		if (gr->style != LINEAR || gr->style != RADIAL) 
+		{
+			double gx = w * ((double)gr->x / 255);
+			double gy = h * ((double)gr->y / 255);
+			double gx2 = w * ((double)gr->x2 / 255);
+			double gy2 = h * ((double)gr->y2 / 255);
+
+			if (gr->style == LINEAR) {
+				fill = cairo_pattern_create_linear (x + gx, y + gy, x + gx2, y + gy2);
+			} else {
+				double radius = w * ((double)gr->radius / 255);
+				double radius2 = h * ((double)gr->radius2 / 255);
+				fill = cairo_pattern_create_radial (x + gx, y + gy, radius, x + gx2, y + gy2, radius2);
+			}
+
+			for(int i = 0; i<gr->colorCount; i++)
+			{
+				double r, g, b;
+				GetColor(gr->colors[i], r, g, b);
+				double offset = (double)gr->offsets[i] / 255;
+				cairo_pattern_add_color_stop_rgba (fill, offset, r, g, b, 1);
+			}
+		}
+
+		if (fill)
+		{
+			cairo_set_source (cairo, fill);
+		}
 	}
 }
