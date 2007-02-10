@@ -33,6 +33,7 @@ namespace Render
 		RenderEngine()
 		{
 			cairo = 0;
+			fill = 0;
 			surface = 0;
 			hdc = 0;
 			hBmp = 0;
@@ -43,17 +44,22 @@ namespace Render
 			DestroyBuffer();
 		}
 
-		bool InitBuffer(HDC hdc, const Rect *pRect);
+		bool InitBuffer(HDC hdc, const Rect *);
 		void DestroyBuffer();
 		void Clear(long color);
 		void Blit(HDC hdc = 0);
 
 		bool Render(Frame *);
-		void DrawRect(const Rect* pRect, long color);
-		void DrawFrame(Frame* pFrame);
+		void BeginFill();
+		void EndFill();
 
-		void GetColor(long color, double &r, double &g, double &b, double &a);
+		void DrawFrame(Frame *);
+		void DrawRect(double x, double y, double x2, double y2);
+		void DrawBorder(BorderStyle *br, double  x, double y, double x2, double y2, bool clip);
+		void DrawGradient(Gradient *gr, double x, double y, double x2, double y2);
+
 		void RoundToDevicePixels(const Rect *pRect, double &l, double &t, double &r, double &b);
+		long GetColor(long color, double &r, double &g, double &b);
 
 	private:
 		HDC hdc;
@@ -63,6 +69,7 @@ namespace Render
 		Rect rect;
 
 		cairo_t *cairo;
+		cairo_pattern_t *fill;
 		cairo_surface_t *surface;
 	};
 }

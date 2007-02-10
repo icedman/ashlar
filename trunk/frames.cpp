@@ -25,7 +25,7 @@ namespace Layout
 	Frame::Frame() 
 	{
 		parentFrame = 0;
-		FrameTool::SetDefaults(frameStyle);
+		SetStyleDefaults(frameStyle);
 	}
 
 	Frame::~Frame()
@@ -96,7 +96,7 @@ namespace Layout
 	{
 		(*pRect) = frameStyle.layout.rect;
 		int mgl, mgt, mgr, mgb;
-		FrameTool::GetBorders(frameStyle.margin, mgl, mgt, mgr, mgb);
+		GetBorders(frameStyle.margin, mgl, mgt, mgr, mgb);
 		pRect->left += mgl;
 		pRect->top += mgt;
 		pRect->right -= mgr;
@@ -107,7 +107,7 @@ namespace Layout
 	bool Frame::GetContentRect(Rect *pRect)
 	{
 		int ol, ot, or, ob;
-		FrameTool::GetContentOffsets(frameStyle, ol, ot, or, ob);
+		GetContentOffsets(frameStyle, ol, ot, or, ob);
 		pRect->left += ol;
 		pRect->top += ot;
 		pRect->right -= or;

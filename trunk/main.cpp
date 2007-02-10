@@ -19,6 +19,7 @@ code.google.com/p/ashlar
 // Note: this is a demo program. it leaks!
 
 #include "ashlar.h"
+#include "window.h"
 
 using namespace Ash;
 using namespace Dom;
@@ -199,8 +200,6 @@ private:
 	RenderEngine renderEngine;
 };
 
-#if 1
-
 int main()
 {
 	MyWindow win;
@@ -218,13 +217,3 @@ int main()
 
 	return 0;
 }
-
-#else
-
-int main()
-{
-
-	return 0;
-}
-
-#endif

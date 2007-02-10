@@ -90,6 +90,10 @@ namespace Dom
 	{
 		Free();
 		explorer = new SafeNode();
+		if (!element && nodes)
+		{
+			element = (Element*)nodes->item(0);
+		}
 		if (element)
 		{
 			NodeList *n = element->GetElementsByTagName(tagName);
@@ -102,11 +106,42 @@ namespace Dom
 	{
 		Free();
 		explorer = new SafeNode();
+		if (!element && nodes)
+		{
+			element = (Element*)nodes->item(0);
+		}
 		if (element)
 		{
 			explorer->Attach((Element*)element->GetAttributeNode(name));
 		}
 		return explorer;
+	}
+
+	SafeNode* SafeNode::GetValue(DOMString *name)
+	{
+		SafeNode* snode = GetAttribute(name);
+		if (snode->Value())
+			return snode;
+
+		snode = GetElement(name);
+		if (snode->Item(0)->Value())
+		{
+			return snode;
+		}
+		Free();
+		return new SafeNode();
+	}
+
+	Element* SafeNode::Node()
+	{
+		if (element)
+			return element; 
+		if (nodes)
+		{
+			if (nodes->Length())
+				return (Element*)nodes->item(0);
+		}
+		return 0;
 	}
 
 	DOMString* SafeNode::Value()

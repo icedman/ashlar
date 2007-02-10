@@ -23,7 +23,6 @@ code.google.com/p/ashlar
 
 // layout
 #include "rect.h"
-#include "window.h"
 #include "frames.h"
 #include "layout.h"
 #include "table.h"

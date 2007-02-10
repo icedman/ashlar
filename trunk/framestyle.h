@@ -19,16 +19,15 @@ code.google.com/p/ashlar
 #pragma once
 
 #include "rect.h"
-#include "domnode.h"
 
 using namespace Ash;
-using namespace Dom;
 
 namespace Layout
 {
 
 #define UNASSIGNED (-0xEE)
 #define ISASSIGNED(x) (x!=UNASSIGNED)
+#define GRADIENT_COLOR_LIMIT 4
 
 	//! Alignment values
 	const unsigned short LEFT = 0;
@@ -37,6 +36,14 @@ namespace Layout
 	const unsigned short TOP = 0;
 	const unsigned short BOTTOM = 1;
 	const unsigned short MIDDLE = 2;
+
+	//! Graident style
+	const unsigned short LINEAR = 1;
+	const unsigned short RADIAL = 2;
+
+	//! Background
+	const unsigned short FILL  = 1;
+	const unsigned short IMAGE = 2;
 
 	//! Layout information data structure
 	typedef struct Borders
@@ -58,6 +65,7 @@ namespace Layout
 
 	typedef struct Font
 	{
+		// todo: more detail
 		int style;
 		long color;
 		long fontId;
@@ -85,9 +93,19 @@ namespace Layout
 		int x2;
 		int y2;
 		int radius2;
-		long colors[8];
+		long colors[GRADIENT_COLOR_LIMIT];
+		int offsets[GRADIENT_COLOR_LIMIT];
 		int colorCount;
 	} Gradient;
+
+	typedef struct SVG
+	{
+		long svgId;
+		int x;
+		int y;
+		int scaleX;
+		int scaleY;
+	} SVG;
 
 	typedef struct BorderStyle
 	{
@@ -104,15 +122,6 @@ namespace Layout
 		long bevelColor;
 		int bevelWidth;
 	} BorderStyle;
-
-	typedef struct SVG
-	{
-		long svgId;
-		int x;
-		int y;
-		int scaleX;
-		int scaleY;
-	} SVG;
 
 	//! Layout information
 	typedef struct LayoutInfo
@@ -145,27 +154,17 @@ namespace Layout
 		Borders padding;
 		Font font;
 		BorderStyle borderStyle;
-		Background background;
+		Background bgImage;
 		Gradient gradient;
 		SVG svg;
 	} FrameStyle;
 
-	//! Frame calculation class
-	/*!
-	Simplifies layout information calculations
-	Unassigned values such as margins are evaluated
-	*/
-	class FrameTool
-	{
-	public:
-		static void SetDefaults(FrameStyle &fs);
-		static void SetStyleFromXml(FrameStyle &fs, DOMNode *el);
-		static void SetLayoutFromXml(LayoutInfo &li, DOMNode *el);
-		
-		static void GetMetrics(LayoutInfo &li, int &x, int &y, int &w, int &h);
-		static void GetBorders(Borders &borders, int &l, int &t, int &r, int &b);
-		static void GetContentOffsets(FrameStyle &frameStyle, int &l, int &t, int &r, int &b);
-		static inline int StringToAlign(DOMString *str, int defaultValue = 0);
-		static inline long StringToColor(DOMString *str, int *r, int *g, int *b, int *a);
-	};
+	//! Set frame style defaults
+	void SetStyleDefaults(FrameStyle &fs);
+	//! Get layout metrics considering unassigned values
+	void GetMetrics(LayoutInfo &li, int &x, int &y, int &w, int &h);
+	//! Get style borders considering unassigned values
+	void GetBorders(Borders &borders, int &l, int &t, int &r, int &b);
+	//! Get frame content offsets (margin + border + padding)
+	void GetContentOffsets(FrameStyle &frameStyle, int &l, int &t, int &r, int &b);
 }

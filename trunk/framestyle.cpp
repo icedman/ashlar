@@ -17,38 +17,11 @@ code.google.com/p/ashlar
 */
 
 #include "framestyle.h"
-#include "safenode.h"
 
 namespace Layout
 {
-	// FrameTool
-	int FrameTool::StringToAlign(DOMString *str, int defaultValue)
-	{
-		if (!str)
-			return defaultValue;
-		const char *c_str = str->c_str();
-		if (strcmp(c_str, "left") == 0)
-			return LEFT;
-		if (strcmp(c_str, "right") == 0)
-			return RIGHT;
-		if (strcmp(c_str, "center") == 0)
-			return CENTER;
-		if (strcmp(c_str, "top") == 0)
-			return TOP;
-		if (strcmp(c_str, "bottom") == 0)
-			return BOTTOM;
-		if (strcmp(c_str, "middle") == 0)
-			return MIDDLE;
-		return defaultValue;
-	}
 
-	long FrameTool::StringToColor(DOMString *str, int *r, int *g, int *b, int *a)
-	{
-		int rr, gg, bb, aa;
-		return atoi(str->c_str());
-	}
-
-	void FrameTool::SetDefaults(FrameStyle &frameStyle)
+	void SetStyleDefaults(FrameStyle &frameStyle)
 	{
 		// default style
 		ZeroMemory(&frameStyle, sizeof(FrameStyle));
@@ -83,9 +56,13 @@ namespace Layout
 		frameStyle.padding.right = UNASSIGNED;
 		frameStyle.padding.top = UNASSIGNED;
 		frameStyle.padding.bottom = UNASSIGNED;
+
+		frameStyle.borderStyle.radiusLeftTop = frameStyle.borderStyle.radiusRightTop = 8;
+		frameStyle.borderStyle.radiusLeftBottom = frameStyle.borderStyle.radiusRightBottom = 8;
 	}
 
-	void FrameTool::GetMetrics(LayoutInfo &layoutInfo, int &x, int &y, int &w, int &h)
+
+	void GetMetrics(LayoutInfo &layoutInfo, int &x, int &y, int &w, int &h)
 	{
 		x = ISASSIGNED(layoutInfo.x) ? layoutInfo.x : layoutInfo.rect.left;
 		y = ISASSIGNED(layoutInfo.y) ? layoutInfo.y : layoutInfo.rect.top;
@@ -93,7 +70,7 @@ namespace Layout
 		h = ISASSIGNED(layoutInfo.height) ? layoutInfo.height : layoutInfo.rect.Height();
 	}
 
-	void FrameTool::GetBorders(Borders &borders, int &l, int &t, int &r, int &b)
+	void GetBorders(Borders &borders, int &l, int &t, int &r, int &b)
 	{
 		int bd = ISASSIGNED(borders.width) ? borders.width : 0;
 		l = ISASSIGNED(borders.left) ? borders.left : bd;
@@ -102,7 +79,7 @@ namespace Layout
 		b = ISASSIGNED(borders.bottom) ? borders.bottom : bd;
 	}
 
-	void FrameTool::GetContentOffsets(FrameStyle &frameStyle, int &l, int &t, int &r, int &b)
+	void GetContentOffsets(FrameStyle &frameStyle, int &l, int &t, int &r, int &b)
 	{
 		// margins
 		int mgl, mgt, mgr, mgb;
@@ -122,25 +99,4 @@ namespace Layout
 		b = mgb + bdb + pdb;
 	}
 
-	void FrameTool::SetStyleFromXml(FrameStyle &fs, DOMNode *el)
-	{
-		SetLayoutFromXml(fs.layout, el);
-	}
-
-	void FrameTool::SetLayoutFromXml(LayoutInfo &li, DOMNode *el)
-	{
-		SafeNode snode((Element*)el);
-		li.x = snode.GetAttribute(&DOMString("x"))->ValueInt(li.y);
-		li.y = snode.GetAttribute(&DOMString("y"))->ValueInt(li.y);
-		li.width = snode.GetAttribute(&DOMString("width"))->ValueInt(li.width);
-		li.height = snode.GetAttribute(&DOMString("height"))->ValueInt(li.height);
-		li.flex = snode.GetAttribute(&DOMString("flex"))->ValueInt(li.flex);
-
-		SafeNode *dxLayout = snode.GetElement(&DOMString("style"))->GetElement(&DOMString("layout"));
-		li.x = dxLayout->GetAttribute(&DOMString("x"))->ValueInt(li.y);
-		li.y = dxLayout->GetAttribute(&DOMString("y"))->ValueInt(li.y);
-		li.width = dxLayout->GetAttribute(&DOMString("width"))->ValueInt(li.width);
-		li.height = dxLayout->GetAttribute(&DOMString("height"))->ValueInt(li.height);
-		li.flex = dxLayout->GetAttribute(&DOMString("flex"))->ValueInt(li.flex);
-	}
 }

@@ -22,7 +22,7 @@ code.google.com/p/ashlar
 
 namespace Dom
 {
-
+	//! Safe DOM node query class
 	class SafeNode
 	{
 	public:
@@ -35,12 +35,22 @@ namespace Dom
 		void Free();
 		void FreeNodes();
 
+		//! Calls NodeList->Item()
 		SafeNode* Item(int index);
+		//! Calls NodeList->Length();
+		int Length() { if (nodes) return nodes->Length(); return 0; }
+		//! Finds a child element. Call GetElementsByTagName()
 		SafeNode* GetElement(DOMString *tagName);
+		//! Finds an attribute of an element
 		SafeNode* GetAttribute(DOMString *name);
+		//! Finds an attribute of an element or and child element of the same name
+		SafeNode* GetValue(DOMString *name);
+		//! Gets the nodeValue of a resulting query
 		DOMString* Value();
+		//! Gets the integer value of a resulting query
 		int ValueInt(int defaultValue);
-		Element* Node() { return element; }
+		//! Gets the DOMNode of a resulting query
+		Element* Node();
 
 	private:
 		SafeNode *explorer;
