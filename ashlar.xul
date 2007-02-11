@@ -36,28 +36,14 @@
 							<radius rightTop="10">0</radius>
 							<color>#ffffff</color>
 						</border>
-						<gradient type="radial" x="125" y="125" x2="125" y2="125" radius="10" radius2="255">
-							<color offset="0">#d5d5d5</color>
-							<color offset="250">#c0c0c0</color>
-							<color offset="255">#e5e5e5</color>
+						<gradient type="linear" x="0" y="0" x2="0" y2="255">
+							<color offset="0">#666666</color>
+							<color offset="75">#aaaaaa</color>
+							<color offset="175">#777777</color>
 						</gradient>
 					</style>
 				</button>
 			</box>
 		</hbox>
-		<box>
-			<button label="button" width="60" height="40">
-				<onClick>
-					<![CDATA[ alert("hello world!"); ]]>
-				</onClick>
-				<style>
-					<gradient type="radial" x="125" y="125" x2="125" y2="125" radius="10" radius2="255">
-						<color offset="0">#d5d5d5</color>
-						<color offset="250">#c0c0c0</color>
-						<color offset="255">#e5e5e5</color>
-					</gradient>
-				</style>
-			</button>
-		</box>
 	</vbox>
 </window>
