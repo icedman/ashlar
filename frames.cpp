@@ -18,29 +18,28 @@ code.google.com/p/ashlar
 
 #include "frames.h"
 #include "framestyle.h"
+#include "windowframe.h"
 
 namespace Layout
 {
 	// Frame
 	Frame::Frame() 
 	{
+		frameState = NORMAL;
 		parentFrame = 0;
 		SetStyleDefaults(frameStyle);
 	}
 
 	Frame::~Frame()
 	{
+		if (frameStyle.extra)
+			delete [] frameStyle.extra;
 	}
 
 	bool Frame::SetParent(Frame* parent)
 	{
 		parentFrame = (Frame*)parent;
 		return true;
-	}
-
-	Frame* Frame::GetParent()
-	{
-		return parentFrame;
 	}
 
 	Frame* Frame::GetRoot()
@@ -50,6 +49,28 @@ namespace Layout
 			return parentFrame->GetRoot();
 		}
 		return 0;
+	}
+
+	Frame* Frame::GetParent()
+	{
+		return parentFrame;
+	}
+
+	Frame* Frame::GetParent(int frameType)
+	{
+		if (parentFrame)
+		{
+			if (parentFrame->IsType(frameType))
+				return parentFrame;
+			return parentFrame->GetParent(frameType);
+		}
+		return 0;
+	}
+
+	void Frame::SetState(int state)
+	{
+		frameState = state;
+		Redraw();
 	}
 
 	bool Frame::AddFrame(Frame* pFrame)
@@ -125,16 +146,9 @@ namespace Layout
 		return true;
 	}
 
-	void Frame::FreeFrames(Frame *frame, bool freeSelf)
+	void Frame::Free()
 	{
-		while(Frame *f = frame->frames.GetFirst())
-		{
-			frame->frames.Remove(f);
-			FreeFrames(f);
-		}
-
-		if (freeSelf)
-			delete frame;
+		delete this;
 	}
 
 	void Frame::Dump()
@@ -155,6 +169,15 @@ namespace Layout
 		{
 			f->Dump();
 			f = f->next;
+		}
+	}
+
+	void Frame::Redraw()
+	{
+		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);
+		if (w)
+		{
+			w->Redraw();
 		}
 	}
 };

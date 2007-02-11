@@ -71,7 +71,7 @@ namespace Render
 		BitBlt(hdcTarget, rect.left, rect.top, rect.Width(), rect.Height(), hdc, 0, 0, SRCCOPY);
 	}
 
-	bool RenderEngine::Render(Frame *pFrame)
+	bool RenderEngine::Render(Frame *pFrame, const Rect *pClip)
 	{
 		if (!hdc)
 		{
@@ -81,11 +81,25 @@ namespace Render
 		LayoutInfo *li = &pFrame->frameStyle.layout;
 		bool draw = true;
 
-		// skip invisible
-		draw &= (li->visible && li->display);
-
 		Rect r;
 		pFrame->GetRect(&r);
+
+		if (pClip)
+		{
+			if (!clip.IsEqual(*pClip))
+			{
+				if (!pClip->Overlap(r))
+				{
+					draw = false;
+					// do cairo clip
+				}
+			}
+			clip = *pClip;
+			Push();
+		}
+
+		// skip invisible
+		draw &= (li->visible && li->display);
 		draw &= (r.Width() > 0 && r.Height() > 0);
 
 		if (draw)
@@ -101,8 +115,13 @@ namespace Render
 		Frame *f = frames->GetFirst();
 		while(f)
 		{
-			Render(f);
+			Render(f, pClip);
 			f = f->next;
+		}
+
+		if (pClip)
+		{
+			Pop();
 		}
 
 		return true;
@@ -165,6 +184,13 @@ namespace Render
 		LayoutInfo *li = &f->frameStyle.layout;
 		FrameStyle *fs = &f->frameStyle;
 		Gradient *gr = &fs->gradient;
+
+		// todo state based framestyles
+		int state = f->GetState();
+		if (fs->extra && state > 0)
+		{
+			fs = &fs->extra[state - 1];
+		}
 
 		double x, y, x2, y2;
 

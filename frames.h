@@ -22,8 +22,11 @@ code.google.com/p/ashlar
 #include "rect.h"
 #include "list.h"
 #include "framestyle.h"
+#include "domnode.h"
+#include "events.h"
 
 using namespace Ash;
+using namespace Dom;
 
 namespace Layout
 {
@@ -33,12 +36,13 @@ namespace Layout
 	typedef List<Frame> FrameList;
 
 	//! Base class for all frame objects
-	class Frame : public Node<Frame>
+	class Frame : public Events::EventListener, public Node<Frame>
 	{
 	public:
 		virtual bool SetParent(Frame*);		//!< Sets the parent of a frame
-		virtual Frame* GetParent();			//!< Get parent of a frame
 		virtual Frame* GetRoot();				//!< Get root frame
+		virtual Frame* GetParent();			//!< Get parent of a frame
+		virtual Frame* GetParent(int frameType);	 //!< Get parent frame that is of given type
 		virtual bool AddFrame(Frame*);		//!< Add child frame
 		virtual bool RemoveFrame(Frame*);	//!< Remove child frame
 		virtual bool GetRect(Rect*);			//!< Get frame rect
@@ -48,12 +52,17 @@ namespace Layout
 		virtual const char* GetName() { return "frame"; } //!< Get frame name
 
 		virtual bool Layout(); //!< Layout method. Layout frames override this method
-		virtual bool OnEvent(int eventId, void *); //!< Event method. Event listeners override this method
+		virtual bool OnEvent(int eventId, void *);
 		virtual Frame* Create() { return new Frame(); }
+		virtual void SetState(int state);
+		virtual int GetState() { return frameState; }
+		virtual void Redraw();
+		// frameType 0 is base FRAME
+		virtual bool IsType(int frameType) { return (frameType == 0); }
 
 		FrameList* GetFrames() { return &frames; } //!< Get child frames list
 
-		static void FreeFrames(Frame *frame, bool freeSelf = false);
+		virtual void Free();
 
 		Frame();
 		virtual ~Frame();
@@ -61,11 +70,14 @@ namespace Layout
 		void Dump();
 
 	public:
-		FrameStyle frameStyle; //!< Frame style information
+		FrameStyle frameStyle;	//!< Frame style information
 
 	private:
 		Frame *parentFrame;
 		FrameList frames;
+		int frameState;
+
+		DOMNode* element;
 	};
 
 }

@@ -121,21 +121,19 @@ namespace Dom
 		return this;
 	}
 
-	void DOMNode::FreeNodes(DOMNode *n, bool freeSelf)
+	void DOMNode::Free()
 	{
-		if (n->parentNode)
+		if (parentNode)
 		{
-			n->parentNode->RemoveChild(n);
+			parentNode->RemoveChild(this);
 		}
 
-		DOMNode *child = n->FirstChild();
-		while(child)
+		DOMNode *child = 0;
+		while(child = FirstChild())
 		{
-			FreeNodes(child, true);
-			child = n->FirstChild();
+			child->Free();
 		}
 
-		if (freeSelf)
-			delete n;
+		delete this;
 	}
 }

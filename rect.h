@@ -25,6 +25,7 @@ code.google.com/p/ashlar
 
 // POINT & RECT
 #include <windows.h>
+#include "math.h"
 
 namespace Ash {
 
@@ -131,6 +132,15 @@ namespace Ash {
 			return Point.x >= left && Point.x < right && Point.y >= top && Point.y < bottom;
 		}
 
+		bool Overlap( const Rect& r) const
+		{
+			int w = Width() + r.Width();
+			int h = Height() + r.Height();
+			int ww = abs(left - r.right);
+			int hh = abs(top - r.bottom);
+			return (ww < w && hh < h);
+		}
+
 		void Move( long x, long y )
 		{
 			Translate( x-left, y-top );
@@ -163,6 +173,11 @@ namespace Ash {
 			right += p.x;
 			top += p.y;
 			bottom += p.y;
+		}
+
+		bool IsEqual( const Rect& r )
+		{
+			return (r.left == left && r.top == top && r.right == right && r.bottom == bottom);
 		}
 	};
 

@@ -25,7 +25,8 @@ code.google.com/p/ashlar
 #include "rect.h"
 #include "frames.h"
 #include "layout.h"
-#include "table.h"
+#include "windowframe.h"
+#include "button.h"
 #include "framebuilder.h"
 
 // rendering
@@ -41,3 +42,7 @@ code.google.com/p/ashlar
 #include "document.h"
 #include "xmlparser.h"
 #include "docbuilder.h"
+
+// widget
+#include "widget.h"
+

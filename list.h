@@ -29,8 +29,8 @@ namespace Ash
 	public:
 		Node()
 		{
-			prev = NULL;
-			next = NULL;
+			prev = 0;
+			next = 0;
 		}
 		~Node()
 		{}
@@ -46,8 +46,8 @@ namespace Ash
 	public:
 		List()
 		{
-			head = NULL;
-			tail = NULL;
+			head = 0;
+			tail = 0;
 			size = 0;
 		}
 
@@ -78,12 +78,12 @@ namespace Ash
 			if (!n) return false;
 
 			tail = tail->prev;
-			if (tail) tail->next = NULL;
+			if (tail) tail->next = 0;
 			size--;
 
 			if (!size)
 			{
-				head=tail=NULL;
+				head=tail=0;
 			}
 
 			return true;
@@ -158,7 +158,7 @@ namespace Ash
 			size--;
 			if (!size)
 			{ 
-				head=tail = NULL;
+				head=tail = 0;
 			}
 
 			return true;
@@ -167,7 +167,7 @@ namespace Ash
 		bool RemoveAt(unsigned long index)
 		{
 			if (!size)
-				return NULL;
+				return 0;
 			if (index >= size-1)
 				return Pop();
 
@@ -182,7 +182,7 @@ namespace Ash
 		_Node* GetAt(unsigned long index)
 		{
 			_Node *n = head;
-			if (!n) return NULL;
+			if (!n) return 0;
 
 			unsigned long s=0;
 			while(s != index && n->next)
@@ -191,7 +191,7 @@ namespace Ash
 				s++;
 			}
 
-			if (s!=index) return NULL;
+			if (s!=index) return 0;
 			return n;
 		}
 

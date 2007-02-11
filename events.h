@@ -18,50 +18,73 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include "frames.h"
 #include "list.h"
+#include "rect.h"
 
 using namespace Ash;
-using namespace Layout;
 
 namespace Events
 {
-	typedef enum
+	class EventManager;
+
+	//! Event Ids
+	const unsigned short ONMOUSEDOWN = 1;
+	const unsigned short ONMOUSEUP = 2;
+	const unsigned short ONMOUSEMOVE = 3;
+	const unsigned short ONMOUSEENTER = 4;
+	const unsigned short ONMOUSEOUT = 5;
+
+	//! Mouse
+	const unsigned short LBUTTON = 1;
+	const unsigned short RBUTTON = 2;
+	const unsigned short MBUTTON = 3;
+
+	typedef struct MouseInfo
 	{
-		ONMOUSEDOWN,
-		ONMOUSEUP,
-		ONMOUSEMOVE,
-		ONMOUSEENTER,
-		ONMOUSEOUT
-	} EventIds;
+		Point point;
+		unsigned short button;
+	} MouseInfo;
+
+	//! Event listener
+	class EventListener
+	{
+	public:
+		virtual bool OnEvent(int eventId, void *) { return true; }
+		virtual bool RegisterEvents(EventManager *manager) { return true; }
+	};
 
 	//! Event class
 	class Event : public Node<Event>
 	{
 	public:
 
-		bool Attach(int eventId, Frame *); //!< Attach frame to an event
+		bool Attach(int eventId, EventListener *); //!< Attach frame to an event
 
-		Event(int eventId = 0, Frame * = 0);
+		Event(int eventId = 0, EventListener * = 0);
 		virtual ~Event() {};
 
 	public:
 		int eventId;
-		Frame  *frame;
+		EventListener *listener;
 	};
 
 	//! Events manager
 	class EventManager : public List<Event>
 	{
 	public:
-		bool AddListener(Event *);
+		EventManager();
+		~EventManager();
+
+		virtual bool AddListener(Event *);
 		bool RemoveListener(Event *);
+		void ClearListeners();
 	};
 
 	//! Mouse events manager
 	class MouseEvents : public EventManager
 	{
 	public:
+		bool AddListener(Event *);
 		bool OnMouseEvent(int eventId, int button, int x, int y);
 	};
 

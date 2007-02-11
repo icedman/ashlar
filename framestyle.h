@@ -29,6 +29,12 @@ namespace Layout
 #define ISASSIGNED(x) (x!=UNASSIGNED)
 #define GRADIENT_COLOR_LIMIT 4
 
+	//! Frame states
+	const unsigned short NORMAL = 0;
+	const unsigned short PRESSED = 1;
+	const unsigned short HOVER = 2;
+	const unsigned short DISABLED = 3;
+
 	//! Alignment values
 	const unsigned short LEFT = 0;
 	const unsigned short RIGHT = 1;
@@ -48,95 +54,95 @@ namespace Layout
 	//! Layout information data structure
 	typedef struct Borders
 	{
-		int width;
-		int left;
-		int top;
-		int right;
-		int bottom;
+		short width;
+		short left;
+		short top;
+		short right;
+		short bottom;
 	} Borders;
 
 	typedef struct Shadow
 	{
-		int style;
+		short style;
 		long color;
-		int x;
-		int y;
+		short x;
+		short y;
 	} Shadow;
 
 	typedef struct Font
 	{
 		// todo: more detail
-		int style;
+		short style;
 		long color;
 		long fontId;
-		int size;
+		short size;
 		long outlineColor;
-		int outlineWidth;
+		short outlineWidth;
 		Shadow shadow;
 	} Font;
 
 	typedef struct Background
 	{
-		int style;
+		short style;
 		long color;
 		long imageId;
-		int imageX;
-		int imageY;
+		short imageX;
+		short imageY;
 	} Background;
 
 	typedef struct Gradient
 	{
-		int style;
-		int x;
-		int y;
-		int radius;
-		int x2;
-		int y2;
-		int radius2;
+		short style;
+		short x;
+		short y;
+		short radius;
+		short x2;
+		short y2;
+		short radius2;
 		long colors[GRADIENT_COLOR_LIMIT];
-		int offsets[GRADIENT_COLOR_LIMIT];
-		int colorCount;
+		short offsets[GRADIENT_COLOR_LIMIT];
+		short colorCount;
 	} Gradient;
 
 	typedef struct SVG
 	{
 		long svgId;
-		int x;
-		int y;
-		int scaleX;
-		int scaleY;
+		short x;
+		short y;
+		short scaleX;
+		short scaleY;
 	} SVG;
 
 	typedef struct BorderStyle
 	{
-		int style;
+		short style;
 		long color;
 		long imageId;
 		Borders radius;
-		int bevelStyle;
+		short bevelStyle;
 		long bevelColor;
-		int bevelWidth;
+		short bevelWidth;
 	} BorderStyle;
 
 	//! Layout information
 	typedef struct LayoutInfo
 	{
-		int x;
-		int y;
-		int width;
-		int height;
-		int flex;
-		int align;
-		int verticalAlign;
+		short x;
+		short y;
+		short width;
+		short height;
+		short flex;
+		short align;
+		short verticalAlign;
 		bool floating;
 		bool display;
 		bool visible;
 		// calculated values
-		int totalFlex;
-		int totalChildWidths;
-		int totalChildHeights;
-		int maxChildWidth;
-		int maxChildHeight;
+		short totalFlex;
+		short totalChildWidths;
+		short totalChildHeights;
+		short maxChildWidth;
+		short maxChildHeight;
 		Rect rect;
 	} LayoutInfo;
 
@@ -151,7 +157,7 @@ namespace Layout
 		BorderStyle borderStyle;
 		Background bgImage;
 		Gradient gradient;
-		SVG svg;
+		FrameStyle *extra;
 	} FrameStyle;
 
 	//! Set frame style defaults

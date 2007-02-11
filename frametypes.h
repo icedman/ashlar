@@ -16,31 +16,17 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include "widget.h"
+#pragma once
 
-using namespace Ash;
-
-int main()
+namespace Layout
 {
-	Widget widget;
-	if (!widget.Load("ashlar.xul"))
-		return 0;
+	const unsigned int FRAME = 0;
+	const unsigned int HBOX = 1;
+	const unsigned int VBOX = 2;
+	const unsigned int BOX = 3;
+	const unsigned int WINDOW = 100;
+	const unsigned int BUTTON = 200;
 
-	/*
-	Widget calc;
-	if (!calc.Load("calc.xul"))
-		return 0;
-	*/
-
-	MSG msg;
-	while (GetMessage(&msg, 0, 0, 0))
-	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-
-	//calc.Destroy();
-	widget.Destroy();
-
-	return 0;
+#define FRAMETYPE(_type, _super) \
+	virtual bool IsType(int frameType) { if (frameType == _type) return true; return _super::IsType(frameType); }
 }
