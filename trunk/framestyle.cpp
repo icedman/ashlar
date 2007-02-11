@@ -57,10 +57,13 @@ namespace Layout
 		frameStyle.padding.top = UNASSIGNED;
 		frameStyle.padding.bottom = UNASSIGNED;
 
-		frameStyle.borderStyle.radiusLeftTop = frameStyle.borderStyle.radiusRightTop = 8;
-		frameStyle.borderStyle.radiusLeftBottom = frameStyle.borderStyle.radiusRightBottom = 8;
+		// borderStyle
+		frameStyle.borderStyle.radius.width = 0;
+		frameStyle.borderStyle.radius.left = UNASSIGNED;
+		frameStyle.borderStyle.radius.right = UNASSIGNED;
+		frameStyle.borderStyle.radius.top = UNASSIGNED;
+		frameStyle.borderStyle.radius.bottom = UNASSIGNED;
 	}
-
 
 	void GetMetrics(LayoutInfo &layoutInfo, int &x, int &y, int &w, int &h)
 	{
@@ -74,8 +77,8 @@ namespace Layout
 	{
 		int bd = ISASSIGNED(borders.width) ? borders.width : 0;
 		l = ISASSIGNED(borders.left) ? borders.left : bd;
-		r = ISASSIGNED(borders.right) ? borders.right : bd;
 		t = ISASSIGNED(borders.top) ? borders.top : bd;
+		r = ISASSIGNED(borders.right) ? borders.right : bd;
 		b = ISASSIGNED(borders.bottom) ? borders.bottom : bd;
 	}
 
@@ -87,16 +90,26 @@ namespace Layout
 
 		// borders
 		int bdl, bdt, bdr, bdb;
-		GetBorders(frameStyle.border, bdl, bdr, bdt, bdb);
+		GetBorders(frameStyle.border, bdl, bdt, bdr, bdb);
 
 		// padding
 		int pdl, pdt, pdr, pdb;
-		GetBorders(frameStyle.padding, pdl, pdr, pdt, pdb);
+		GetBorders(frameStyle.padding, pdl, pdt, pdr, pdb);
 
 		l = mgl + bdl + pdl;
 		t = mgt + bdt + pdt;
 		r = mgr + bdr + pdr;
 		b = mgb + bdb + pdb;
+	}
+
+	int GetMaxBorder(Borders &bs)
+	{
+		int max = ISASSIGNED(bs.width) ? bs.width : 0;
+		max = bs.left > max ? bs.left : max;
+		max = bs.right > max ? bs.right : max;
+		max = bs.top > max ? bs.top : max;
+		max = bs.bottom > max ? bs.bottom : max;
+		return max;
 	}
 
 }

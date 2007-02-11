@@ -50,18 +50,18 @@ namespace Render
 		void Blit(HDC hdc = 0);
 
 		bool Render(Frame *);
-		void BeginFill();
-		void EndFill();
-
 		void DrawFrame(Frame *);
 		void DrawRect(double x, double y, double x2, double y2);
-		void DrawBorder(BorderStyle *br, double  x, double y, double x2, double y2, bool clip);
+		void DrawBorder(Borders *br, BorderStyle *bs, double  x, double y, double x2, double y2, bool clip);
 		void DrawGradient(Gradient *gr, double x, double y, double x2, double y2);
 
+	private:
+
+		void Push();
+		void Pop();
 		void RoundToDevicePixels(const Rect *pRect, double &l, double &t, double &r, double &b);
 		long GetColor(long color, double &r, double &g, double &b);
 
-	private:
 		HDC hdc;
 		HGDIOBJ hOld;
 		HBITMAP hBmp;

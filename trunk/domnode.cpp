@@ -26,7 +26,8 @@ namespace Dom
 		DOMNode *n = GetFirst();
 		while(n)
 		{
-			if (n->nodeName == *nodeName)
+			//if (n->nodeName == *nodeName)
+			if (stricmp(n->nodeName.c_str(), nodeName->c_str()) == 0)
 			{
 				return n;
 			}

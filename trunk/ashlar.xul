@@ -3,17 +3,32 @@
 <!-- simple xul sample -->
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<vbox flex="1" align="right">
+		<style>
+			<margin>20</margin>
+			<padding right="10"/>
+		</style>
 		<hbox flex="1" align="center" valign="middle">
+			<style>
+				<gradient type="linear" x="0" y="0" x2="0" y2="255">
+					<color offset="0">#d5d5d5</color>
+					<color offset="150">#c0c0c0</color>
+					<color offset="255">#e5e5e5</color>
+				</gradient>
+			</style>
 			<box>
 				<button label="button" width="80" height="40">
 					<style>
 						<layout>
 							<width>40</width>
 						</layout>
-						<gradient style="linear" x="0" y="0" x2="255" y2="255">
-							<color offset="0">#ff0000</color>
-							<color offset="100">#00ff00</color>
-							<color offset="255">#0000ff</color>
+						<border type="" width="1">
+							<radius rightTop="10">0</radius>
+							<color>#ffffff</color>
+						</border>
+						<gradient type="linear" x="0" y="0" x2="0" y2="255">
+							<color offset="0">#444444</color>
+							<color offset="75">#888888</color>
+							<color offset="175">#555555</color>
 						</gradient>
 					</style>
 				</button>
@@ -25,9 +40,10 @@
 					<![CDATA[ alert("hello world!"); ]]>
 				</onClick>
 				<style>
-					<gradient style="radial" x="120" y="100" x2="100" y2="100" radius="50" radius2="150">
-						<color>#ff0000</color>
-						<color>#00ff00</color>
+					<gradient type="radial" x="125" y="125" x2="125" y2="125" radius="10" radius2="255">
+						<color offset="0">#d5d5d5</color>
+						<color offset="250">#c0c0c0</color>
+						<color offset="255">#e5e5e5</color>
 					</gradient>
 				</style>
 			</button>

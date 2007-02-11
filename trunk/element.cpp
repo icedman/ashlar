@@ -53,7 +53,8 @@ namespace Dom
 		DOMNode *e = FirstChild();
 		while(e)
 		{
-			if (e->nodeName == *tagName)
+			//if (e->nodeName == *tagName)
+			if (stricmp(e->nodeName.c_str(), tagName->c_str()) == 0)
 			{
 				n->Push(e);
 			}
@@ -62,7 +63,7 @@ namespace Dom
 		return n;
 	}
 
-	NodeList* Element::GetElementsById(DOMString *tagName)
+	NodeList* Element::GetElementsById(DOMString *id)
 	{
 		return 0;
 	}
@@ -122,7 +123,7 @@ namespace Dom
 	Frame* Element::Attach(Frame* pFrame)
 	{
 		frame = pFrame;
-		Layout::SetStyleFromXml(frame->frameStyle, this);
+		Layout::GetStyleXml(frame->frameStyle, this);
 		return frame;
 	}
 

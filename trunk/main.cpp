@@ -58,27 +58,6 @@ public:
 	Frame* Create() { return new Button(); }
 };
 
-class Spacer : public Frame
-{
-public:
-	const char* GetName() { return "spacer"; }
-	Frame* Create() { return new Spacer(); }
-};
-
-class Toolbar : public HFrame
-{
-public:
-	const char* GetName() { return "toolbar"; }
-	Frame* Create() { return new Toolbar(); }
-};
-
-class Client : public HFrame
-{
-public:
-	const char* GetName() { return "client"; }
-	Frame* Create() { return new Client(); }
-};
-
 class MyWindow : public Window
 {
 	BEGIN_MSG_HANDLER
@@ -179,7 +158,6 @@ class MyWindow : public Window
 
 	VOID OnLButtonDown(POINT p)
 	{
-		// mouseEvents.OnMouseEvent(ONMOUSEDOWN, 1, p.x, p.y);
 	}
 
 
