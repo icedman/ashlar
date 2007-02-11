@@ -17,19 +17,43 @@ code.google.com/p/ashlar
 */
 
 #include "events.h"
+#include "rect.h"
+
+using namespace Ash;
 
 namespace Events
 {
-	Event::Event(int eid, Frame *pFrame)
+	// Event
+	Event::Event(int eid, EventListener *listener)
 	{
-		Attach(eid, pFrame);
+		Attach(eid, listener);
 	}
 
-	bool Event::Attach(int eid, Frame *pFrame)
+	bool Event::Attach(int eid, EventListener *plistener)
 	{
 		eventId = eid;
-		frame = pFrame;
+		listener = plistener;
 		return true;
+	}
+
+	// Event Manager
+	EventManager::EventManager()
+	{
+	}
+
+	EventManager::~EventManager()
+	{
+		ClearListeners();
+	}
+
+	void EventManager::ClearListeners()
+	{
+		Event *e = GetFirst();
+		while(e = GetFirst())
+		{
+			Remove(e);
+			delete e;
+		}
 	}
 
 	bool EventManager::AddListener(Event* pEvent)
@@ -42,18 +66,35 @@ namespace Events
 		return Remove(pEvent);
 	}
 
+	// MouseEvents
+	bool MouseEvents::AddListener(Event *e)
+	{
+		// filter
+		if (e->eventId == ONMOUSEDOWN)
+			return EventManager::AddListener(e);
+		if (e->eventId == ONMOUSEUP)
+			return EventManager::AddListener(e);
+		if (e->eventId == ONMOUSEMOVE)
+			return EventManager::AddListener(e);
+		if (e->eventId == ONMOUSEENTER)
+			return EventManager::AddListener(e);
+		if (e->eventId == ONMOUSEOUT)
+			return EventManager::AddListener(e);
+		return false;
+	}
+
 	bool MouseEvents::OnMouseEvent(int eventId, int button, int x, int y)
 	{
 		Event *e = GetFirst();
 		while(e)
 		{
-			Frame *f = e->frame;
-			Rect r;
-			f->GetBorderRect(&r);
-			Point p(x,y);
-			if (r.Contains(p))
+			EventListener *listener = e->listener;
+			if (e->eventId == eventId)
 			{
-				f->OnEvent(eventId, (void*)&p);
+				MouseInfo mInfo;
+				mInfo.point = Point(x,y);
+				mInfo.button = button;
+				listener->OnEvent(eventId, (void*)&mInfo);
 			}
 			e = e->next;
 		}

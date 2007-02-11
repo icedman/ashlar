@@ -16,31 +16,28 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include "widget.h"
+#pragma once
 
-using namespace Ash;
+#include "layout.h"
+#include "events.h"
+#include "frametypes.h"
 
-int main()
+using namespace Events;
+
+namespace Layout
 {
-	Widget widget;
-	if (!widget.Load("ashlar.xul"))
-		return 0;
 
-	/*
-	Widget calc;
-	if (!calc.Load("calc.xul"))
-		return 0;
-	*/
-
-	MSG msg;
-	while (GetMessage(&msg, 0, 0, 0))
+	class Button : public HFrame
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
+	public:
+		Button();
 
-	//calc.Destroy();
-	widget.Destroy();
+		virtual const char* GetName() { return "button"; }
+		virtual Frame* Create() { return new Button(); }
+		FRAMETYPE(BUTTON, HFrame)
 
-	return 0;
+		virtual bool OnEvent(int eid, void *pp);
+		virtual bool RegisterEvents(EventManager *manager);
+	};
+
 }

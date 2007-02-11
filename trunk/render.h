@@ -49,7 +49,7 @@ namespace Render
 		void Clear(long color);
 		void Blit(HDC hdc = 0);
 
-		bool Render(Frame *);
+		bool Render(Frame *, const Rect *clip = 0);
 		void DrawFrame(Frame *);
 		void DrawRect(double x, double y, double x2, double y2);
 		void DrawBorder(Borders *br, BorderStyle *bs, double  x, double y, double x2, double y2, bool clip);
@@ -67,6 +67,7 @@ namespace Render
 		HBITMAP hBmp;
 		HDC hdcTarget;
 		Rect rect;
+		Rect clip;
 
 		cairo_t *cairo;
 		cairo_pattern_t *fill;

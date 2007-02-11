@@ -16,31 +16,37 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include "widget.h"
+#pragma once
 
-using namespace Ash;
+#include "windowframe.h"
+#include "button.h"
 
-int main()
+#include "document.h"
+#include "docbuilder.h"
+#include "framebuilder.h"
+
+using namespace Dom;
+using namespace Layout;
+using namespace Events;
+
+namespace Ash
 {
-	Widget widget;
-	if (!widget.Load("ashlar.xul"))
-		return 0;
 
-	/*
-	Widget calc;
-	if (!calc.Load("calc.xul"))
-		return 0;
-	*/
-
-	MSG msg;
-	while (GetMessage(&msg, 0, 0, 0))
+	class Widget
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
+	public:
 
-	//calc.Destroy();
-	widget.Destroy();
+		Widget();
+		~Widget();
 
-	return 0;
+		bool Load(const char* filename);
+		bool Create();
+		void Destroy();
+
+	private:
+
+		WindowFrame *window;
+		DOMDocument *document;
+	};
+
 }

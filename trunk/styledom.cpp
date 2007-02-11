@@ -22,6 +22,7 @@ namespace Layout
 {
 	/*
 	Todo:
+	- case insensitive
 	- add default values everywhere
 	- add min/max checking
 	*/
@@ -94,6 +95,28 @@ namespace Layout
 		GetBordersXml(fs.border, sstyle->GetElement(&DOMString("border"))->Node());
 		GetBordersXml(fs.padding, sstyle->GetElement(&DOMString("padding"))->Node());
 		GetBorderStyleXml(fs.borderStyle, sstyle->GetElement(&DOMString("border"))->Node());
+
+		GetExtraStylesXml(fs, el);
+	}
+
+	void GetExtraStylesXml(FrameStyle &fs, DOMNode *el)
+	{
+		SafeNode snode((Element*)el);
+		SafeNode *sstyle = snode.GetElement(&DOMString("style"));
+		if (sstyle->Length() < 2)
+			return;
+
+		if (!fs.extra)
+			fs.extra = new FrameStyle[3];
+
+		fs.extra[0] = fs;
+		fs.extra[1] = fs;
+		fs.extra[2] = fs;
+
+		for(int i = 1; i<sstyle->Length(); i++)
+		{
+			// extra styles
+		}
 	}
 
 	void GetBorderStyleXml(BorderStyle &bs, DOMNode *el)

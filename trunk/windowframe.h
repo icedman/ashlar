@@ -19,37 +19,32 @@ code.google.com/p/ashlar
 #pragma once
 
 #include "frames.h"
+#include "window.h"
+#include "layout.h"
+#include "render.h"
 #include "frametypes.h"
 
 namespace Layout
 {
-	//! Horizontal flow frame (xul:hbox)
-	class HFrame : public Frame
+	class WindowFrame : public VFrame, public Ash::Window
 	{
 	public:
-		virtual bool Layout();
-		virtual const char* GetName() { return "hbox"; }
-		virtual Frame* Create() { return new HFrame(); }
-		FRAMETYPE(HBOX, Frame)
-	};
+		WindowFrame();
 
-	//! Vertical flow frame (xul:vbox)
-	class VFrame : public Frame
-	{
+		const char* GetName() { return "window"; }
+		Frame* Create() { return new WindowFrame(); }
+		FRAMETYPE(WINDOW, VFrame)
+
+		void OnSize(const Rect *r);
+		void OnDraw(HDC hdc, Rect *rc);
+		void OnMouseDown(int button, Point p);
+		void OnMouseUp(int button, Point p);
+
+		bool RegisterEvents(Frame *frame);
+		void Redraw();
+
 	public:
-		virtual bool Layout();
-		virtual const char* GetName() { return "vbox"; }
-		virtual Frame* Create() { return new VFrame(); }
-		FRAMETYPE(VBOX, Frame)
+		Render::RenderEngine render;
+		Events::MouseEvents mouseEvents;
 	};
-
-	//! xul:box
-	class Box : public HFrame
-	{
-	public:
-		virtual const char* GetName() { return "box"; }
-		virtual Frame* Create() { return new Box(); }
-		FRAMETYPE(BOX, Frame)
-	};
-
 }

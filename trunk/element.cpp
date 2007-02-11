@@ -25,12 +25,18 @@ namespace Dom
 	Element::Element()
 	{
 		nodeType = ELEMENT_NODE;
+		frame = 0;
 	}
 
 	Element::Element(DOMString *tagName)
 	{
 		nodeType = ELEMENT_NODE;
 		nodeName = *tagName;
+		frame = 0;
+	}
+
+	Element::~Element()
+	{
 	}
 
 	DOMString* Element::GetAttribute(DOMString *name)
@@ -122,9 +128,23 @@ namespace Dom
 
 	Frame* Element::Attach(Frame* pFrame)
 	{
+		// todo: handle this
+		if (frame)
+			return 0;
+
 		frame = pFrame;
 		Layout::GetStyleXml(frame->frameStyle, this);
 		return frame;
+	}
+
+	void Element::Free()
+	{
+		if (frame)
+		{
+			frame->Free();
+			frame = 0;
+		}
+		DOMNode::Free();
 	}
 
 	// Attribute

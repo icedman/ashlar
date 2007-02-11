@@ -31,6 +31,7 @@ namespace Dom
 	public:
 		Element();
 		Element(DOMString *tagName);
+		~Element();
 
 		DOMString* TagName() { return &nodeName; }
 
@@ -44,6 +45,7 @@ namespace Dom
 		DOMNode* SetAttributeNode(DOMNode *node, bool isId = false);
 
 		Frame* Attach(Frame* frame);
+		virtual void Free();
 
 		void Dump();
 

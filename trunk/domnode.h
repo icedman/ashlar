@@ -87,7 +87,7 @@ namespace Dom
 		virtual DOMNode* Create() { return new DOMNode(); }
 		virtual DOMString* Value() { return &nodeValue; }
 
-		static void FreeNodes(DOMNode*, bool freeSelf = true);
+		virtual void Free();
 
 	public:
 		DOMString nodeName;
