@@ -110,14 +110,9 @@ namespace Layout
 	typedef struct BorderStyle
 	{
 		int style;
-		int borderWidth;
 		long color;
 		long imageId;
-		int radius;
-		int radiusLeftTop;
-		int radiusLeftBottom;
-		int radiusRightTop;
-		int radiusRightBottom;
+		Borders radius;
 		int bevelStyle;
 		long bevelColor;
 		int bevelWidth;
@@ -167,4 +162,6 @@ namespace Layout
 	void GetBorders(Borders &borders, int &l, int &t, int &r, int &b);
 	//! Get frame content offsets (margin + border + padding)
 	void GetContentOffsets(FrameStyle &frameStyle, int &l, int &t, int &r, int &b);
+	//! Get maximum border;
+	int GetMaxBorder(Borders &borders);
 }

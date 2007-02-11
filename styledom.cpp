@@ -83,16 +83,36 @@ namespace Layout
 		return RGB(bb, gg, rr);
 	}
 
-	void SetStyleFromXml(FrameStyle &fs, DOMNode *el)
+	void GetStyleXml(FrameStyle &fs, DOMNode *el)
 	{
-		SetLayoutFromXml(fs.layout, el);
+		GetLayoutXml(fs.layout, el);
 		SafeNode snode((Element*)el);
 		SafeNode *sstyle = snode.GetElement(&DOMString("style"));
-		SetLayoutFromXml(fs.layout, sstyle->GetElement(&DOMString("layout"))->Node());
-		SetGradientFromXml(fs.gradient, sstyle->GetElement(&DOMString("gradient"))->Node());
+		GetLayoutXml(fs.layout, sstyle->GetElement(&DOMString("layout"))->Node());
+		GetGradientXml(fs.gradient, sstyle->GetElement(&DOMString("gradient"))->Node());
+		GetBordersXml(fs.margin, sstyle->GetElement(&DOMString("margin"))->Node());
+		GetBordersXml(fs.border, sstyle->GetElement(&DOMString("border"))->Node());
+		GetBordersXml(fs.padding, sstyle->GetElement(&DOMString("padding"))->Node());
+		GetBorderStyleXml(fs.borderStyle, sstyle->GetElement(&DOMString("border"))->Node());
 	}
 
-	void SetLayoutFromXml(LayoutInfo &li, DOMNode *el)
+	void GetBorderStyleXml(BorderStyle &bs, DOMNode *el)
+	{
+		if (!el)
+			return;
+
+		SafeNode snode((Element*)el);
+		//bs.style = snode.GetValue(&DOMString("style"))->ValueInt(bs.style);
+		bs.color = StringToColor(snode.GetValue(&DOMString("color"))->Value(), 0);
+		//bs.imageId = snode.GetValue(&DOMString("imageId"))->ValueInt(bs.imageId);
+		GetBordersXml(bs.radius, snode.GetElement(&DOMString("radius"))->Node());
+		if (snode.GetElement(&DOMString("radius"))->Node())
+		//bs.bevelStyle = snode.GetValue(&DOMString("bevelStyle"))->ValueInt(bs.bevelStyle);
+		bs.bevelColor = StringToColor(snode.GetValue(&DOMString("bevelColor"))->Value(), 0);
+		bs.bevelWidth = snode.GetValue(&DOMString("bevelWidth"))->ValueInt(bs.bevelWidth);
+	}
+
+	void GetLayoutXml(LayoutInfo &li, DOMNode *el)
 	{
 		if (!el)
 			return;
@@ -107,13 +127,33 @@ namespace Layout
 		li.verticalAlign = StringToAlign(snode.GetValue(&DOMString("valign"))->Value(), TOP);
 	}
 
-	void SetGradientFromXml(Gradient &gr, DOMNode *el)
+	void GetBordersXml(Borders &br, DOMNode *el)
+	{
+		if (!el)
+			return;
+
+		SafeNode snode((Element*)el);
+		br.width = snode.ValueInt(br.width);
+		br.width = snode.GetValue(&DOMString("width"))->ValueInt(br.width);
+		br.left = snode.GetValue(&DOMString("left"))->ValueInt(br.left);
+		br.right = snode.GetValue(&DOMString("right"))->ValueInt(br.right);
+		br.top = snode.GetValue(&DOMString("top"))->ValueInt(br.top);
+		br.bottom = snode.GetValue(&DOMString("bottom"))->ValueInt(br.bottom);
+
+		// radius
+		br.left = snode.GetValue(&DOMString("leftTop"))->ValueInt(br.left);
+		br.top = snode.GetValue(&DOMString("rightTop"))->ValueInt(br.top);
+		br.right = snode.GetValue(&DOMString("rightBottom"))->ValueInt(br.right);
+		br.bottom = snode.GetValue(&DOMString("leftBottom"))->ValueInt(br.bottom);
+	}
+
+	void GetGradientXml(Gradient &gr, DOMNode *el)
 	{
 		if (!el)
 			return;
 
 		SafeNode sgradient((Element*)el);
-		gr.style = StringToStyle(sgradient.GetValue(&DOMString("style"))->Value(), 0);
+		gr.style = StringToStyle(sgradient.GetValue(&DOMString("type"))->Value(), 0);
 		if (!gr.style)
 			return;
 

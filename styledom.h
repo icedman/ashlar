@@ -25,14 +25,16 @@ using namespace Dom;
 
 namespace Layout
 {
-	//! Set style from xml tree
-	void SetStyleFromXml(FrameStyle &fs, DOMNode *el);
-
-	//! Set layout from xml tree
-	void SetLayoutFromXml(LayoutInfo &li, DOMNode *el);
-
-	//! Set gradient from xml tree
-	void SetGradientFromXml(Gradient &gr, DOMNode *el);
+	//! Get style from xml tree
+	void GetStyleXml(FrameStyle &fs, DOMNode *el);
+	//! Get layout from xml tree
+	void GetLayoutXml(LayoutInfo &li, DOMNode *el);
+	//! Get gradient from xml tree
+	void GetGradientXml(Gradient &gr, DOMNode *el);
+	//! Get border from xml tree
+	void GetBordersXml(Borders &br, DOMNode *el);
+	//! Get border style from xml tree
+	void GetBorderStyleXml(BorderStyle &bs, DOMNode *el);
 
 	//! Convert DOMString to alignment value
 	inline int StringToAlign(DOMString *str, int defaultValue = 0);
