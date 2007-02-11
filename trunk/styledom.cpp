@@ -89,33 +89,28 @@ namespace Layout
 		GetLayoutXml(fs.layout, el);
 		SafeNode snode((Element*)el);
 		SafeNode *sstyle = snode.GetElement(&DOMString("style"));
-		GetLayoutXml(fs.layout, sstyle->GetElement(&DOMString("layout"))->Node());
-		GetGradientXml(fs.gradient, sstyle->GetElement(&DOMString("gradient"))->Node());
-		GetBordersXml(fs.margin, sstyle->GetElement(&DOMString("margin"))->Node());
-		GetBordersXml(fs.border, sstyle->GetElement(&DOMString("border"))->Node());
-		GetBordersXml(fs.padding, sstyle->GetElement(&DOMString("padding"))->Node());
-		GetBorderStyleXml(fs.borderStyle, sstyle->GetElement(&DOMString("border"))->Node());
 
-		GetExtraStylesXml(fs, el);
-	}
-
-	void GetExtraStylesXml(FrameStyle &fs, DOMNode *el)
-	{
-		SafeNode snode((Element*)el);
-		SafeNode *sstyle = snode.GetElement(&DOMString("style"));
-		if (sstyle->Length() < 2)
-			return;
-
-		if (!fs.extra)
-			fs.extra = new FrameStyle[3];
-
-		fs.extra[0] = fs;
-		fs.extra[1] = fs;
-		fs.extra[2] = fs;
-
-		for(int i = 1; i<sstyle->Length(); i++)
+		FrameStyle *fstyle = &fs;
+		int l = sstyle->Length();
+		if (l>1)
 		{
-			// extra styles
+			fs.extra = new FrameStyle[3];
+		}
+
+		for(int i=0; i<l; i++)
+		{
+			GetLayoutXml(fstyle->layout, sstyle->Item(i)->GetElement(&DOMString("layout"))->Node());
+			GetGradientXml(fstyle->gradient, sstyle->Item(i)->GetElement(&DOMString("gradient"))->Node());
+			GetBordersXml(fstyle->margin, sstyle->Item(i)->GetElement(&DOMString("margin"))->Node());
+			GetBordersXml(fstyle->border, sstyle->Item(i)->GetElement(&DOMString("border"))->Node());
+			GetBordersXml(fstyle->padding, sstyle->Item(i)->GetElement(&DOMString("padding"))->Node());
+			GetBorderStyleXml(fstyle->borderStyle, sstyle->Item(i)->GetElement(&DOMString("border"))->Node());
+			if (fs.extra)
+			{
+				fstyle = &fs.extra[i];
+				*fstyle = fs;
+				fstyle->border.width = 4;
+			}
 		}
 	}
 
@@ -130,8 +125,8 @@ namespace Layout
 		//bs.imageId = snode.GetValue(&DOMString("imageId"))->ValueInt(bs.imageId);
 		GetBordersXml(bs.radius, snode.GetElement(&DOMString("radius"))->Node());
 		if (snode.GetElement(&DOMString("radius"))->Node())
-		//bs.bevelStyle = snode.GetValue(&DOMString("bevelStyle"))->ValueInt(bs.bevelStyle);
-		bs.bevelColor = StringToColor(snode.GetValue(&DOMString("bevelColor"))->Value(), 0);
+			//bs.bevelStyle = snode.GetValue(&DOMString("bevelStyle"))->ValueInt(bs.bevelStyle);
+			bs.bevelColor = StringToColor(snode.GetValue(&DOMString("bevelColor"))->Value(), 0);
 		bs.bevelWidth = snode.GetValue(&DOMString("bevelWidth"))->ValueInt(bs.bevelWidth);
 	}
 

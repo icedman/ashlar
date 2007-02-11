@@ -27,8 +27,6 @@ namespace Layout
 {
 	//! Get style from xml tree
 	void GetStyleXml(FrameStyle &fs, DOMNode *el);
-	//! Get extra styles
-	void GetExtraStylesXml(FrameStyle &fs, DOMNode *el);
 	//! Get layout from xml tree
 	void GetLayoutXml(LayoutInfo &li, DOMNode *el);
 	//! Get gradient from xml tree

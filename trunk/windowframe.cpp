@@ -71,7 +71,6 @@ namespace Layout
 
 	void WindowFrame::Redraw()
 	{
-		printf("redraw!\n");
 		RedrawWindow(window.m_hWnd, 0, 0, RDW_NOERASE | RDW_INVALIDATE | RDW_INTERNALPAINT);
 	}
 }

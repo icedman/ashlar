@@ -31,7 +31,11 @@ namespace Layout
 		GetRect(&r);
 
 		if (!r.Contains(mInfo->point))
+		{
+			if (GetState() == PRESSED)
+				SetState(NORMAL);
 			return true;
+		}
 
 		switch(eid)
 		{
