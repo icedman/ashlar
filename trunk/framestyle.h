@@ -19,6 +19,7 @@ code.google.com/p/ashlar
 #pragma once
 
 #include "rect.h"
+#include "list.h"
 
 using namespace Ash;
 
@@ -29,12 +30,14 @@ namespace Layout
 #define ISASSIGNED(x) (x!=UNASSIGNED)
 #define GRADIENT_COLOR_LIMIT 4
 
-	//! Frame states
+	//! Frame pseudo classes (button:pressed)
 	const unsigned short NORMAL = 0;
 	const unsigned short PRESSED = 1;
-	const unsigned short HOVER = 2;
-	const unsigned short DISABLED = 3;
-
+	const unsigned short DISABLED = 2;
+	const unsigned short ACTIVE = 3;
+	const unsigned short HOVER = 4;
+	const unsigned short VISITED = 5;
+	
 	//! Alignment values
 	const unsigned short LEFT = 0;
 	const unsigned short RIGHT = 1;
@@ -157,7 +160,6 @@ namespace Layout
 		BorderStyle borderStyle;
 		Background bgImage;
 		Gradient gradient;
-		FrameStyle *extra;
 	} FrameStyle;
 
 	//! Set frame style defaults
@@ -170,4 +172,5 @@ namespace Layout
 	void GetContentOffsets(FrameStyle &frameStyle, int &l, int &t, int &r, int &b);
 	//! Get maximum border;
 	int GetMaxBorder(Borders &borders);
+
 }

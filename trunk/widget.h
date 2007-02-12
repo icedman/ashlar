@@ -24,6 +24,7 @@ code.google.com/p/ashlar
 #include "document.h"
 #include "docbuilder.h"
 #include "framebuilder.h"
+#include "stylemanager.h"
 
 using namespace Dom;
 using namespace Layout;
@@ -31,7 +32,7 @@ using namespace Events;
 
 namespace Ash
 {
-
+	//! Widget class
 	class Widget
 	{
 	public:
@@ -39,8 +40,11 @@ namespace Ash
 		Widget();
 		~Widget();
 
+		//! Loads widget from an xul file
 		bool Load(const char* filename);
+		//! Creates a widget 
 		bool Create();
+		//! Frees a widget
 		void Destroy();
 
 	private:

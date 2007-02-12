@@ -23,7 +23,7 @@ namespace Ash
 
 	typedef bool (*SortFunc) (void*, void*);
 
-	// simple list template. does not free nodes on destroy
+	//! simple list node template. does not free nodes on destroy
 	template<class _Node>
 	class Node {
 	public:
@@ -41,6 +41,7 @@ namespace Ash
 	};
 
 
+	//! simple list template. does not free nodes on destroy
 	template<class _Node>
 	class List {
 	public:
@@ -55,6 +56,8 @@ namespace Ash
 		{}
 
 	public:
+
+		//! Add an item
 		bool Push(_Node* n)
 		{
 			if (!tail)
@@ -72,6 +75,7 @@ namespace Ash
 			return true;
 		}
 
+		//! Removes the last item
 		bool Pop()
 		{
 			_Node *n = tail;
@@ -89,22 +93,26 @@ namespace Ash
 			return true;
 		}
 
+		//! Clears the list
 		void Clear()
 		{
 			while(Size())
 				Pop();
 		}
 
+		//! Get current list size
 		unsigned long Size()
 		{
 			return size;
 		}
 
+		//! Insert new item at index
 		bool InsertAt(unsigned long index, _Node *n)
 		{
 			InsertBefore(n, GetAt(index));
 		}
 
+		//! Insert new item before a specified reference node
 		bool InsertBefore(_Node *newn, _Node *refNode)
 		{
 			_Node *n = refNode;
@@ -132,6 +140,7 @@ namespace Ash
 			return true;
 		}
 
+		//! Removes an item
 		bool Remove(_Node *node)
 		{
 			if (!node)
@@ -164,6 +173,7 @@ namespace Ash
 			return true;
 		}
 
+		//! Removes an item at specified index
 		bool RemoveAt(unsigned long index)
 		{
 			if (!size)
@@ -174,11 +184,13 @@ namespace Ash
 			return Remove(GetAt(index));
 		}
 
+		//! Retrieves an item
 		_Node* operator[](unsigned long index)
 		{
 			return GetAt(index);
 		}
 
+		//! Retrieves an item
 		_Node* GetAt(unsigned long index)
 		{
 			_Node *n = head;
@@ -195,9 +207,12 @@ namespace Ash
 			return n;
 		}
 
+		//! Get first item
 		inline _Node* GetFirst() { return head; }
+		//! Get last item
 		inline _Node* GetLast() { return tail; }
 
+		//! Sort function
 		void Sort(SortFunc func)
 		{
 			_Node *i = head;

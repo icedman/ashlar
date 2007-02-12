@@ -31,15 +31,15 @@
 							<color offset="175">#555555</color>
 						</gradient>
 					</style>
-					<style>
+					<style name=":hover">
 						<border type="" width="2">
 							<radius rightTop="10">0</radius>
 							<color>#ffffff</color>
 						</border>
 						<gradient type="linear" x="0" y="0" x2="0" y2="255">
-							<color offset="0">#666666</color>
-							<color offset="75">#aaaaaa</color>
-							<color offset="175">#777777</color>
+							<color offset="0">#886666</color>
+							<color offset="75">#ccaaaa</color>
+							<color offset="175">#997777</color>
 						</gradient>
 					</style>
 				</button>

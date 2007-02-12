@@ -23,9 +23,7 @@ code.google.com/p/ashlar
 namespace Layout
 {
 	WindowFrame::WindowFrame()
-	{
-		frameStyle.layout.floating = true;
-	}
+	{}
 
 	void WindowFrame::OnSize(const Rect *r)
 	{

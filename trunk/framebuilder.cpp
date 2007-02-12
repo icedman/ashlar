@@ -77,7 +77,9 @@ namespace Layout
 		{
 			if (strcmp(f->GetName(), e->TagName()->c_str()) == 0)
 			{
-				return e->Attach(f->Create());
+				Frame *nw = f->Create();
+				e->SetData((void*)nw);
+				return nw;
 			}
 			f = f->next;
 		}
