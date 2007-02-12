@@ -26,11 +26,8 @@ int main()
 	if (!widget.Load("ashlar.xul"))
 		return 0;
 
-	/*
-	Widget calc;
-	if (!calc.Load("calc.xul"))
+	if (!widget.Create())
 		return 0;
-	*/
 
 	MSG msg;
 	while (GetMessage(&msg, 0, 0, 0))
@@ -39,8 +36,16 @@ int main()
 		DispatchMessage(&msg);
 	}
 
-	//calc.Destroy();
 	widget.Destroy();
 
 	return 0;
 }
+
+
+/*
+todo
+move layout outside of style
+
+stylesheet id
+selector .class #id :state
+*/

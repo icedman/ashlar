@@ -16,18 +16,111 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include "styledom.h"
+#include "stylemanager.h"
+#include "safenode.h"
 
 namespace Layout
 {
-	/*
-	Todo:
-	- case insensitive
-	- add default values everywhere
-	- add min/max checking
-	*/
+	// Style
+	bool Style::IsEqual(Style *s)
+	{
+		if (selector != s->selector)
+			return false;
+		if (className != s->className)
+			return false;
+		if (pseudoClass != s->pseudoClass)
+			return false;
+		if (id != s->id)
+			return false;
+		return true;
+	}
 
-	int StringToAlign(DOMString *str, int defaultValue)
+	bool Style::GetStyleName(Element *e)
+	{
+		SafeNode snode(e);
+
+		DOMString *name = snode.GetValue(&DOMString("name"))->Value();
+		DOMString tmpName("#");
+
+		if (!name)
+		{
+			char address[32] = "";
+			sprintf(address, "&%d", e);
+			tmpName.append(address);
+			name = &tmpName;
+		}
+
+		int clIdx = name->find_first_of(".");
+		int psIdx = name->find_first_of(":");
+		int idIdx = name->find_first_of("#");
+		int any = name->find_first_of(":.#");
+		any = (any!=-1) ? any : name->size();
+
+		selector = DOMString(*name, 0, any);
+		if (clIdx!=-1)
+		{
+			DOMString tmp(*name, clIdx + 1);
+			any = tmp.find_first_of(":.#");
+			any = (any!=-1) ? any : tmp.size();
+			className = DOMString(tmp, 0, any);
+		}
+		if (psIdx!=-1)
+		{
+			DOMString tmp(*name, psIdx + 1);
+			any = tmp.find_first_of(":.#");
+			any = (any!=-1) ? any : tmp.size();
+			pseudoClass = DOMString(tmp, 0, any);
+		}
+		if (idIdx!=-1)
+		{
+			DOMString tmp(*name, idIdx + 1);
+			any = tmp.find_first_of(":.#");
+			any = (any!=-1) ? any : tmp.size();
+			id = DOMString(tmp, 0, any);
+		}
+
+		return true;
+	}
+
+	bool Style::Build(Element *e)
+	{
+		SetStyleDefaults(style);
+		if (!GetStyleName(e))
+			return false;
+
+		SafeNode snode(e);
+		GetLayoutXml(style.layout, snode.GetElement(&DOMString("layout"))->Node());
+		GetGradientXml(style.gradient, snode.GetElement(&DOMString("gradient"))->Node());
+		GetBordersXml(style.margin, snode.GetElement(&DOMString("margin"))->Node());
+		GetBordersXml(style.border, snode.GetElement(&DOMString("border"))->Node());
+		GetBordersXml(style.padding, snode.GetElement(&DOMString("padding"))->Node());
+		GetBorderStyleXml(style.borderStyle,snode.GetElement(&DOMString("border"))->Node());
+
+		printf("build %d\n", style.gradient.colorCount);
+		return true;
+	}
+
+	bool Style::Apply(FrameStyle &fs)
+	{
+		LayoutInfo t = fs.layout;
+		fs = style;
+		fs.layout = t;
+		printf("apply %d\n", style.gradient.colorCount);
+		return true;
+	}
+
+	Style* Style::Create(Element *e)
+	{
+		Style *s = new Style();
+		if (!s->Build(e))
+		{
+			delete s;
+			return 0;
+		}
+		return s;
+	}
+
+	int Style::StringToAlign(DOMString *str, int defaultValue)
 	{
 		if (!str)
 			return defaultValue;
@@ -46,7 +139,7 @@ namespace Layout
 		return defaultValue;
 	}
 
-	int StringToStyle(DOMString *str, int defaultValue)
+	int Style::StringToStyle(DOMString *str, int defaultValue)
 	{
 		// gradient
 		if (!str)
@@ -63,7 +156,7 @@ namespace Layout
 		return defaultValue;
 	}
 
-	long StringToColor(DOMString *str, long defaultValue)
+	long Style::StringToColor(DOMString *str, long defaultValue)
 	{
 		if (!str)
 			return defaultValue;
@@ -84,37 +177,7 @@ namespace Layout
 		return RGB(bb, gg, rr);
 	}
 
-	void GetStyleXml(FrameStyle &fs, DOMNode *el)
-	{
-		GetLayoutXml(fs.layout, el);
-		SafeNode snode((Element*)el);
-		SafeNode *sstyle = snode.GetElement(&DOMString("style"));
-
-		FrameStyle *fstyle = &fs;
-		int l = sstyle->Length();
-		if (l>1)
-		{
-			fs.extra = new FrameStyle[3];
-		}
-
-		for(int i=0; i<l; i++)
-		{
-			GetLayoutXml(fstyle->layout, sstyle->Item(i)->GetElement(&DOMString("layout"))->Node());
-			GetGradientXml(fstyle->gradient, sstyle->Item(i)->GetElement(&DOMString("gradient"))->Node());
-			GetBordersXml(fstyle->margin, sstyle->Item(i)->GetElement(&DOMString("margin"))->Node());
-			GetBordersXml(fstyle->border, sstyle->Item(i)->GetElement(&DOMString("border"))->Node());
-			GetBordersXml(fstyle->padding, sstyle->Item(i)->GetElement(&DOMString("padding"))->Node());
-			GetBorderStyleXml(fstyle->borderStyle, sstyle->Item(i)->GetElement(&DOMString("border"))->Node());
-			if (fs.extra)
-			{
-				fstyle = &fs.extra[i];
-				*fstyle = fs;
-				fstyle->border.width = 4;
-			}
-		}
-	}
-
-	void GetBorderStyleXml(BorderStyle &bs, DOMNode *el)
+	void Style::GetBorderStyleXml(BorderStyle &bs, DOMNode *el)
 	{
 		if (!el)
 			return;
@@ -130,7 +193,7 @@ namespace Layout
 		bs.bevelWidth = snode.GetValue(&DOMString("bevelWidth"))->ValueInt(bs.bevelWidth);
 	}
 
-	void GetLayoutXml(LayoutInfo &li, DOMNode *el)
+	void Style::GetLayoutXml(LayoutInfo &li, DOMNode *el)
 	{
 		if (!el)
 			return;
@@ -145,7 +208,7 @@ namespace Layout
 		li.verticalAlign = StringToAlign(snode.GetValue(&DOMString("valign"))->Value(), TOP);
 	}
 
-	void GetBordersXml(Borders &br, DOMNode *el)
+	void Style::GetBordersXml(Borders &br, DOMNode *el)
 	{
 		if (!el)
 			return;
@@ -165,7 +228,7 @@ namespace Layout
 		br.bottom = snode.GetValue(&DOMString("leftBottom"))->ValueInt(br.bottom);
 	}
 
-	void GetGradientXml(Gradient &gr, DOMNode *el)
+	void Style::GetGradientXml(Gradient &gr, DOMNode *el)
 	{
 		if (!el)
 			return;
@@ -207,6 +270,98 @@ namespace Layout
 				gr.offsets[j] = scolors->Item(i)->GetValue(&DOMString("offset"))->ValueInt(gr.offsets[j]);
 				j++;
 			}
+		}
+
+		printf("gradient %d\n", gr.colorCount);
+	}
+
+	// Style manager
+	StyleManager::StyleManager()
+	{
+	}
+
+	StyleManager::~StyleManager()
+	{
+		Free();
+	}
+
+	Style* StyleManager::AddStyle(Element *element)
+	{
+		if (element->nodeName != DOMString("style"))
+		{
+			return 0;
+		}
+
+		Style *s = GetStyle(element);
+		if (s)
+		{
+			// update style
+			s->Build(element);
+		} else {
+			s = Style::Create(element);
+			if (s)
+			{
+				Push(s);
+			}
+		}
+		return s;
+	}
+
+	Style* StyleManager::GetStyle(Element *element)
+	{
+		Style *s = GetFirst();
+		while(s)
+		{
+			Style st;
+			if (st.GetStyleName(element))
+			{
+				if (st.IsEqual(s))
+					return s;
+			}
+			s = s->next;
+		}
+		return 0;
+	}
+
+	bool StyleManager::LoadStyle(Element *element)
+	{
+		AddStyle(element);
+		if (element->HasChildNodes())
+		{
+			DOMNode *n = element->FirstChild();
+			while(n)
+			{
+				LoadStyle((Element*)n);
+				n = n->NextSibling();
+			}
+		}
+		return true;
+	}
+
+	void StyleManager::Free()
+	{
+		Style *s = 0;
+		while(s = GetFirst())
+		{
+			Remove(s);
+			delete s;
+		}
+	}
+
+	void StyleManager::Dump()
+	{
+		Style *s = GetFirst();
+		while(s)
+		{
+
+			printf("selector:%s\nclass:%s\npseudo:%s\nid:%s\n%d\n",
+				s->selector.c_str(),
+				s->className.c_str(),
+				s->pseudoClass.c_str(),
+				s->id.c_str(),
+				s->style.gradient.colorCount);
+
+			s = s->next;
 		}
 	}
 }

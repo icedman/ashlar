@@ -27,13 +27,12 @@ namespace Layout
 	{
 		frameState = NORMAL;
 		parentFrame = 0;
+		element = 0;
 		SetStyleDefaults(frameStyle);
 	}
 
 	Frame::~Frame()
 	{
-		if (frameStyle.extra)
-			delete [] frameStyle.extra;
 	}
 
 	bool Frame::SetParent(Frame* parent)
@@ -70,6 +69,12 @@ namespace Layout
 	void Frame::SetState(int state)
 	{
 		frameState = state;
+		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);
+		if (w)
+		{
+			Style *s = w->stylesheet.GetLast();
+			s->Apply(frameStyle);
+		}
 		Redraw();
 	}
 

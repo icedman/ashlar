@@ -20,9 +20,6 @@ code.google.com/p/ashlar
 
 namespace Layout
 {
-	Button::Button()
-	{}
-
 	bool Button::OnEvent(int eid, void *pInfo)
 	{
 		MouseInfo *mInfo = (MouseInfo*)pInfo;

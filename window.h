@@ -24,6 +24,7 @@ code.google.com/p/ashlar
 
 namespace Ash
 {
+	//! Native win32 window implementation
 	class NativeWindow : public OSWin::Window
 	{
 	public:
@@ -51,16 +52,21 @@ namespace Ash
 		IWindow *iwindow;
 	};
 
+	//! IWindow implementation
 	class Window : public IWindow
 	{
 	public:
 		Window();
 		~Window();
 
+		//! Create window
 		virtual bool Create(int w, int h);
+		//! Free window
 		virtual void Destroy();
 
+		//! Set size
 		virtual bool SetSize(int x, int y, int w, int h);
+		//! Show or hide a window
 		virtual void Show(bool show);
 
 		virtual bool OnCreate();

@@ -186,11 +186,6 @@ namespace Render
 		Gradient *gr = &fs->gradient;
 
 		// todo state based framestyles
-		int state = f->GetState();
-		if (fs->extra && state > 0)
-		{
-			fs = &fs->extra[state - 1];
-		}
 
 		double x, y, x2, y2;
 

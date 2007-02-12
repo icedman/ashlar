@@ -23,6 +23,7 @@ code.google.com/p/ashlar
 
 namespace Ash
 {
+	//! IWindow abstract class
 	class IWindow
 	{
 	public:

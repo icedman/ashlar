@@ -22,12 +22,15 @@ code.google.com/p/ashlar
 
 namespace Layout
 {
+	// todo: delete this, make xul:grid
 
 	class Row : public HFrame
 	{
 	public:
 		virtual bool Layout();
 		virtual const char* GetName() { return "row"; }
+		virtual Frame* Create() { return new Row(); }
+		FRAMETYPE(HBOX, Frame)
 	};
 
 	class Table : public VFrame
@@ -35,5 +38,7 @@ namespace Layout
 	public:
 		virtual bool Layout();
 		virtual const char* GetName() { return "table"; }
+		virtual Frame* Create() { return new Table(); }
+		FRAMETYPE(HBOX, Frame)
 	};
 }

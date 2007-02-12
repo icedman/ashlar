@@ -36,8 +36,8 @@ namespace Ash
 		if (document)
 			Destroy();
 
-		DOMBuilder dbuild;
-		dbuild.Initialize();
+		DOMBuilder db;
+		db.Initialize();
 
 		FILE *fp = fopen(filename, "r");
 		while(!feof(fp))
@@ -45,14 +45,17 @@ namespace Ash
 			char buffer[1024];
 			unsigned short len = fread(buffer, 1, 1024, fp);
 			int isFinal = feof(fp);
-			dbuild.Parse(buffer, len, isFinal);
+			db.Parse(buffer, len, isFinal);
 		}
 		fclose(fp);
 
-		document = dbuild.GetDocument();
-		dbuild.Shutdown();
+		document = db.GetDocument();
+		db.Shutdown();
 
-		return Create();
+		if (!document)
+			return false;
+
+		return true;
 	}
 
 	bool Widget::Create()
@@ -62,21 +65,21 @@ namespace Ash
 			return 0;
 		}
 
-		document->Dump();
+		// document->Dump();
 
-		FrameBuilder fbuild;
-		fbuild.Register(new Frame());
-		fbuild.Register(new HFrame());
-		fbuild.Register(new VFrame());
-		fbuild.Register(new WindowFrame());
-		fbuild.Register(new Button());
-		fbuild.Build(document);
+		FrameBuilder fb;
+		fb.Register(new Frame());
+		fb.Register(new HFrame());
+		fb.Register(new VFrame());
+		fb.Register(new WindowFrame());
+		fb.Register(new Button());
+		fb.Build(document);
 
-		window = (WindowFrame*)fbuild.root;
+		window = (WindowFrame*)fb.root;
 		if (!window)
 			return 0;
 
-		window->Dump();
+		//window->Dump();
 
 		IWindow *w = (IWindow*)window;
 		w->Create(400,200);
@@ -84,6 +87,11 @@ namespace Ash
 
 		// register mouse events
 		window->RegisterEvents(window);
+
+		// stylesheets
+		window->stylesheet.LoadStyle(document);
+		window->stylesheet.Dump();
+
 		return true;
 	}
 

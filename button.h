@@ -30,8 +30,6 @@ namespace Layout
 	class Button : public HFrame
 	{
 	public:
-		Button();
-
 		virtual const char* GetName() { return "button"; }
 		virtual Frame* Create() { return new Button(); }
 		FRAMETYPE(BUTTON, HFrame)
