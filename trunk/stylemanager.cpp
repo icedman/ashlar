@@ -18,25 +18,33 @@ code.google.com/p/ashlar
 
 #include "stylemanager.h"
 #include "safenode.h"
+#include "frames.h"
 
 namespace Layout
 {
 	// Style
 	bool Style::IsEqual(Style *s)
 	{
-		if (selector != s->selector)
+		if (id.size() && id != s->id)
 			return false;
-		if (className != s->className)
+		if (selector.size() && selector != s->selector)
 			return false;
-		if (pseudoClass != s->pseudoClass)
+		if (className.size() && className != s->className)
 			return false;
-		if (id != s->id)
+		if (pseudoClass.size() && pseudoClass != s->pseudoClass)
 			return false;
 		return true;
 	}
 
 	bool Style::GetStyleName(Element *e)
 	{
+		// stylesheet selector.class:pseudoClass#id
+
+		selector = "";
+		id = "";
+		className = "";
+		pseudoClass = "";
+
 		SafeNode snode(e);
 
 		DOMString *name = snode.GetValue(&DOMString("name"))->Value();
@@ -44,18 +52,25 @@ namespace Layout
 
 		if (!name)
 		{
-			char address[32] = "";
-			sprintf(address, "&%d", e);
-			tmpName.append(address);
-			name = &tmpName;
+			DOMNode *p = e->ParentNode();
+			if (p)
+			{
+				if (p->nodeName != "stylesheet")
+				{
+					char address[32] = "";
+					sprintf(address, "&%d", p);
+					tmpName.append(address);
+					name = &tmpName;
+				}
+			}
 		}
 
 		int clIdx = name->find_first_of(".");
 		int psIdx = name->find_first_of(":");
 		int idIdx = name->find_first_of("#");
+
 		int any = name->find_first_of(":.#");
 		any = (any!=-1) ? any : name->size();
-
 		selector = DOMString(*name, 0, any);
 		if (clIdx!=-1)
 		{
@@ -82,6 +97,40 @@ namespace Layout
 		return true;
 	}
 
+	bool Style::GetSelector(Element *e)
+	{
+		selector = "";
+		id = "";
+		className = "";
+		pseudoClass = "";
+
+		SafeNode snode(e);
+		DOMString *tmp;
+
+		// selector
+		selector = *e->TagName();
+
+		// id
+		tmp = snode.GetAttribute(&DOMString("id"))->Value();
+		if (tmp)
+		{
+			id = *tmp;
+		} else {
+			char address[32] = "";
+			sprintf(address, "&%d", e);
+			id = address;
+		}
+
+		// class
+		tmp = snode.GetAttribute(&DOMString("class"))->Value();
+		if (tmp)
+		{
+			className = *tmp;
+		}
+
+		return true;
+	}
+
 	bool Style::Build(Element *e)
 	{
 		SetStyleDefaults(style);
@@ -96,7 +145,6 @@ namespace Layout
 		GetBordersXml(style.padding, snode.GetElement(&DOMString("padding"))->Node());
 		GetBorderStyleXml(style.borderStyle,snode.GetElement(&DOMString("border"))->Node());
 
-		printf("build %d\n", style.gradient.colorCount);
 		return true;
 	}
 
@@ -187,10 +235,9 @@ namespace Layout
 		bs.color = StringToColor(snode.GetValue(&DOMString("color"))->Value(), 0);
 		//bs.imageId = snode.GetValue(&DOMString("imageId"))->ValueInt(bs.imageId);
 		GetBordersXml(bs.radius, snode.GetElement(&DOMString("radius"))->Node());
-		if (snode.GetElement(&DOMString("radius"))->Node())
-			//bs.bevelStyle = snode.GetValue(&DOMString("bevelStyle"))->ValueInt(bs.bevelStyle);
-			bs.bevelColor = StringToColor(snode.GetValue(&DOMString("bevelColor"))->Value(), 0);
-		bs.bevelWidth = snode.GetValue(&DOMString("bevelWidth"))->ValueInt(bs.bevelWidth);
+		//bs.bevelStyle = snode.GetValue(&DOMString("bevelStyle"))->ValueInt(bs.bevelStyle);
+		//bs.bevelColor = StringToColor(snode.GetValue(&DOMString("bevelColor"))->Value(), 0);
+		//bs.bevelWidth = snode.GetValue(&DOMString("bevelWidth"))->ValueInt(bs.bevelWidth);
 	}
 
 	void Style::GetLayoutXml(LayoutInfo &li, DOMNode *el)
@@ -199,7 +246,7 @@ namespace Layout
 			return;
 
 		SafeNode snode((Element*)el);
-		li.x = snode.GetValue(&DOMString("x"))->ValueInt(li.y);
+		li.x = snode.GetValue(&DOMString("x"))->ValueInt(li.x);
 		li.y = snode.GetValue(&DOMString("y"))->ValueInt(li.y);
 		li.width = snode.GetValue(&DOMString("width"))->ValueInt(li.width);
 		li.height = snode.GetValue(&DOMString("height"))->ValueInt(li.height);
@@ -271,8 +318,22 @@ namespace Layout
 				j++;
 			}
 		}
+	}
 
-		printf("gradient %d\n", gr.colorCount);
+	void Style::Dump()
+	{
+		printf("selector:%s\nclass:%s\npseudo:%s\nid:%s\n",
+			selector.c_str(),
+			className.c_str(),
+			pseudoClass.c_str(),
+			id.c_str());
+	}
+
+	void Style::DumpStyle()
+	{
+		printf("border: %d\ngradient: %d\n",
+			style.border.width,
+			style.gradient.colorCount);
 	}
 
 	// Style manager
@@ -297,6 +358,7 @@ namespace Layout
 		{
 			// update style
 			s->Build(element);
+			printf("update style\n");
 		} else {
 			s = Style::Create(element);
 			if (s)
@@ -307,20 +369,23 @@ namespace Layout
 		return s;
 	}
 
-	Style* StyleManager::GetStyle(Element *element)
+	Style* StyleManager::GetStyle(Style *style)
 	{
 		Style *s = GetFirst();
 		while(s)
 		{
-			Style st;
-			if (st.GetStyleName(element))
-			{
-				if (st.IsEqual(s))
-					return s;
-			}
+			if (s->IsEqual(style))
+				return s;
 			s = s->next;
 		}
 		return 0;
+	}
+
+	Style* StyleManager::GetStyle(Element *element)
+	{
+		Style sname;
+		sname.GetStyleName(element);
+		return GetStyle(&sname);
 	}
 
 	bool StyleManager::LoadStyle(Element *element)
@@ -348,19 +413,49 @@ namespace Layout
 		}
 	}
 
+	bool StyleManager::ApplyStyle(Element *element)
+	{
+		Frame *f = (Frame*)element->GetData();
+		if (f)
+		{
+			Style sname;
+			sname.GetSelector(element);
+			sname.Dump();
+			Style *s = GetStyle(&sname);
+			if (s)
+			{
+				s->DumpStyle();
+				s->Apply(f->frameStyle);
+			}
+			if (sname.id.size())
+			{
+				sname.id = "";
+				Style *s = GetStyle(&sname);
+				if (s)
+				{
+					s->DumpStyle();
+					s->Apply(f->frameStyle);
+				}
+			}
+		}
+
+		DOMNode *n = element->FirstChild();
+		while(n)
+		{
+			ApplyStyle((Element*)n);
+			n = n->NextSibling();
+		}
+
+		return true;
+	}
+
 	void StyleManager::Dump()
 	{
 		Style *s = GetFirst();
 		while(s)
 		{
-
-			printf("selector:%s\nclass:%s\npseudo:%s\nid:%s\n%d\n",
-				s->selector.c_str(),
-				s->className.c_str(),
-				s->pseudoClass.c_str(),
-				s->id.c_str(),
-				s->style.gradient.colorCount);
-
+			s->Dump();
+			s->DumpStyle();
 			s = s->next;
 		}
 	}

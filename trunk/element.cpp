@@ -105,7 +105,7 @@ namespace Dom
 		}
 
 		for(int i = 0; i<level; i++) printf("  ");
-		printf("%s[%d] %s\n", nodeName.c_str(), nodeType, nodeValue.c_str());
+		printf("%d %s[%d] %s\n", GetData(), nodeName.c_str(), nodeType, nodeValue.c_str());
 		if (HasAttributes())
 		{
 			DOMNode *n = attributes.GetFirst();

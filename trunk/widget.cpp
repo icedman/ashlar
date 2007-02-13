@@ -65,8 +65,6 @@ namespace Ash
 			return 0;
 		}
 
-		// document->Dump();
-
 		FrameBuilder fb;
 		fb.Register(new Frame());
 		fb.Register(new HFrame());
@@ -79,8 +77,6 @@ namespace Ash
 		if (!window)
 			return 0;
 
-		//window->Dump();
-
 		IWindow *w = (IWindow*)window;
 		w->Create(400,200);
 		w->Show(true);
@@ -90,8 +86,17 @@ namespace Ash
 
 		// stylesheets
 		window->stylesheet.LoadStyle(document);
-		window->stylesheet.Dump();
+		window->stylesheet.ApplyStyle((Element*)document->OwnerDocument());
 
+		if (0)
+		{
+			document->Dump();
+			window->Dump();
+			window->stylesheet.Dump();
+			return false;
+		}
+
+		window->Layout();
 		return true;
 	}
 

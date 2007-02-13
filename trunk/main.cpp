@@ -40,12 +40,3 @@ int main()
 
 	return 0;
 }
-
-
-/*
-todo
-move layout outside of style
-
-stylesheet id
-selector .class #id :state
-*/

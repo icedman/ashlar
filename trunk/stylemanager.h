@@ -33,10 +33,14 @@ namespace Layout
 	public:
 		bool Build(Element *e);
 		bool Apply(FrameStyle &fs);
-		bool GetStyleName(Element *e);
-		bool IsEqual(Style *s);
+		bool GetStyleName(Element *e);	//!< get style name. input style element
+		bool GetSelector(Element *e);		//!< get element selector
+
+		inline bool IsEqual(Style *s);
 
 		static Style* Create(Element *e);
+		void Dump();
+		void DumpStyle();
 
 		DOMString id;				//!< id
 		DOMString selector;		//!< selector, the element's tag name
@@ -55,7 +59,6 @@ namespace Layout
 		static void GetBordersXml(Borders &br, DOMNode *el);
 		//! Get border style from xml tree
 		static void GetBorderStyleXml(BorderStyle &bs, DOMNode *el);
-
 		//! Convert DOMString to alignment value
 		static inline int StringToAlign(DOMString *str, int defaultValue = 0);
 		//! Convert DOMStrng to color value
@@ -74,7 +77,9 @@ namespace Layout
 
 		Style* AddStyle(Element *element);
 		Style* GetStyle(Element *element);
+		Style* GetStyle(Style *style);
 		bool LoadStyle(Element *element);
+		bool ApplyStyle(Element *element);
 		void Free();
 
 		void Dump();
