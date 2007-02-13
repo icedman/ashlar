@@ -2,13 +2,31 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <!-- simple xul sample -->
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<stylesheet>
+		<style name="button">
+			<border width="2" color="#ff0000"/>
+		</style>
+		<style name="button:pressed">
+			<border type="" width="2">
+				<radius rightTop="10">0</radius>
+				<color>#ffffff</color>
+			</border>
+			<gradient type="linear" x="0" y="0" x2="0" y2="255">
+				<color offset="0">#886666</color>
+				<color offset="75">#ccaaaa</color>
+				<color offset="175">#997777</color>
+			</gradient>
+		</style>
+	</stylesheet>
 	<vbox flex="1" align="right">
 		<style>
+			<border type="" width="1"/>
 			<margin>20</margin>
 			<padding right="10"/>
 		</style>
 		<hbox flex="1" align="center" valign="middle">
 			<style>
+				<border type="" width="1"/>
 				<gradient type="linear" x="0" y="0" x2="0" y2="255">
 					<color offset="0">#d5d5d5</color>
 					<color offset="150">#c0c0c0</color>
@@ -16,30 +34,19 @@
 				</gradient>
 			</style>
 			<box>
-				<button label="button" width="80" height="40">
+				<button label="button" width="50" height="30"/>
+				<button label="button" width="50" height="30">
 					<style>
 						<layout>
 							<width>40</width>
 						</layout>
 						<border type="" width="1">
 							<radius rightTop="10">0</radius>
-							<color>#ffffff</color>
 						</border>
 						<gradient type="linear" x="0" y="0" x2="0" y2="255">
 							<color offset="0">#444444</color>
 							<color offset="75">#888888</color>
 							<color offset="175">#555555</color>
-						</gradient>
-					</style>
-					<style name=":hover">
-						<border type="" width="2">
-							<radius rightTop="10">0</radius>
-							<color>#ffffff</color>
-						</border>
-						<gradient type="linear" x="0" y="0" x2="0" y2="255">
-							<color offset="0">#886666</color>
-							<color offset="75">#ccaaaa</color>
-							<color offset="175">#997777</color>
 						</gradient>
 					</style>
 				</button>

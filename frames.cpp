@@ -68,13 +68,25 @@ namespace Layout
 
 	void Frame::SetState(int state)
 	{
+		if (!element)
+			return;
+
 		frameState = state;
 		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);
-		if (w)
-		{
-			Style *s = w->stylesheet.GetLast();
-			s->Apply(frameStyle);
-		}
+		if (!w)
+			return;
+
+			Style squery;
+			squery.GetSelector(GetElement());
+			if (frameState == PRESSED)
+				squery.pseudoClass = "pressed";
+			squery.Dump();
+			Style *s = w->stylesheet.GetStyle(&squery);
+			if (s)
+			{
+				s->Apply(frameStyle);
+			}
+
 		Redraw();
 	}
 
@@ -184,5 +196,12 @@ namespace Layout
 		{
 			w->Redraw();
 		}
+	}
+
+	Dom::Element* Frame::SetElement(Dom::Element *e)
+	{
+		Style::GetLayoutXml(frameStyle.layout, e);
+		element = e;
+		return e;
 	}
 };

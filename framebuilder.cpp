@@ -79,6 +79,7 @@ namespace Layout
 			{
 				Frame *nw = f->Create();
 				e->SetData((void*)nw);
+				nw->SetElement(e);
 				return nw;
 			}
 			f = f->next;

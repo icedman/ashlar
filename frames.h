@@ -57,8 +57,8 @@ namespace Layout
 		virtual int GetState() { return frameState; }
 		virtual void Redraw();
 
-		Dom::Element* SetElement(Dom::Element *e) { element = e; return e; }
-		Dom::Element* GetElement() { return element; }
+		virtual Dom::Element* SetElement(Dom::Element *e);
+		virtual Dom::Element* GetElement() { return element; }
 
 		// frameType 0 is base FRAME
 		virtual bool IsType(int frameType) { return (frameType == 0); }
