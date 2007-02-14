@@ -46,8 +46,7 @@ namespace Dom
 
 		// attributes
 		for (int i = 0; attr[i]; i += 2) {
-			bool isId = strcmpi(attr[i], "id") == 0;
-			child->SetAttribute(&DOMString(attr[i]), &DOMString(attr[i+1]), isId);
+			child->SetAttribute(&DOMString(attr[i]), &DOMString(attr[i+1]));
 		}
 	}
 

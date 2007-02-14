@@ -86,6 +86,9 @@ namespace Dom
 
 		virtual DOMNode* Create() { return new DOMNode(); }
 		virtual DOMString* Value() { return &nodeValue; }
+		virtual DOMNode* Clone(bool deep = false) { return 0; }
+		virtual bool CloneChildren(DOMNode *dst, bool deep = false) { return false; }
+		virtual bool Merge(DOMNode *node) { return false; }
 
 		virtual void Free();
 

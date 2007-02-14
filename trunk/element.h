@@ -38,11 +38,16 @@ namespace Dom
 		NodeList* GetElementsById(DOMString *id);
 		bool HasAttribute(DOMString *name);
 		bool HasAttributes() { return attributes.Length()>0; }
-		DOMNode* SetAttribute(DOMString *name, DOMString *value = 0, bool isId = false);
-		DOMNode* SetAttributeNode(DOMNode *node, bool isId = false);
+		DOMNode* SetAttribute(DOMString *name, DOMString *value = 0);
+		DOMNode* SetAttributeNode(DOMNode *node);
+		virtual DOMString* Value() { return &nodeValue; }
 
 		void* SetData(void *d) { data = d; return d; }
 		void* GetData() { return data; }
+
+		virtual DOMNode* Clone(bool deep = false);
+		virtual bool CloneChildren(DOMNode *dst, bool deep = false);
+		virtual bool Merge(DOMNode *node);
 
 		virtual void Free();
 

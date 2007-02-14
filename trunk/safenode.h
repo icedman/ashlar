@@ -52,6 +52,10 @@ namespace Dom
 		//! Gets the DOMNode of a resulting query
 		Element* Node();
 
+		SafeNode* GetElement(const char* name) { return GetElement(&DOMString(name)); }
+		SafeNode* GetAttribute(const char* name) { return GetAttribute(&DOMString(name)); }
+		SafeNode* GetValue(const char* name) { return GetValue(&DOMString(name)); }
+
 	private:
 		SafeNode *explorer;
 		Element *element;
