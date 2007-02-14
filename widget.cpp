@@ -17,6 +17,7 @@ code.google.com/p/ashlar
 */
 
 #include "widget.h"
+#include "safenode.h"
 
 namespace Ash
 {
@@ -77,10 +78,6 @@ namespace Ash
 		if (!window)
 			return 0;
 
-		IWindow *w = (IWindow*)window;
-		w->Create(400,200);
-		w->Show(true);
-
 		// register mouse events
 		window->RegisterEvents(window);
 
@@ -94,6 +91,10 @@ namespace Ash
 			window->Dump();
 			window->stylesheet.Dump();
 			return false;
+		} else {
+			IWindow *w = (IWindow*)window;
+			w->Create(400,200);
+			w->Show(true);
 		}
 
 		window->Layout();

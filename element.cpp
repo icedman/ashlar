@@ -17,6 +17,7 @@ code.google.com/p/ashlar
 */
 
 #include "document.h"
+#include "safenode.h"
 
 namespace Dom
 {
@@ -78,18 +79,14 @@ namespace Dom
 		return (GetAttributeNode(name)!=0);
 	}
 
-	DOMNode* Element::SetAttribute(DOMString *name, DOMString *value, bool isId)
+	DOMNode* Element::SetAttribute(DOMString *name, DOMString *value)
 	{
-		Attribute *attr = new Attribute(name, value, isId);
-		return SetAttributeNode(attr, isId);
+		Attribute *attr = new Attribute(name, value);
+		return SetAttributeNode(attr);
 	}
 
-	DOMNode* Element::SetAttributeNode(DOMNode *node, bool isId)
+	DOMNode* Element::SetAttributeNode(DOMNode *node)
 	{
-		if (node->nodeType == ATTRIBUTE_NODE)
-		{
-			((Attribute*)node)->isId = isId;
-		}
 		attributes.Push(node);
 		return node;
 	}
@@ -128,6 +125,88 @@ namespace Dom
 	void Element::Free()
 	{
 		DOMNode::Free();
+	}
+
+	DOMNode* Element::Clone(bool deep)
+	{		
+		Element *n = new Element();
+		n->nodeName = nodeName;
+		n->nodeValue = nodeValue;
+
+		// attributes
+		if (attributes.Length())
+		{
+			DOMNode *a = attributes.GetFirst();
+			while(a)
+			{
+				((Element*)n)->SetAttribute(&a->nodeName, &a->nodeValue);
+				a = a->next;
+			}
+		}
+
+		// child nodes
+		if (deep && childNodes.Length())
+		{
+			CloneChildren(n, deep);
+		}
+
+		return (DOMNode*)n;
+	}
+
+	bool Element::CloneChildren(DOMNode *dst, bool deep)
+	{
+		DOMNode *n = childNodes.GetFirst();
+		while(n)
+		{
+			DOMNode *clone = (Element*)n->Clone(deep);
+			dst->AppendChild(clone);
+			n = n->NextSibling();
+		}
+		return true;
+	}
+
+	bool Element::Merge(DOMNode *src)
+	{
+		// attributes
+		DOMNode *n = src->attributes.GetFirst();
+		while(n)
+		{
+			DOMNode *a = GetAttributeNode(&n->nodeName);
+			if (a)
+			{
+				a->nodeValue = n->nodeValue;
+			} else {
+				SetAttribute(&n->nodeName, &n->nodeValue);
+			}
+			n = n->next;
+		}
+
+		// child nodes
+		SafeNode snode(this);
+		n = src->childNodes.GetFirst();
+		while(n)
+		{
+			SafeNode *nl = snode.GetElement(&n->nodeName);
+			bool merged = false;
+			for(int i = 0; i<nl->Length(); i++)
+			{
+				Element *ee = nl->Item(i)->Node();
+				if (ee->nodeName == n->nodeName)
+				{
+					// same name
+					// same id
+					ee->Merge(n);
+					merged = true;
+					break;
+				}
+			}
+			if (!merged)
+			{
+				AppendChild(n->Clone(true));
+			}
+			n = n->next;
+		}
+		return true;
 	}
 
 	// Attribute
