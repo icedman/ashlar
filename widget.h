@@ -22,9 +22,9 @@ code.google.com/p/ashlar
 #include "button.h"
 
 #include "document.h"
+#include "stylesheet.h"
 #include "docbuilder.h"
 #include "framebuilder.h"
-#include "stylemanager.h"
 
 using namespace Dom;
 using namespace Layout;
@@ -51,6 +51,7 @@ namespace Ash
 
 		WindowFrame *window;
 		DOMDocument *document;
+		StyleSheet  *stylesheet;
 	};
 
 }

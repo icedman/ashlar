@@ -59,10 +59,21 @@ namespace Dom
 		DOMNode *e = FirstChild();
 		while(e)
 		{
-			//if (e->nodeName == *tagName)
 			if (stricmp(e->nodeName.c_str(), tagName->c_str()) == 0)
 			{
 				n->Push(e);
+			}
+			// deep
+			if (1)
+			{
+				NodeList *nn = ((Element *)e)->GetElementsByTagName(tagName);
+				DOMNode *nnode = nn->GetFirst();
+				while(nnode)
+				{
+					n->Push(nnode);
+					nnode = nnode->next;
+				}
+				delete nn;
 			}
 			e = e->NextSibling();
 		}
@@ -71,7 +82,38 @@ namespace Dom
 
 	NodeList* Element::GetElementsById(DOMString *id)
 	{
-		return 0;
+		return GetElementsByAttribute(&DOMString("id"), id);
+	}
+
+	NodeList* Element::GetElementsByAttribute(DOMString *attr, DOMString *value)
+	{
+		NodeList *n = new NodeList();
+		DOMNode *e = FirstChild();
+		while(e)
+		{
+			DOMString *tmp = SafeNode((Element*)e).GetAttribute(attr)->Value();
+			if (tmp)
+			{
+				if (stricmp(tmp->c_str(), value->c_str()) == 0)
+				{
+					n->Push(e);
+				}
+			}
+			// deep
+			if (1)
+			{
+				NodeList *nn = ((Element *)e)->GetElementsByAttribute(attr, value);
+				DOMNode *nnode = nn->GetFirst();
+				while(nnode)
+				{
+					n->Push(nnode);
+					nnode = nnode->next;
+				}
+				delete nn;
+			}
+			e = e->NextSibling();
+		}
+		return n;
 	}
 
 	bool Element::HasAttribute(DOMString *name)
@@ -102,17 +144,18 @@ namespace Dom
 		}
 
 		for(int i = 0; i<level; i++) printf("  ");
-		printf("%d %s[%d] %s\n", GetData(), nodeName.c_str(), nodeType, nodeValue.c_str());
+		printf("%s", nodeName.c_str());
 		if (HasAttributes())
 		{
 			DOMNode *n = attributes.GetFirst();
+			printf(" > ");
 			while(n)
 			{
-				for(int i = 0; i<level; i++) printf("  ");
-				printf(" > %s = %s\n", n->nodeName.c_str(), n->nodeValue.c_str());
+				printf("%s = %s; ", n->nodeName.c_str(), n->nodeValue.c_str());
 				n = n->next;
 			}
 		}
+		printf("\n");
 
 		n = FirstChild();
 		while(n)
@@ -132,6 +175,7 @@ namespace Dom
 		Element *n = new Element();
 		n->nodeName = nodeName;
 		n->nodeValue = nodeValue;
+		n->data = data;
 
 		// attributes
 		if (attributes.Length())

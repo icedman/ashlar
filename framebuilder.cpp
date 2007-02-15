@@ -21,6 +21,25 @@ code.google.com/p/ashlar
 
 namespace Layout
 {
+	FrameBuilder::FrameBuilder()
+	{
+	}
+
+	FrameBuilder::~FrameBuilder()
+	{
+		Free();
+	}
+
+	void FrameBuilder::Free()
+	{
+		Frame *f;
+		while(f = frameTemplates.GetFirst())
+		{
+			frameTemplates.Remove(f);
+			delete f;
+		}
+	}
+
 	bool FrameBuilder::Register(Frame* f)
 	{
 		return frameTemplates.Push(f);
@@ -51,7 +70,6 @@ namespace Layout
 			{
 				parent->AddFrame(frame);
 			}
-
 			frameStack.Push(frame);
 		}
 
@@ -79,7 +97,7 @@ namespace Layout
 			{
 				Frame *nw = f->Create();
 				e->SetData((void*)nw);
-				nw->SetElement(e);
+				f->SetElement(e);
 				return nw;
 			}
 			f = f->next;

@@ -18,6 +18,7 @@ code.google.com/p/ashlar
 
 #pragma once
 
+#include "debug.h"
 #include "common.h"
 #include "rect.h"
 #include "list.h"
@@ -72,6 +73,18 @@ namespace Layout
 
 		void Dump();
 
+		inline int CountFrames(int lastCount = 0)
+		{
+			lastCount++;
+			Frame *f = frames.GetFirst();
+			while(f)
+			{
+				lastCount = f->CountFrames(lastCount);
+				f = f->next;
+			}
+			return lastCount;
+		}
+
 	public:
 		FrameStyle frameStyle;	//!< Frame style information
 
@@ -81,6 +94,8 @@ namespace Layout
 		int frameState;
 
 		Dom::Element* element;
+
+		TRACE
 	};
 
 }

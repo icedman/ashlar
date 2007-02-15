@@ -19,6 +19,7 @@ code.google.com/p/ashlar
 #include "frames.h"
 #include "framestyle.h"
 #include "windowframe.h"
+#include "stylesheet.h"
 
 namespace Layout
 {
@@ -76,17 +77,6 @@ namespace Layout
 		if (!w)
 			return;
 
-			Style squery;
-			squery.GetSelector(GetElement());
-			if (frameState == PRESSED)
-				squery.pseudoClass = "pressed";
-			squery.Dump();
-			Style *s = w->stylesheet.GetStyle(&squery);
-			if (s)
-			{
-				s->Apply(frameStyle);
-			}
-
 		Redraw();
 	}
 
@@ -115,7 +105,7 @@ namespace Layout
 
 	bool Frame::Layout()
 	{
-		printf("layout %s\n", GetName());
+		//printf("layout %s\n", GetName());
 		return true;
 	}
 
@@ -165,6 +155,19 @@ namespace Layout
 
 	void Frame::Free()
 	{
+		if (parentFrame)
+		{
+			parentFrame->RemoveFrame(this);
+		}
+
+		// free child frames
+		Frame *f;
+		while(f = frames.GetFirst())
+		{
+			frames.Remove(f);
+			f->Free();
+		}
+
 		delete this;
 	}
 
@@ -200,7 +203,6 @@ namespace Layout
 
 	Dom::Element* Frame::SetElement(Dom::Element *e)
 	{
-		Style::GetLayoutXml(frameStyle.layout, e);
 		element = e;
 		return e;
 	}

@@ -18,6 +18,8 @@ code.google.com/p/ashlar
 
 #pragma once
 
+#include "debug.h"
+#include "common.h"
 #include "domstring.h"
 #include "list.h"
 
@@ -46,7 +48,8 @@ namespace Dom
 	{
 	public:
 		unsigned long Length() { return Size(); }
-		DOMNode* item(unsigned long index) { return GetAt(index); }
+		DOMNode* Item(unsigned long index) { return GetAt(index); }
+		TRACE
 	};
 
 	//! DOM NamedNodeMap class
@@ -91,6 +94,18 @@ namespace Dom
 		virtual bool Merge(DOMNode *node) { return false; }
 
 		virtual void Free();
+
+		inline int CountNodes(int lastCount = 0)
+		{
+			lastCount++;
+			DOMNode *n = childNodes.GetFirst();
+			while(n)
+			{
+				lastCount = n->CountNodes(lastCount);
+				n = n->next;
+			}
+			return lastCount;
+		}
 
 	public:
 		DOMString nodeName;

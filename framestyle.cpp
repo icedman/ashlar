@@ -44,7 +44,7 @@ namespace Layout
 		frameStyle.margin.bottom = UNASSIGNED;
 
 		// borders
-		frameStyle.border.width = 0;
+		frameStyle.border.width = 2;
 		frameStyle.border.left = UNASSIGNED;
 		frameStyle.border.right = UNASSIGNED;
 		frameStyle.border.top = UNASSIGNED;

@@ -18,6 +18,8 @@ code.google.com/p/ashlar
 
 #pragma once
 
+#include "debug.h"
+
 namespace Ash
 {
 
@@ -38,6 +40,7 @@ namespace Ash
 	public:
 		_Node *prev;
 		_Node *next;
+		TRACEOBJ(nodeRef)
 	};
 
 
@@ -197,7 +200,7 @@ namespace Ash
 			if (!n) return 0;
 
 			unsigned long s=0;
-			while(s != index && n->next)
+			while(s!=index && n->next)
 			{
 				n = n->next;
 				s++;
@@ -235,6 +238,7 @@ namespace Ash
 		_Node *head;
 		_Node *tail;
 		unsigned long	size;
+		TRACEOBJ(nodeRef)
 	};
 
 }
