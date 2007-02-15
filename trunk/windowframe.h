@@ -23,7 +23,6 @@ code.google.com/p/ashlar
 #include "layout.h"
 #include "render.h"
 #include "frametypes.h"
-#include "stylemanager.h"
 
 namespace Layout
 {
@@ -45,7 +44,6 @@ namespace Layout
 		void Redraw();
 
 	public:
-		StyleManager stylesheet;
 		Render::RenderEngine render;
 		Events::MouseEvents mouseEvents;
 	};

@@ -18,6 +18,7 @@ code.google.com/p/ashlar
 
 #include "widget.h"
 #include "safenode.h"
+#include "stylesheet.h"
 
 namespace Ash
 {
@@ -25,6 +26,7 @@ namespace Ash
 	{
 		window = 0;
 		document = 0;
+		stylesheet = 0;
 	}
 
 	Widget::~Widget()
@@ -56,6 +58,10 @@ namespace Ash
 		if (!document)
 			return false;
 
+		stylesheet = new StyleSheet();
+		stylesheet->Load(document);
+		stylesheet->Dump();
+
 		return true;
 	}
 
@@ -80,16 +86,11 @@ namespace Ash
 
 		// register mouse events
 		window->RegisterEvents(window);
-
-		// stylesheets
-		window->stylesheet.LoadStyle(document);
-		window->stylesheet.ApplyStyle((Element*)document->OwnerDocument());
-
 		if (0)
 		{
 			document->Dump();
 			window->Dump();
-			window->stylesheet.Dump();
+			stylesheet->Dump();
 			return false;
 		} else {
 			IWindow *w = (IWindow*)window;
@@ -97,6 +98,8 @@ namespace Ash
 			w->Show(true);
 		}
 
+		stylesheet->ApplyStyle(document);
+		// bug: layout need to be called multiple times when no definite widths and heights are available
 		window->Layout();
 		return true;
 	}
@@ -107,6 +110,16 @@ namespace Ash
 		{
 			document->Free();
 			document = 0;
+		}
+		if (window)
+		{
+			window->Free();
+			window = 0;
+		}
+		if (stylesheet)
+		{
+			stylesheet->Free();
+			stylesheet = 0;
 		}
 	}
 }

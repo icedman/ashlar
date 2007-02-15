@@ -81,7 +81,7 @@ namespace Dom
 		explorer = new SafeNode();
 		if (nodes)
 		{
-			explorer->Attach((Element*)nodes->item(index));
+			explorer->Attach((Element*)nodes->Item(index));
 		}
 		return explorer;
 	}
@@ -92,7 +92,7 @@ namespace Dom
 		explorer = new SafeNode();
 		if (!element && nodes)
 		{
-			element = (Element*)nodes->item(0);
+			element = (Element*)nodes->Item(0);
 		}
 		if (element)
 		{
@@ -108,7 +108,7 @@ namespace Dom
 		explorer = new SafeNode();
 		if (!element && nodes)
 		{
-			element = (Element*)nodes->item(0);
+			element = (Element*)nodes->Item(0);
 		}
 		if (element)
 		{
@@ -139,21 +139,21 @@ namespace Dom
 		if (nodes)
 		{
 			if (nodes->Length())
-				return (Element*)nodes->item(0);
+				return (Element*)nodes->Item(0);
 		}
 		return 0;
 	}
 
-	DOMString* SafeNode::Value()
+	DOMString* SafeNode::Value(DOMString *defaultValue)
 	{
 		if (element)
 			return element->Value();
 		if (nodes)
 		{
 			if (nodes->Length())
-				return nodes->item(0)->Value();
+				return nodes->Item(0)->Value();
 		}
-		return 0;
+		return defaultValue;
 	}
 
 	int SafeNode::ValueInt(int defaultValue)

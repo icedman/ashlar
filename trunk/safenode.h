@@ -46,7 +46,7 @@ namespace Dom
 		//! Finds an attribute of an element or and child element of the same name
 		SafeNode* GetValue(DOMString *name);
 		//! Gets the nodeValue of a resulting query
-		DOMString* Value();
+		DOMString* Value(DOMString *defaultValue = 0);
 		//! Gets the integer value of a resulting query
 		int ValueInt(int defaultValue);
 		//! Gets the DOMNode of a resulting query

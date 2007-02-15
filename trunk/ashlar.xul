@@ -3,15 +3,19 @@
 <!-- simple xul sample -->
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	<stylesheet>
+		<style>
+			<border width="1" color="#c0c0c0"/>
+		</style>
 		<style name="button">
-			<border width="1">
-				<radius rightTop="10">0</radius>
-				<color>#ff0000</color>
-			</border>
-			<gradient type="radial" style="diagonal"/>
+			<border width="1" color="#000000"/>
+			<gradient type="linear" x="0" y="0" x2="0" y2="255">
+				<color offset="0">#666666</color>
+				<color offset="75">#aaaaaa</color>
+				<color offset="175">#777777</color>
+			</gradient>
 		</style>
 		<style name="button:pressed">
-			<border color="#000000"/>
+			<border width="2" color="#000000"/>
 			<gradient type="linear" x="0" y="0" x2="0" y2="255">
 				<color offset="0">#d5d5d5</color>
 				<color offset="150">#c0c0c0</color>
@@ -19,6 +23,8 @@
 			</gradient>
 		</style>
 	</stylesheet>
+	<button label="button" width="50" height="30"/>
+	<button label="button" width="50" height="30"/>
 	<vbox flex="1" align="right">
 		<hbox flex="1" align="center" valign="middle">
 			<box>
@@ -26,5 +32,14 @@
 				<button label="button" width="50" height="30"/>
 			</box>
 		</hbox>
+		<button label="button" width="50" height="30">
+			<style>
+				<gradient type="linear" x="0" y="0" x2="0" y2="255">
+					<color offset="0">#d5d5d5</color>
+					<color offset="150">#c0c0c0</color>
+					<color offset="255">#e5e5e5</color>
+				</gradient>
+			</style>
+		</button>
 	</vbox>
 </window>

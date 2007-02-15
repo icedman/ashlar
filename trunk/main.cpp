@@ -17,6 +17,7 @@ code.google.com/p/ashlar
 */
 
 #include "widget.h"
+#include "common.h"
 
 using namespace Ash;
 
@@ -29,6 +30,8 @@ int main()
 	if (!widget.Create())
 		return 0;
 
+	printf("unfreed objects:%d\n", Ref::GetCount());
+
 	MSG msg;
 	while (GetMessage(&msg, 0, 0, 0))
 	{
@@ -38,5 +41,6 @@ int main()
 
 	widget.Destroy();
 
+	printf("unfreed objects:%d\n", Ref::GetCount());
 	return 0;
 }

@@ -18,29 +18,28 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include "frames.h"
-#include "document.h"
+#define STRICT
+#define WIN32_LEAN_AND_MEAN
+#define _CRT_SECURE_NO_DEPRECATE
 
-using namespace Dom;
+#include <stdio.h>
 
-namespace Layout
+#define DEBUG
+
+#ifdef DEBUG
+extern int objCount;
+#define TRACE Ref refObject;
+#define TRACEOBJ(_o) Ref _o;
+#else
+#define TRACE
+#define TRACEOBJ(_o)
+#endif
+
+class Ref
 {
-	class FrameBuilder
-	{
-	public:
-		FrameBuilder();
-		~FrameBuilder();
+public:
+	Ref();
+	~Ref();
 
-		bool Register(Frame* f);
-		void Unregister(Frame* f);
-		void Free();
-
-		Frame* Build(DOMDocument *doc);
-		Frame* BuildFrames(Element *element);
-		Frame* CreateFrame(Element *element);
-
-		FrameList frameTemplates;
-		FrameList frameStack;
-		Frame* root;
-	};
-}
+	static int GetCount();
+};

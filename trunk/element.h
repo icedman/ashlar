@@ -36,6 +36,7 @@ namespace Dom
 		DOMNode* GetAttributeNode(DOMString *name);
 		NodeList* GetElementsByTagName(DOMString *tagName);
 		NodeList* GetElementsById(DOMString *id);
+		NodeList* GetElementsByAttribute(DOMString *attr, DOMString *value);
 		bool HasAttribute(DOMString *name);
 		bool HasAttributes() { return attributes.Length()>0; }
 		DOMNode* SetAttribute(DOMString *name, DOMString *value = 0);
