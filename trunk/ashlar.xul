@@ -7,19 +7,25 @@
 			<border width="1" color="#c0c0c0"/>
 		</style>
 		<style name="button">
-			<border width="1" color="#000000"/>
+			<layout width="60" height="30"/>
+			<border width="1" color="#000000">
+				<radius>2</radius>
+			</border>
 			<gradient type="linear" x="0" y="0" x2="0" y2="255">
 				<color offset="0">#666666</color>
 				<color offset="75">#aaaaaa</color>
 				<color offset="175">#777777</color>
 			</gradient>
 		</style>
-		<style name="button:pressed">
+		<style name="button:hover">
 			<border width="2" color="#000000"/>
+		</style>
+		<style name="button:pressed">
+			<border width="2" color="#555555"/>
 			<gradient type="linear" x="0" y="0" x2="0" y2="255">
-				<color offset="0">#d5d5d5</color>
-				<color offset="150">#c0c0c0</color>
-				<color offset="255">#e5e5e5</color>
+				<color offset="0">#777777</color>
+				<color offset="75">#bbbbbb</color>
+				<color offset="175">#888888</color>
 			</gradient>
 		</style>
 	</stylesheet>
@@ -29,11 +35,11 @@
 		<hbox flex="1" align="center" valign="middle">
 			<box>
 				<button label="button" width="50" height="30"/>
-				<button label="button" width="50" height="30"/>
+				<button class="classed" label="button" width="50" height="30"/>
 			</box>
 		</hbox>
 		<button label="button" width="50" height="30">
-			<style>
+			<style name=":pressed">
 				<gradient type="linear" x="0" y="0" x2="0" y2="255">
 					<color offset="0">#d5d5d5</color>
 					<color offset="150">#c0c0c0</color>

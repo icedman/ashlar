@@ -49,7 +49,7 @@ namespace Dom
 		return true;
 	}
 
-	bool SafeNode::Attach(NodeList *n)
+	bool SafeNode::Attach(NodeList2 *n)
 	{
 		Free();
 		FreeNodes();
@@ -81,7 +81,8 @@ namespace Dom
 		explorer = new SafeNode();
 		if (nodes)
 		{
-			explorer->Attach((Element*)nodes->Item(index));
+			if (nodes->Length() > index)
+				explorer->Attach((Element*)nodes->Item(index));
 		}
 		return explorer;
 	}
@@ -92,11 +93,12 @@ namespace Dom
 		explorer = new SafeNode();
 		if (!element && nodes)
 		{
-			element = (Element*)nodes->Item(0);
+			if (nodes->Length())
+				element = (Element*)nodes->Item(0);
 		}
 		if (element)
 		{
-			NodeList *n = element->GetElementsByTagName(tagName);
+			NodeList2 *n = element->GetElementsByTagName(tagName);
 			explorer->Attach(n);
 		}
 		return explorer;
@@ -108,7 +110,8 @@ namespace Dom
 		explorer = new SafeNode();
 		if (!element && nodes)
 		{
-			element = (Element*)nodes->Item(0);
+			if (nodes->Length())
+				element = (Element*)nodes->Item(0);
 		}
 		if (element)
 		{
@@ -128,8 +131,10 @@ namespace Dom
 		{
 			return snode;
 		}
+
 		Free();
-		return new SafeNode();
+		explorer = new SafeNode();
+		return explorer;
 	}
 
 	Element* SafeNode::Node()

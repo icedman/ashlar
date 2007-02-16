@@ -29,7 +29,6 @@ namespace Dom
 	public:
 		DOMDocument();
 		DOMDocument(DOMString *name);
-		~DOMDocument();
 		
 		Attribute* createAttribute(DOMString *name);
 		CDataSection* createCDataSection();

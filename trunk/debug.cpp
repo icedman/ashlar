@@ -29,6 +29,7 @@ Ref::Ref()
 #ifdef DEBUG
 	objCount++;
 #endif
+	//printf("create %d\n", this);
 }
 
 Ref::~Ref()
@@ -36,6 +37,7 @@ Ref::~Ref()
 #ifdef DEBUG
 	objCount--;
 #endif
+	//printf("free %d\n", this);
 }
 
 int Ref::GetCount()

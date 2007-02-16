@@ -28,15 +28,14 @@ namespace Dom
 	public:
 		Element();
 		Element(DOMString *tagName);
-		~Element();
 
 		DOMString* TagName() { return &nodeName; }
 
 		DOMString* GetAttribute(DOMString *name);
 		DOMNode* GetAttributeNode(DOMString *name);
-		NodeList* GetElementsByTagName(DOMString *tagName);
-		NodeList* GetElementsById(DOMString *id);
-		NodeList* GetElementsByAttribute(DOMString *attr, DOMString *value);
+		NodeList2* GetElementsByTagName(DOMString *tagName);
+		NodeList2* GetElementsById(DOMString *id);
+		NodeList2* GetElementsByAttribute(DOMString *attr, DOMString *value);
 		bool HasAttribute(DOMString *name);
 		bool HasAttributes() { return attributes.Length()>0; }
 		DOMNode* SetAttribute(DOMString *name, DOMString *value = 0);
@@ -49,10 +48,6 @@ namespace Dom
 		virtual DOMNode* Clone(bool deep = false);
 		virtual bool CloneChildren(DOMNode *dst, bool deep = false);
 		virtual bool Merge(DOMNode *node);
-
-		virtual void Free();
-
-		void Dump();
 
 	private:
 		void* data;

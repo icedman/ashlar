@@ -23,12 +23,11 @@ using namespace Ash;
 
 int main()
 {
-	Widget widget;
-	if (!widget.Load("ashlar.xul"))
+	Widget *widget = new Widget();
+	if (!widget->Load("ashlar.xul"))
 		return 0;
 
-	if (!widget.Create())
-		return 0;
+	//widget->Dump();
 
 	printf("unfreed objects:%d\n", Ref::GetCount());
 
@@ -39,7 +38,7 @@ int main()
 		DispatchMessage(&msg);
 	}
 
-	widget.Destroy();
+	delete widget;
 
 	printf("unfreed objects:%d\n", Ref::GetCount());
 	return 0;

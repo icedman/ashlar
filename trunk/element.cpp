@@ -35,10 +35,6 @@ namespace Dom
 		data = 0;
 	}
 
-	Element::~Element()
-	{
-	}
-
 	DOMString* Element::GetAttribute(DOMString *name)
 	{
 		DOMNode *n = GetAttributeNode(name);
@@ -53,25 +49,23 @@ namespace Dom
 		return n;
 	}
 
-	NodeList* Element::GetElementsByTagName(DOMString *tagName)
+	NodeList2* Element::GetElementsByTagName(DOMString *tagName)
 	{
-		NodeList *n = new NodeList();
+		NodeList2 *n = new NodeList2();
 		DOMNode *e = FirstChild();
 		while(e)
 		{
 			if (stricmp(e->nodeName.c_str(), tagName->c_str()) == 0)
 			{
-				n->Push(e);
+				n->push_back(e);
 			}
 			// deep
 			if (1)
 			{
-				NodeList *nn = ((Element *)e)->GetElementsByTagName(tagName);
-				DOMNode *nnode = nn->GetFirst();
-				while(nnode)
+				NodeList2 *nn = ((Element *)e)->GetElementsByTagName(tagName);
+				for(int i=0; i<nn->Length(); i++)
 				{
-					n->Push(nnode);
-					nnode = nnode->next;
+					n->push_back(nn->Item(i));
 				}
 				delete nn;
 			}
@@ -80,14 +74,14 @@ namespace Dom
 		return n;
 	}
 
-	NodeList* Element::GetElementsById(DOMString *id)
+	NodeList2* Element::GetElementsById(DOMString *id)
 	{
 		return GetElementsByAttribute(&DOMString("id"), id);
 	}
 
-	NodeList* Element::GetElementsByAttribute(DOMString *attr, DOMString *value)
+	NodeList2* Element::GetElementsByAttribute(DOMString *attr, DOMString *value)
 	{
-		NodeList *n = new NodeList();
+		NodeList2 *n = new NodeList2();
 		DOMNode *e = FirstChild();
 		while(e)
 		{
@@ -96,18 +90,16 @@ namespace Dom
 			{
 				if (stricmp(tmp->c_str(), value->c_str()) == 0)
 				{
-					n->Push(e);
+					n->push_back(e);
 				}
 			}
 			// deep
 			if (1)
 			{
-				NodeList *nn = ((Element *)e)->GetElementsByAttribute(attr, value);
-				DOMNode *nnode = nn->GetFirst();
-				while(nnode)
+				NodeList2 *nn = ((Element *)e)->GetElementsByAttribute(attr, value);
+				for(int i=0; i<nn->Length(); i++)
 				{
-					n->Push(nnode);
-					nnode = nnode->next;
+					n->push_back(nn->Item(i));
 				}
 				delete nn;
 			}
@@ -129,45 +121,7 @@ namespace Dom
 
 	DOMNode* Element::SetAttributeNode(DOMNode *node)
 	{
-		attributes.Push(node);
-		return node;
-	}
-
-	void Element::Dump()
-	{
-		int level = 0;
-		DOMNode *n = ParentNode();
-		while(n)
-		{
-			n = n->ParentNode();
-			level++;
-		}
-
-		for(int i = 0; i<level; i++) printf("  ");
-		printf("%s", nodeName.c_str());
-		if (HasAttributes())
-		{
-			DOMNode *n = attributes.GetFirst();
-			printf(" > ");
-			while(n)
-			{
-				printf("%s = %s; ", n->nodeName.c_str(), n->nodeValue.c_str());
-				n = n->next;
-			}
-		}
-		printf("\n");
-
-		n = FirstChild();
-		while(n)
-		{
-			((Element*)n)->Dump();
-			n = n->NextSibling();
-		}
-	}
-
-	void Element::Free()
-	{
-		DOMNode::Free();
+		return attributes.SetNamedItem(node);
 	}
 
 	DOMNode* Element::Clone(bool deep)
@@ -184,7 +138,7 @@ namespace Dom
 			while(a)
 			{
 				((Element*)n)->SetAttribute(&a->nodeName, &a->nodeValue);
-				a = a->next;
+				a = a->NextSibling();
 			}
 		}
 
@@ -222,7 +176,7 @@ namespace Dom
 			} else {
 				SetAttribute(&n->nodeName, &n->nodeValue);
 			}
-			n = n->next;
+			n = n->NextSibling();
 		}
 
 		// child nodes
@@ -248,7 +202,7 @@ namespace Dom
 			{
 				AppendChild(n->Clone(true));
 			}
-			n = n->next;
+			n = n->NextSibling();
 		}
 		return true;
 	}

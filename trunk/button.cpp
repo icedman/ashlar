@@ -29,22 +29,29 @@ namespace Layout
 
 		if (!r.Contains(mInfo->point))
 		{
-			if (GetState() == PRESSED)
+			if (GetState() == PRESSED || GetState() == HOVER)
 				SetState(NORMAL);
 			return true;
 		}
 
 		switch(eid)
 		{
+		case ONMOUSEMOVE:
+			if (GetState() != PRESSED && GetState() != HOVER)
+				SetState(HOVER);
+			break;
 		case ONMOUSEDOWN:
-			printf("down %s\n", GetName());
 			SetState(PRESSED);
 			break;
 		case ONMOUSEUP:
-			printf("up %s\n", GetName());
-			SetState(NORMAL);
+			if (GetState() == PRESSED)
+			{
+				printf("OnClick!\n");
+			}
+			SetState(HOVER);
 			break;
 		}
+
 		return true;
 	}
 
@@ -52,6 +59,7 @@ namespace Layout
 	{
 		manager->AddListener(new Event(ONMOUSEDOWN, this));
 		manager->AddListener(new Event(ONMOUSEUP, this));
+		manager->AddListener(new Event(ONMOUSEMOVE, this));
 		return true;
 	}
 }

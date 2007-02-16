@@ -27,6 +27,8 @@ namespace Layout
 	class HFrame : public Frame
 	{
 	public:
+		virtual ~HFrame() {}
+
 		virtual bool Layout();
 		virtual const char* GetName() { return "hbox"; }
 		virtual Frame* Create() { return new HFrame(); }
@@ -37,6 +39,8 @@ namespace Layout
 	class VFrame : public Frame
 	{
 	public:
+		virtual ~VFrame() {}
+
 		virtual bool Layout();
 		virtual const char* GetName() { return "vbox"; }
 		virtual Frame* Create() { return new VFrame(); }

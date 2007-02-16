@@ -19,6 +19,7 @@ code.google.com/p/ashlar
 #pragma once
 
 #include "element.h"
+#include "debug.h"
 
 namespace Dom
 {
@@ -31,7 +32,8 @@ namespace Dom
 		~SafeNode();
 
 		bool Attach(Element *e);
-		bool Attach(NodeList *n);
+		bool Attach(NodeList2 *n);
+
 		void Free();
 		void FreeNodes();
 
@@ -59,7 +61,9 @@ namespace Dom
 	private:
 		SafeNode *explorer;
 		Element *element;
-		NodeList *nodes;
+		NodeList2 *nodes;
+
+		TRACE
 	};
 
 }

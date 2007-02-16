@@ -18,26 +18,24 @@ code.google.com/p/ashlar
 
 #include "widget.h"
 #include "safenode.h"
-#include "stylesheet.h"
+#include "styleSheet.h"
 
 namespace Ash
 {
 	Widget::Widget()
 	{
-		window = 0;
-		document = 0;
-		stylesheet = 0;
+		styleSheet = 0;
 	}
 
 	Widget::~Widget()
 	{
-		Destroy();
+		Free();
 	}
 
 	bool Widget::Load(const char* filename)
 	{
-		if (document)
-			Destroy();
+		DOMDocument *document = 0;
+		WindowFrame *window = 0;
 
 		DOMBuilder db;
 		db.Initialize();
@@ -57,20 +55,12 @@ namespace Ash
 
 		if (!document)
 			return false;
+	
+		SetElement((Element*)document);
 
-		stylesheet = new StyleSheet();
-		stylesheet->Load(document);
-		stylesheet->Dump();
-
-		return true;
-	}
-
-	bool Widget::Create()
-	{
-		if (!document)
-		{
-			return 0;
-		}
+		styleSheet = new StyleSheet();
+		styleSheet->Load(document);
+		//styleSheet->Dump();
 
 		FrameBuilder fb;
 		fb.Register(new Frame());
@@ -78,48 +68,38 @@ namespace Ash
 		fb.Register(new VFrame());
 		fb.Register(new WindowFrame());
 		fb.Register(new Button());
-		fb.Build(document);
 
-		window = (WindowFrame*)fb.root;
+		window = (WindowFrame*)fb.Build(document);
 		if (!window)
 			return 0;
 
 		// register mouse events
 		window->RegisterEvents(window);
-		if (0)
-		{
-			document->Dump();
-			window->Dump();
-			stylesheet->Dump();
-			return false;
-		} else {
-			IWindow *w = (IWindow*)window;
-			w->Create(400,200);
-			w->Show(true);
-		}
 
-		stylesheet->ApplyStyle(document);
+		IWindow *w = (IWindow*)window;
+		w->Create(400,200);
+		w->Show(true);
+
+		styleSheet->ApplyStyle(element);
 		// bug: layout need to be called multiple times when no definite widths and heights are available
 		window->Layout();
+
+		AddFrame(window);
 		return true;
 	}
 
-	void Widget::Destroy()
+	void Widget::Free()
 	{
-		if (document)
+		if (styleSheet)
 		{
-			document->Free();
-			document = 0;
+			delete styleSheet;
+			styleSheet = 0;
 		}
-		if (window)
+
+		if (element)
 		{
-			window->Free();
-			window = 0;
-		}
-		if (stylesheet)
-		{
-			stylesheet->Free();
-			stylesheet = 0;
+			delete element;
+			element = 0;
 		}
 	}
 }

@@ -18,6 +18,7 @@ code.google.com/p/ashlar
 
 #include "frames.h"
 #include "framestyle.h"
+#include "widget.h"
 #include "windowframe.h"
 #include "stylesheet.h"
 
@@ -34,6 +35,7 @@ namespace Layout
 
 	Frame::~Frame()
 	{
+		Free();
 	}
 
 	bool Frame::SetParent(Frame* parent)
@@ -69,13 +71,30 @@ namespace Layout
 
 	void Frame::SetState(int state)
 	{
-		if (!element)
+		if (!element || frameState == state)
 			return;
 
 		frameState = state;
-		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);
+		Widget *w = (Widget*)GetParent(WIDGET);
 		if (!w)
 			return;
+
+		switch(frameState)
+		{
+		case PRESSED:
+			element->SetAttribute(&DOMString("#pseudoClass"),&DOMString("pressed"));
+			break;
+		case HOVER:
+			element->SetAttribute(&DOMString("#pseudoClass"),&DOMString("hover"));
+			break;
+		default:
+			element->SetAttribute(&DOMString("#pseudoClass"),&DOMString(""));
+			break;
+		}
+
+		StyleSheet *css = w->GetStyleSheet();
+		if (css)
+			css->ApplyStyle(element);
 
 		Redraw();
 	}
@@ -164,11 +183,8 @@ namespace Layout
 		Frame *f;
 		while(f = frames.GetFirst())
 		{
-			frames.Remove(f);
-			f->Free();
+			delete f;
 		}
-
-		delete this;
 	}
 
 	void Frame::Dump()
@@ -182,7 +198,7 @@ namespace Layout
 		}
 
 		for(int i = 0; i<level; i++) printf("  ");
-		printf("%s\n", GetName());
+		printf("%s %d\n", GetName(), GetElement());
 
 		f = frames.GetFirst();
 		while(f)
@@ -203,7 +219,8 @@ namespace Layout
 
 	Dom::Element* Frame::SetElement(Dom::Element *e)
 	{
-		element = e;
-		return e;
+		if (!element)
+			element = e;
+		return element;
 	}
 };

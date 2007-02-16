@@ -26,6 +26,7 @@ namespace Layout
 	const unsigned int BOX = 3;
 	const unsigned int WINDOW = 100;
 	const unsigned int BUTTON = 200;
+	const unsigned int WIDGET = 1000;
 
 #define FRAMETYPE(_type, _super) \
 	virtual bool IsType(int frameType) { if (frameType == _type) return true; return _super::IsType(frameType); }
