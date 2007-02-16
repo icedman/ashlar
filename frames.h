@@ -39,6 +39,9 @@ namespace Layout
 	class Frame : public Events::EventListener, public Node<Frame>
 	{
 	public:
+		Frame();
+		virtual ~Frame();
+
 		virtual bool SetParent(Frame*);		//!< Sets the parent of a frame
 		virtual Frame* GetRoot();				//!< Get root frame
 		virtual Frame* GetParent();			//!< Get parent of a frame
@@ -68,9 +71,7 @@ namespace Layout
 
 		virtual void Free();
 
-		Frame();
-		virtual ~Frame();
-
+#ifdef DEBUG
 		void Dump();
 
 		inline int CountFrames(int lastCount = 0)
@@ -84,18 +85,17 @@ namespace Layout
 			}
 			return lastCount;
 		}
+#endif
 
 	public:
 		FrameStyle frameStyle;	//!< Frame style information
 
-	private:
+	protected:
 		Frame *parentFrame;
 		FrameList frames;
 		int frameState;
 
 		Dom::Element* element;
-
-		TRACE
 	};
 
 }

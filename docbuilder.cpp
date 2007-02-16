@@ -20,12 +20,14 @@ code.google.com/p/ashlar
 
 namespace Dom
 {
-	bool DOMBuilder::Initialize()
+	bool DOMBuilder::Initialize(DOMDocument *d)
 	{
 		if (!XmlParser::Initialize())
 			return false;
 
-		DOMDocument *d = new DOMDocument();
+		if (!d)
+			d = new DOMDocument();
+
 		nodeStack.Clear();
 		nodeStack.Push(d);
 		return true;

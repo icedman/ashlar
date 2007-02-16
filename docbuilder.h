@@ -30,7 +30,7 @@ namespace Dom
 	class DOMBuilder : public XmlParser
 	{
 	public:
-		bool Initialize();
+		bool Initialize(DOMDocument *d = 0);
 		void Shutdown();
 		void OnStartElement(const XML_Char *name, const XML_Char **atts);
 		void OnEndElement(const XML_Char *name);

@@ -37,8 +37,14 @@ namespace Dom
 
 	DOMNode* NamedNodeMap::SetNamedItem(DOMNode *node)
 	{
+		// replace existing item
+		DOMNode *n = RemoveNamedItem(&node->nodeName);
+		if (n)
+			delete n;
+
 		if (Push(node))
 			return node;
+
 		return 0;
 	}
 
@@ -69,6 +75,7 @@ namespace Dom
 
 	DOMNode::~DOMNode()
 	{
+		Free();
 	}
 
 	DOMNode* DOMNode::AppendChild(DOMNode *node)
@@ -127,6 +134,13 @@ namespace Dom
 			parentNode->RemoveChild(this);
 		}
 
+		// free childNodes
+		DOMNode *child = 0;
+		while(child = FirstChild())
+		{
+			delete child;
+		}
+
 		// free attributes
 		DOMNode *attr;
 		while(attr = attributes.GetFirst())
@@ -134,14 +148,37 @@ namespace Dom
 			attributes.Remove(attr);
 			delete attr;
 		}
+	}
 
-		// free childNodes
-		DOMNode *child = 0;
-		while(child = FirstChild())
+	void DOMNode::Dump()
+	{
+		int level = 0;
+		DOMNode *n = ParentNode();
+		while(n)
 		{
-			child->Free();
+			n = n->ParentNode();
+			level++;
 		}
 
-		delete this;
+		for(int i = 0; i<level; i++) printf("  ");
+		printf("%s", nodeName.c_str());
+		if (attributes.Length())
+		{
+			DOMNode *n = attributes.GetFirst();
+			printf(" > ");
+			while(n)
+			{
+				printf("%s = %s; ", n->nodeName.c_str(), n->nodeValue.c_str());
+				n = n->NextSibling();
+			}
+		}
+		printf("\n");
+
+		n = FirstChild();
+		while(n)
+		{
+			n->Dump();
+			n = n->NextSibling();
+		}
 	}
 }

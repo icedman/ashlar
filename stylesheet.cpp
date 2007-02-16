@@ -182,13 +182,11 @@ namespace Dom
 	// StyleSheet
 	bool StyleSheet::Load(Element *element)
 	{
-		NodeList *nl = element->GetElementsByTagName(&DOMString("style"));
+		NodeList2 *nl = element->GetElementsByTagName(&DOMString("style"));
 
-		DOMNode *n = nl->GetFirst();
-		while(n)
+		for(int i=0; i<nl->Length(); i++)
 		{
-			AddStyle((Element*)n);
-			n = n->NextSibling();
+			AddStyle((Element*)nl->Item(i));
 		}
 
 		delete nl;
@@ -309,6 +307,7 @@ namespace Dom
 	bool StyleSheet::ApplyStyle(Element *element)
 	{
 		Frame *f = (Frame*)element->GetData();
+
 		DOMNode *n;
 		if (f)
 		{
@@ -321,7 +320,6 @@ namespace Dom
 			DOMString elPseudoClass;
 			GetSelector(element, elSelector, elId, elClassName, elPseudoClass);
 			SafeNode sel(element);
-
 
 			if (elId == "")
 			{
@@ -353,18 +351,18 @@ namespace Dom
 
 				if (apply)
 				{
-					/*
+
 					printf("%s apply %s .%s:%s #%s\n",
 						f->GetName(),
 						selector->c_str(),
 						className->c_str(),
 						pseudoClass->c_str(),
 						id->c_str());
-					*/
+
 					ApplyStyle(f->frameStyle, (Element*)n);
 				}
 
-				n = n->next;
+				n = n->NextSibling();
 			}
 
 			GetLayoutXml(f->frameStyle.layout, element);
@@ -374,7 +372,7 @@ namespace Dom
 		while(n)
 		{
 			ApplyStyle((Element*)n);
-			n= n->next;
+			n= n->NextSibling();
 		}
 		return true;
 	}

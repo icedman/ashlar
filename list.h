@@ -23,6 +23,8 @@ code.google.com/p/ashlar
 namespace Ash
 {
 
+
+
 	typedef bool (*SortFunc) (void*, void*);
 
 	//! simple list node template. does not free nodes on destroy
@@ -43,8 +45,6 @@ namespace Ash
 		TRACEOBJ(nodeRef)
 	};
 
-
-	//! simple list template. does not free nodes on destroy
 	template<class _Node>
 	class List {
 	public:

@@ -25,6 +25,8 @@ code.google.com/p/ashlar
 
 using namespace Ash;
 
+#include <vector>
+
 namespace Dom
 {
 	const unsigned short UNKNOWN_NODE = 0;
@@ -49,7 +51,13 @@ namespace Dom
 	public:
 		unsigned long Length() { return Size(); }
 		DOMNode* Item(unsigned long index) { return GetAt(index); }
-		TRACE
+	};
+
+	class NodeList2: public std::vector<DOMNode*>
+	{
+	public:
+		unsigned long Length() { return size(); }
+		DOMNode* Item(unsigned long index) { return at(index); }
 	};
 
 	//! DOM NamedNodeMap class
@@ -67,7 +75,7 @@ namespace Dom
 	public:
 		DOMNode();
 		DOMNode(DOMString *name);
-		~DOMNode();
+		virtual ~DOMNode();
 
 		DOMNode* FirstChild() { return childNodes.GetFirst(); }
 		DOMNode* LastChild() { return childNodes.GetLast(); }
@@ -95,6 +103,9 @@ namespace Dom
 
 		virtual void Free();
 
+#ifdef DEBUG
+		void Dump();
+
 		inline int CountNodes(int lastCount = 0)
 		{
 			lastCount++;
@@ -102,10 +113,11 @@ namespace Dom
 			while(n)
 			{
 				lastCount = n->CountNodes(lastCount);
-				n = n->next;
+				n = n->NextSibling();
 			}
 			return lastCount;
 		}
+#endif
 
 	public:
 		DOMString nodeName;

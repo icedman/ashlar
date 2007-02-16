@@ -18,6 +18,7 @@ code.google.com/p/ashlar
 
 #include "framebuilder.h"
 #include "framestyle.h"
+#include "frametypes.h"
 
 namespace Layout
 {
@@ -54,6 +55,7 @@ namespace Layout
 	{
 		root = 0;
 		BuildFrames(doc);
+		root->Dump();
 		return root;
 	}
 
@@ -62,7 +64,7 @@ namespace Layout
 		Frame *frame = CreateFrame(element);
 		if (frame)
 		{
-			if (!root)
+			if (!root && frame->IsType(WINDOW))
 				root = frame;
 
 			Frame *parent = frameStack.GetLast();
@@ -97,7 +99,7 @@ namespace Layout
 			{
 				Frame *nw = f->Create();
 				e->SetData((void*)nw);
-				f->SetElement(e);
+				nw->SetElement(e);
 				return nw;
 			}
 			f = f->next;

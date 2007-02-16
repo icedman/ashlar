@@ -33,25 +33,28 @@ using namespace Events;
 namespace Ash
 {
 	//! Widget class
-	class Widget
+	class Widget : public Frame
 	{
 	public:
 
 		Widget();
-		~Widget();
+		virtual ~Widget();
+
+		FRAMETYPE(WIDGET, Frame)
 
 		//! Loads widget from an xul file
 		bool Load(const char* filename);
-		//! Creates a widget 
-		bool Create();
-		//! Frees a widget
-		void Destroy();
+		virtual void Free();
+
+		StyleSheet* GetStyleSheet() { return styleSheet; }
+		DOMDocument* GetDocument() { return (DOMDocument*)element; }
+		// ScriptEngine* GetScriptEngine()
+		// Resources* GetResources()
 
 	private:
 
-		WindowFrame *window;
-		DOMDocument *document;
-		StyleSheet  *stylesheet;
+		StyleSheet  *styleSheet;
+		// JavaScript *scriptEngine;
 	};
 
 }

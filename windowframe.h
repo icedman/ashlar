@@ -30,6 +30,7 @@ namespace Layout
 	{
 	public:
 		WindowFrame();
+		virtual ~WindowFrame() {}
 
 		const char* GetName() { return "window"; }
 		Frame* Create() { return new WindowFrame(); }
@@ -37,6 +38,7 @@ namespace Layout
 
 		void OnSize(const Rect *r);
 		void OnDraw(HDC hdc, Rect *rc);
+		void OnMouseMove(Point p);
 		void OnMouseDown(int button, Point p);
 		void OnMouseUp(int button, Point p);
 

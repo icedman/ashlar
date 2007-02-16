@@ -36,10 +36,6 @@ namespace Dom
 			nodeName = *name;
 	}
 
-	DOMDocument::~DOMDocument()
-	{
-	}
-
 	Attribute* DOMDocument::createAttribute(DOMString *name)
 	{
 		return new Attribute(name);

@@ -57,6 +57,11 @@ namespace Layout
 		return true;
 	}
 
+	void WindowFrame::OnMouseMove(Point p)
+	{
+		mouseEvents.OnMouseEvent(Events::ONMOUSEMOVE, 0, p.x, p.y);
+	}
+
 	void WindowFrame::OnMouseDown(int button, Point p)
 	{
 		mouseEvents.OnMouseEvent(Events::ONMOUSEDOWN, button, p.x, p.y);
