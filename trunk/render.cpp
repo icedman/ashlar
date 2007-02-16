@@ -34,11 +34,14 @@ namespace Render
 		surface = 0;
 		hdc = 0;
 		hBmp = 0;
+		fontOptions = cairo_font_options_create();
+		cairo_font_options_set_antialias(fontOptions, CAIRO_ANTIALIAS_SUBPIXEL);
 	}
 
 	RenderEngine::~RenderEngine()
 	{
 		DestroyBuffer();
+		cairo_font_options_destroy(fontOptions);
 	}
 
 	bool RenderEngine::InitBuffer(HDC hdcTarget, const Rect* pRect)
@@ -342,6 +345,7 @@ namespace Render
 
 		cairo_text_extents_t extents;
 		cairo_set_font_size (cairo, fs->font.size);
+		cairo_set_font_options (cairo, fontOptions);
 		cairo_select_font_face (cairo, rc->GetName()->c_str(),  CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 		cairo_text_extents (cairo, text, &extents);
 
