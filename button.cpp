@@ -17,6 +17,10 @@ code.google.com/p/ashlar
 */
 
 #include "button.h"
+#include "windowframe.h"
+#include "safenode.h"
+
+using namespace Dom;
 
 namespace Layout
 {
@@ -61,5 +65,24 @@ namespace Layout
 		manager->AddListener(new Event(ONMOUSEUP, this));
 		manager->AddListener(new Event(ONMOUSEMOVE, this));
 		return true;
+	}
+
+	bool Button::Layout()
+	{
+		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);
+		if (w)
+		{
+			SafeNode *label = SafeNode(GetElement()).GetValue("label");
+			if (label->Value())
+			{
+				Render::RenderEngine *r = &w->render;
+				double width, height;
+				if (!r->GetTextExtents(&frameStyle, label->Value()->c_str(), width, height))
+					return HFrame::Layout();
+				frameStyle.layout.width = ISASSIGNED(frameStyle.layout.width) ? frameStyle.layout.width : width;
+				frameStyle.layout.height = ISASSIGNED(frameStyle.layout.height) ? frameStyle.layout.height : height;
+			}
+		}
+		return HFrame::Layout();
 	}
 }

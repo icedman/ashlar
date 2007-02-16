@@ -30,19 +30,8 @@ namespace Render
 	class RenderEngine
 	{
 	public:
-		RenderEngine()
-		{
-			cairo = 0;
-			fill = 0;
-			surface = 0;
-			hdc = 0;
-			hBmp = 0;
-		}
-
-		~RenderEngine()
-		{
-			DestroyBuffer();
-		}
+		RenderEngine();
+		~RenderEngine();
 
 		bool InitBuffer(HDC hdc, const Rect *);
 		void DestroyBuffer();
@@ -51,9 +40,12 @@ namespace Render
 
 		bool Render(Frame *, const Rect *clip = 0);
 		void DrawFrame(Frame *);
+		void DrawText(Frame *, const char *text);
 		void DrawRect(double x, double y, double x2, double y2);
 		void DrawBorder(Borders *br, BorderStyle *bs, double  x, double y, double x2, double y2, bool clip);
 		void DrawGradient(Gradient *gr, double x, double y, double x2, double y2);
+		
+		bool GetTextExtents(FrameStyle *fs, const char* text, double &width, double &height);
 
 	private:
 

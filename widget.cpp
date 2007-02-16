@@ -24,7 +24,7 @@ namespace Ash
 {
 	Widget::Widget()
 	{
-		styleSheet = 0;
+		resources = ResourceManager::GetInstance();
 	}
 
 	Widget::~Widget()
@@ -58,9 +58,8 @@ namespace Ash
 	
 		SetElement((Element*)document);
 
-		styleSheet = new StyleSheet();
-		styleSheet->Load(document);
-		//styleSheet->Dump();
+		styleSheet.Load(document);
+		resources->Load(document);
 
 		FrameBuilder fb;
 		fb.Register(new Frame());
@@ -73,6 +72,8 @@ namespace Ash
 		if (!window)
 			return 0;
 
+		AddFrame(window);
+
 		// register mouse events
 		window->RegisterEvents(window);
 
@@ -80,26 +81,23 @@ namespace Ash
 		w->Create(400,200);
 		w->Show(true);
 
-		styleSheet->ApplyStyle(element);
-		// bug: layout need to be called multiple times when no definite widths and heights are available
-		window->Layout();
+		styleSheet.ApplyStyle(element);
 
-		AddFrame(window);
+		// bug: layout need to be called multiple times when no definite widths and heights are available
+		for(int i=0; i<2; i++)
+			window->Layout();
+
+		resources->Dump();
 		return true;
 	}
 
 	void Widget::Free()
 	{
-		if (styleSheet)
-		{
-			delete styleSheet;
-			styleSheet = 0;
-		}
-
 		if (element)
 		{
 			delete element;
 			element = 0;
 		}
+		resources->Free();
 	}
 }

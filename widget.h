@@ -25,10 +25,11 @@ code.google.com/p/ashlar
 #include "stylesheet.h"
 #include "docbuilder.h"
 #include "framebuilder.h"
+#include "resources.h"
 
 using namespace Dom;
 using namespace Layout;
-using namespace Events;
+using namespace Res;
 
 namespace Ash
 {
@@ -46,14 +47,15 @@ namespace Ash
 		bool Load(const char* filename);
 		virtual void Free();
 
-		StyleSheet* GetStyleSheet() { return styleSheet; }
+		StyleSheet* GetStyleSheet() { return &styleSheet; }
 		DOMDocument* GetDocument() { return (DOMDocument*)element; }
+		ResourceManager* GetResources() { return resources; }
 		// ScriptEngine* GetScriptEngine()
-		// Resources* GetResources()
 
 	private:
 
-		StyleSheet  *styleSheet;
+		StyleSheet			styleSheet;
+		ResourceManager	*resources;
 		// JavaScript *scriptEngine;
 	};
 

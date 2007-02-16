@@ -17,11 +17,30 @@ code.google.com/p/ashlar
 */
 
 #include "render.h"
+#include "resources.h"
+#include "safenode.h"
+
 #include <cairo-win32.h>
-#include <math.h>
+
+using namespace Res;
 
 namespace Render
 {
+
+	RenderEngine::RenderEngine()
+	{
+		cairo = 0;
+		fill = 0;
+		surface = 0;
+		hdc = 0;
+		hBmp = 0;
+	}
+
+	RenderEngine::~RenderEngine()
+	{
+		DestroyBuffer();
+	}
+
 	bool RenderEngine::InitBuffer(HDC hdcTarget, const Rect* pRect)
 	{
 		rect = (*pRect);
@@ -192,16 +211,28 @@ namespace Render
 		f->GetBorderRect(&r);
 		RoundToDevicePixels(&r, x, y, x2, y2);
 
+		// Draw Background
 		Push();
 		DrawBorder(&fs->border, &fs->borderStyle, x, y, x2, y2, true);
 		DrawGradient(&fs->gradient, x, y, x2, y2);
-		// DrawImage
-		// DrawSvg
 		DrawRect(x, y, x2, y2);
 		Pop();
 
 		// DrawBorder
 		DrawBorder(&fs->border, &fs->borderStyle, x, y, x2, y2, false);
+
+		// Draw Image
+		// Draw Svg
+
+		// Draw Text
+		Element *e = f->GetElement();
+		SafeNode *label = SafeNode(e).GetValue("label");
+		if (label->Value())
+		{
+			Push();
+			DrawText(f, label->Value()->c_str());
+			Pop();
+		}
 	}
 
 	void RenderEngine::DrawRect(double x, double y, double x2, double y2)
@@ -291,5 +322,58 @@ namespace Render
 		{
 			cairo_set_source (cairo, fill);
 		}
+	}
+
+
+	void RenderEngine::DrawText(Frame *f, const char *text)
+	{
+		Rect r;
+		FrameStyle *fs = &f->frameStyle;
+
+		ResourceManager *rm = ResourceManager::GetInstance();
+		Resource *rc = rm->GetResource(fs->font.fontId);
+		if (!rc)
+			return;
+
+		double x, y, x2, y2, tx, ty;
+
+		f->GetContentRect(&r);
+		RoundToDevicePixels(&r, x, y, x2, y2);
+
+		cairo_text_extents_t extents;
+		cairo_set_font_size (cairo, fs->font.size);
+		cairo_select_font_face (cairo, rc->GetName()->c_str(),  CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+		cairo_text_extents (cairo, text, &extents);
+
+		tx = x + ((x2 - x)/2 - (extents.width/2));
+		ty = y + ((y2 - y)/2 + (extents.height/2));
+
+		double rr, gg, bb;
+		GetColor(fs->font.color, rr, gg, bb);
+		cairo_set_source_rgba(cairo, rr, gg, bb, 1);
+		cairo_move_to (cairo, tx, ty);
+		cairo_show_text (cairo, text);
+	}
+
+	bool RenderEngine::GetTextExtents(FrameStyle *fs, const char* text, double &width, double &height)
+	{
+		width = 0;
+		height = 0;
+
+		ResourceManager *rm = ResourceManager::GetInstance();
+		Resource *rc = rm->GetResource(fs->font.fontId);
+		if (!rc)
+			return false;
+
+		Push();
+		cairo_text_extents_t extents;
+		cairo_set_font_size (cairo, fs->font.size);
+		cairo_select_font_face (cairo, rc->GetName()->c_str(),  CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+		cairo_text_extents (cairo, text, &extents);
+		width = extents.width + 20;
+		height = extents.height + 20;
+		Pop();
+
+		return true;
 	}
 }

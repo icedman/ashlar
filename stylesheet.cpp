@@ -19,8 +19,10 @@ code.google.com/p/ashlar
 #include "stylesheet.h"
 #include "safenode.h"
 #include "frames.h"
+#include "resources.h"
 
 using namespace Layout;
+using namespace Res;
 
 namespace Dom
 {
@@ -177,6 +179,22 @@ namespace Dom
 				j++;
 			}
 		}
+	}
+
+	void GetFontXml(Font &fn, DOMNode *el)
+	{
+		if (!el)
+			return;
+
+		SafeNode snode((Element*)el);
+		DOMString tmp;
+
+		ResourceManager *rm = ResourceManager::GetInstance();
+		Resource *rc = rm->GetResource(snode.GetValue("name")->Value(&tmp));
+
+		fn.fontId = rc ? rc->GetId() : fn.fontId;
+		fn.size = snode.GetValue(&DOMString("size"))->ValueInt(fn.size);
+		fn.color = StringToColor(snode.GetValue(&DOMString("color"))->Value(), fn.color);
 	}
 
 	// StyleSheet
@@ -389,6 +407,7 @@ namespace Dom
 		GetBordersXml(fs.margin, snode.GetElement("margin")->Node());
 		GetBordersXml(fs.padding, snode.GetElement("padding")->Node());
 		GetGradientXml(fs.gradient, snode.GetElement("gradient")->Node());
+		GetFontXml(fs.font, snode.GetElement("font")->Node());
 		return true;
 	}
 }

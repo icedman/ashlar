@@ -34,6 +34,7 @@ namespace Dom
 	void GetLayoutXml(LayoutInfo &li, DOMNode *el);
 	void GetBordersXml(Borders &br, DOMNode *el);
 	void GetGradientXml(Gradient &gr, DOMNode *el);
+	void GetFontXml(Font &fn, DOMNode *el);
 
 	class StyleSheet : public DOMDocument
 	{

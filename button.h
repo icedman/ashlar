@@ -34,6 +34,7 @@ namespace Layout
 		virtual Frame* Create() { return new Button(); }
 		FRAMETYPE(BUTTON, HFrame)
 
+		virtual bool Layout();
 		virtual bool OnEvent(int eid, void *pp);
 		virtual bool RegisterEvents(EventManager *manager);
 	};

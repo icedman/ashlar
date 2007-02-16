@@ -7,8 +7,13 @@
 			<border width="1" color="#c0c0c0"/>
 		</style>
 		<style name="button">
-			<layout width="60" height="30"/>
-			<border width="1" color="#000000">
+			<font>
+				<name>verdana</name>
+				<size>14</size>
+				<color>#ffffff</color>
+			</font>
+			<layout/>
+			<border width="1" color="#222222">
 				<radius>2</radius>
 			</border>
 			<gradient type="linear" x="0" y="0" x2="0" y2="255">
@@ -29,16 +34,16 @@
 			</gradient>
 		</style>
 	</stylesheet>
-	<button label="button" width="50" height="30"/>
-	<button label="button" width="50" height="30"/>
+	<button label="button abc"/>
+	<button label="button b"/>
 	<vbox flex="1" align="right">
 		<hbox flex="1" align="center" valign="middle">
 			<box>
-				<button label="button" width="50" height="30"/>
-				<button class="classed" label="button" width="50" height="30"/>
+				<button label="button c"/>
+				<button label="button d" class="classed"/>
 			</box>
 		</hbox>
-		<button label="button" width="50" height="30">
+		<button label="button e">
 			<style name=":pressed">
 				<gradient type="linear" x="0" y="0" x2="0" y2="255">
 					<color offset="0">#d5d5d5</color>

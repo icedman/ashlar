@@ -18,6 +18,7 @@ code.google.com/p/ashlar
 
 #include "widget.h"
 #include "common.h"
+#include "resources.h"
 
 using namespace Ash;
 
