@@ -94,14 +94,12 @@ namespace Res
 
 	bool ResourceManager::Load(Element *element)
 	{
-		DOMString tmp;
-
 		// add fonts
 		NodeList2 *n = element->GetElementsByTagName(&DOMString("font"));		
 		for(int i=0; i<n->Length(); i++)
 		{
 			SafeNode snode((Element*)n->Item(i));
-			DOMString *v = snode.GetValue("name")->Value(&tmp);
+			DOMString *v = snode.GetValue("name")->Value();
 			if (v)
 			{
 				AddResource(v, 0, FONT_RESOURCE);

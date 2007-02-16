@@ -45,6 +45,7 @@
 		</hbox>
 		<button label="button e">
 			<style name=":pressed">
+				<font color="#505050"/>
 				<gradient type="linear" x="0" y="0" x2="0" y2="255">
 					<color offset="0">#d5d5d5</color>
 					<color offset="150">#c0c0c0</color>

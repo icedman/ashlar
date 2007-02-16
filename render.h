@@ -62,6 +62,7 @@ namespace Render
 		Rect clip;
 
 		cairo_t *cairo;
+		cairo_font_options_t *fontOptions;
 		cairo_pattern_t *fill;
 		cairo_surface_t *surface;
 	};
