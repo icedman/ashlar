@@ -31,6 +31,7 @@ code.google.com/p/ashlar
 
 // rendering
 #include "render.h"
+#include "resources.h"
 
 // events
 #include "events.h"

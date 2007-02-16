@@ -153,6 +153,7 @@ namespace Layout
 
 	bool Frame::GetContentRect(Rect *pRect)
 	{
+		(*pRect) = frameStyle.layout.rect;
 		int ol, ot, or, ob;
 		GetContentOffsets(frameStyle, ol, ot, or, ob);
 		pRect->left += ol;
