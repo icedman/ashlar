@@ -18,39 +18,24 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <common.h>
-#include <list.h>
-
-// layout
-#include <rect.h>
-#include <layout/frames.h>
 #include <layout/layout.h>
-#include <layout/windowframe.h>
-#include <layout/button.h>
-#include <layout/framebuilder.h>
-#include <layout/framestyle.h>
 #include <layout/frametypes.h>
-
-// rendering
-#include <render/render.h>
-#include <render/resources.h>
-
-// events
 #include <events/events.h>
 
-// dom
-#include <dom/domstring.h>
-#include <dom/domnode.h>
-#include <dom/element.h>
-#include <dom/document.h>
-#include <dom/xmlparser.h>
-#include <dom/docbuilder.h>
-#include <dom/safenode.h>
-#include <dom/stylesheet.h>
+using namespace Events;
 
-// script
-#include <script/scriptengine.h>
+namespace Layout
+{
+	class Button : public HFrame
+	{
+	public:
+		virtual const char* GetName() { return "button"; }
+		virtual Frame* Create() { return new Button(); }
+		FRAMETYPE(BUTTON, HFrame)
 
-// widget
-#include <widget.h>
+		virtual bool Layout();
+		virtual bool OnEvent(int eid, void *pp);
+		virtual bool RegisterEvents(EventManager *manager);
+	};
 
+}

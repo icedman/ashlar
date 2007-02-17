@@ -16,17 +16,40 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include "widget.h"
-#include "safenode.h"
-#include "styleSheet.h"
-#include "button.h"
+#include <widget.h>
+#include <dom/safenode.h>
+#include <dom/styleSheet.h>
+#include <layout/button.h>
+
+#include <script/jsw.h>
 
 namespace Ash
 {
+
+	static JSBool
+		my_add (JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+	{
+		jsdouble x, y;
+
+		if (!JS_ValueToNumber(cx, argv[0], &x))
+			return JS_FALSE;
+
+		if (!JS_ValueToNumber(cx, argv[1], &y))
+			return JS_FALSE;
+
+		printf("js:%f %f\n", x, y);
+		return JS_NewDoubleValue(cx, x + y, rval);
+	}
+
+	JSW_BEGIN_FUNCTION_MAP(my_functions)
+		JSW_ADD_FUNCTION("my_add", my_add, 2)
+		JSW_END_FUNCTION_MAP
+
 	Widget::Widget()
 	{
 		resources = ResourceManager::GetInstance();
 		scriptEngine.Initialize();
+		scriptEngine.RegisterFunctions(my_functions);
 	}
 
 	Widget::~Widget()

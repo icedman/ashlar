@@ -21,11 +21,11 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include "common.h"
+#include <common.h>
 
 // POINT & RECT
 #include <windows.h>
-#include "math.h"
+#include <math.h>
 
 namespace Ash {
 

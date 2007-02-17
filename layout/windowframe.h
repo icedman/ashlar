@@ -18,39 +18,35 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <common.h>
-#include <list.h>
-
-// layout
-#include <rect.h>
 #include <layout/frames.h>
+#include "window.h"
 #include <layout/layout.h>
-#include <layout/windowframe.h>
-#include <layout/button.h>
-#include <layout/framebuilder.h>
-#include <layout/framestyle.h>
+#include <render/render.h>
 #include <layout/frametypes.h>
 
-// rendering
-#include <render/render.h>
-#include <render/resources.h>
+namespace Layout
+{
+	class WindowFrame : public VFrame, public Ash::Window
+	{
+	public:
+		WindowFrame();
+		virtual ~WindowFrame() {}
 
-// events
-#include <events/events.h>
+		const char* GetName() { return "window"; }
+		Frame* Create() { return new WindowFrame(); }
+		FRAMETYPE(WINDOW, VFrame)
 
-// dom
-#include <dom/domstring.h>
-#include <dom/domnode.h>
-#include <dom/element.h>
-#include <dom/document.h>
-#include <dom/xmlparser.h>
-#include <dom/docbuilder.h>
-#include <dom/safenode.h>
-#include <dom/stylesheet.h>
+		void OnSize(const Rect *r);
+		void OnDraw(HDC hdc, Rect *rc);
+		void OnMouseMove(Point p);
+		void OnMouseDown(int button, Point p);
+		void OnMouseUp(int button, Point p);
 
-// script
-#include <script/scriptengine.h>
+		bool RegisterEvents(Frame *frame);
+		void Redraw();
 
-// widget
-#include <widget.h>
-
+	public:
+		Render::RenderEngine render;
+		Events::MouseEvents mouseEvents;
+	};
+}

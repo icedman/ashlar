@@ -16,35 +16,8 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include <debug.h>
+#include <layout/table.h>
 
-#ifdef DEBUG
-int objCount = 0;
-#endif
-
-#include <common.h>
-
-Ref::Ref()
+namespace Layout
 {
-#ifdef DEBUG
-	objCount++;
-#endif
-	//printf("create %d\n", this);
-}
-
-Ref::~Ref()
-{
-#ifdef DEBUG
-	objCount--;
-#endif
-	//printf("free %d\n", this);
-}
-
-int Ref::GetCount()
-{
-#ifndef DEBUG
-	return 0;
-#else
-	return objCount;
-#endif
 }

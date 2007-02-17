@@ -18,41 +18,12 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include "common.h"
-#include "iwindow.h"
-#include "win32/window.h"
+#include <common.h>
+#include <iwindow.h>
+#include <win32/nativewindow.h>
 
 namespace Ash
 {
-	//! Native win32 window implementation
-	class NativeWindow : public OSWin::Window
-	{
-	public:
-		BEGIN_MSG_HANDLER
-			HANDLE_MSG(WM_CREATE, OnCreate)
-			HANDLE_MSG(WM_DESTROY, OnDestroy)
-			HANDLE_MSG(WM_PAINT, OnPaint)
-			HANDLE_MSG(WM_SIZE, OnSize)
-			HANDLE_MSG(WM_MOUSEMOVE, OnMouseEvent)
-			HANDLE_MSG(WM_LBUTTONDOWN, OnMouseEvent)
-			HANDLE_MSG(WM_RBUTTONDOWN, OnMouseEvent)
-			HANDLE_MSG(WM_LBUTTONUP, OnMouseEvent)
-			HANDLE_MSG(WM_RBUTTONUP, OnMouseEvent)
-			HANDLE_MSG(WM_ERASEBKGND, OnEraseBackground)
-			HANDLE_MSG(WM_KEYDOWN, OnKeyEvent)
-			END_MSG_HANDLER;
-
-		LRESULT OnCreate( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
-		LRESULT OnDestroy( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
-		LRESULT OnEraseBackground( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
-		LRESULT OnSize( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
-		LRESULT OnPaint( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
-		LRESULT OnMouseEvent( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );		
-
-	public:
-		IWindow *iwindow;
-	};
-
 	//! IWindow implementation
 	class Window : public IWindow
 	{
@@ -84,6 +55,6 @@ namespace Ash
 		virtual void OnDraw(HDC hdc, Rect *rc);
 
 	public:
-		NativeWindow window;
+		OSWin::NativeWindow window;
 	};
 }
