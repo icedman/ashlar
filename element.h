@@ -59,10 +59,8 @@ namespace Dom
 	{
 	public:
 		Attribute();
-		Attribute(DOMString *name, DOMString *value = 0, bool id = false);
+		Attribute(DOMString *name, DOMString *value = 0);
 		DOMString* Value() { return &nodeValue; }
-
-		bool isId;
 	};
 
 	//! DOM Text Node class

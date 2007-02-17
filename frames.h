@@ -69,6 +69,9 @@ namespace Layout
 
 		FrameList* GetFrames() { return &frames; } //!< Get child frames list
 
+		virtual bool OnMouseEvents(int eid, void *pp);
+		virtual bool OnKeyEvents(int eid, void *pp);
+
 		virtual void Free();
 
 #ifdef DEBUG

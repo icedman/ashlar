@@ -1,40 +1,7 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!-- simple xul sample -->
-<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<stylesheet>
-		<style>
-			<border width="1" color="#c0c0c0"/>
-		</style>
-		<style name="button">
-			<font>
-				<name>verdana</name>
-				<size>14</size>
-				<color>#ffffff</color>
-			</font>
-			<layout/>
-			<border width="1" color="#222222">
-				<radius>2</radius>
-			</border>
-			<gradient type="linear" x="0" y="0" x2="0" y2="255">
-				<color offset="0">#666666</color>
-				<color offset="75">#aaaaaa</color>
-				<color offset="175">#777777</color>
-			</gradient>
-		</style>
-		<style name="button:hover">
-			<border width="2" color="#000000"/>
-		</style>
-		<style name="button:pressed">
-			<border width="2" color="#555555"/>
-			<gradient type="linear" x="0" y="0" x2="0" y2="255">
-				<color offset="0">#777777</color>
-				<color offset="75">#bbbbbb</color>
-				<color offset="175">#888888</color>
-			</gradient>
-		</style>
-	</stylesheet>
-	<button label="button abc"/>
+<window>
+	<stylesheet src="style.xul"/>
+	<button label="button abc" width="120" height="40"/>
 	<button label="button b"/>
 	<vbox flex="1" align="right">
 		<hbox flex="1" align="center" valign="middle">

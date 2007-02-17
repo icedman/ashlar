@@ -26,44 +26,15 @@ namespace Layout
 {
 	bool Button::OnEvent(int eid, void *pInfo)
 	{
-		MouseInfo *mInfo = (MouseInfo*)pInfo;
-
-		Rect r;
-		GetRect(&r);
-
-		if (!r.Contains(mInfo->point))
-		{
-			if (GetState() == PRESSED || GetState() == HOVER)
-				SetState(NORMAL);
-			return true;
-		}
-
-		switch(eid)
-		{
-		case ONMOUSEMOVE:
-			if (GetState() != PRESSED && GetState() != HOVER)
-				SetState(HOVER);
-			break;
-		case ONMOUSEDOWN:
-			SetState(PRESSED);
-			break;
-		case ONMOUSEUP:
-			if (GetState() == PRESSED)
-			{
-				printf("OnClick!\n");
-			}
-			SetState(HOVER);
-			break;
-		}
-
+		OnMouseEvents(eid, pInfo);
 		return true;
 	}
 
 	bool Button::RegisterEvents(EventManager *manager)
 	{
-		manager->AddListener(new Event(ONMOUSEDOWN, this));
-		manager->AddListener(new Event(ONMOUSEUP, this));
-		manager->AddListener(new Event(ONMOUSEMOVE, this));
+		manager->AddListener(ONMOUSEDOWN, this);
+		manager->AddListener(ONMOUSEUP, this);
+		manager->AddListener(ONMOUSEMOVE, this);
 		return true;
 	}
 
@@ -72,7 +43,8 @@ namespace Layout
 		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);
 		if (w)
 		{
-			SafeNode *label = SafeNode(GetElement()).GetValue("label");
+			SafeNode snode(GetElement());
+			SafeNode *label = snode.GetValue("label");
 			if (label->Value())
 			{
 				Render::RenderEngine *r = &w->render;

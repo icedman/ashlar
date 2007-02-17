@@ -57,7 +57,9 @@ namespace Dom
 	{
 	public:
 		unsigned long Length() { return size(); }
-		DOMNode* Item(unsigned long index) { return at(index); }
+		DOMNode* Item(unsigned long index) { if (Length()>index) return at(index); return 0; }
+
+		TRACE
 	};
 
 	//! DOM NamedNodeMap class

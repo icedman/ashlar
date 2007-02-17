@@ -112,8 +112,8 @@ namespace Dom
 		li.width = snode.GetValue(&DOMString("width"))->ValueInt(li.width);
 		li.height = snode.GetValue(&DOMString("height"))->ValueInt(li.height);
 		li.flex = snode.GetValue(&DOMString("flex"))->ValueInt(li.flex);
-		li.align = StringToAlign(snode.GetValue(&DOMString("align"))->Value(), LEFT);
-		li.verticalAlign = StringToAlign(snode.GetValue(&DOMString("valign"))->Value(), TOP);
+		li.align = StringToAlign(snode.GetValue(&DOMString("align"))->Value(), li.align);
+		li.verticalAlign = StringToAlign(snode.GetValue(&DOMString("valign"))->Value(), li.verticalAlign);
 	}
 
 	void GetBordersXml(Borders &br, DOMNode *el)
@@ -197,10 +197,29 @@ namespace Dom
 		fn.color = StringToColor(snode.GetValue(&DOMString("color"))->Value(), fn.color);
 	}
 
-	// StyleSheet
+	bool StyleSheet::LoadFile(const char* filename)
+	{
+		DOMDocument doc;
+		if (!doc.LoadFile(filename))
+			return false;
+
+		return Load(&doc);
+	}
+
 	bool StyleSheet::Load(Element *element)
 	{
-		NodeList2 *nl = element->GetElementsByTagName(&DOMString("style"));
+		// external stylesheet
+		NodeList2 *nl = element->GetElementsByTagName(&DOMString("stylesheet"));
+		for(int i=0; i<nl->Length(); i++)
+		{
+			SafeNode snode((Element*)nl->Item(i));
+			if (snode.GetValue("src")->Value())
+				LoadFile(snode.GetValue("src")->Value()->c_str());
+		}
+		delete nl;
+
+		// styles
+		nl = element->GetElementsByTagName(&DOMString("style"));
 
 		for(int i=0; i<nl->Length(); i++)
 		{
@@ -369,14 +388,14 @@ namespace Dom
 
 				if (apply)
 				{
-
+					/*
 					printf("%s apply %s .%s:%s #%s\n",
-						f->GetName(),
-						selector->c_str(),
-						className->c_str(),
-						pseudoClass->c_str(),
-						id->c_str());
-
+					f->GetName(),
+					selector->c_str(),
+					className->c_str(),
+					pseudoClass->c_str(),
+					id->c_str());
+					*/
 					ApplyStyle(f->frameStyle, (Element*)n);
 				}
 

@@ -21,6 +21,9 @@ code.google.com/p/ashlar
 #include "widget.h"
 #include "windowframe.h"
 #include "stylesheet.h"
+#include "events.h"
+
+using namespace Events;
 
 namespace Layout
 {
@@ -224,4 +227,51 @@ namespace Layout
 			element = e;
 		return element;
 	}
-};
+
+	bool Frame::OnMouseEvents(int eid, void *pp)
+	{
+		MouseInfo *mInfo = (MouseInfo*)pp;
+
+		Rect r;
+		GetRect(&r);
+
+		if (!r.Contains(mInfo->point))
+		{
+			if (GetState() == PRESSED || GetState() == HOVER)
+				SetState(NORMAL);
+			return true;
+		}
+
+		switch(eid)
+		{
+		case ONMOUSEMOVE:
+			if (GetState() != PRESSED && GetState() != HOVER)
+				SetState(HOVER);
+			break;
+		case ONMOUSEDOWN:
+			SetState(PRESSED);
+			break;
+		case ONMOUSEUP:
+			if (GetState() == PRESSED)
+			{
+				//printf("OnClick!\n");
+				printf("unfreed objects:%d\n", Ref::GetCount());
+				Widget *w = (Widget*)GetParent(WIDGET);
+				if (w)
+				{
+					ScriptEngine *s = w->GetScriptEngine();
+					const char* script = "x++;";
+					s->RunScript(script, strlen(script));
+				}
+			}
+			SetState(HOVER);
+			break;
+		}
+		return true;
+	}
+
+	bool Frame::OnKeyEvents(int eid, void *pp)
+	{
+		return true;
+	}
+}

@@ -75,7 +75,9 @@ namespace Events
 		EventManager();
 		~EventManager();
 
+		virtual bool AddListener(int, EventListener *);
 		virtual bool AddListener(Event *);
+		virtual bool HasEvent(Event *);
 		bool RemoveListener(Event *);
 		void ClearListeners();
 	};

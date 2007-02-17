@@ -16,9 +16,10 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include "widget.h"
 #include "common.h"
+#include "widget.h"
 #include "resources.h"
+#include "safenode.h"
 
 using namespace Ash;
 
@@ -27,8 +28,6 @@ int main()
 	Widget *widget = new Widget();
 	if (!widget->Load("ashlar.xul"))
 		return 0;
-
-	//widget->Dump();
 
 	printf("unfreed objects:%d\n", Ref::GetCount());
 

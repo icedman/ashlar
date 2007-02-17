@@ -19,12 +19,14 @@ code.google.com/p/ashlar
 #include "widget.h"
 #include "safenode.h"
 #include "styleSheet.h"
+#include "button.h"
 
 namespace Ash
 {
 	Widget::Widget()
 	{
 		resources = ResourceManager::GetInstance();
+		scriptEngine.Initialize();
 	}
 
 	Widget::~Widget()
@@ -34,32 +36,16 @@ namespace Ash
 
 	bool Widget::Load(const char* filename)
 	{
-		DOMDocument *document = 0;
+		DOMDocument *document = new DOMDocument();
 		WindowFrame *window = 0;
 
-		DOMBuilder db;
-		db.Initialize();
-
-		FILE *fp = fopen(filename, "r");
-		while(!feof(fp))
-		{
-			char buffer[1024];
-			unsigned short len = fread(buffer, 1, 1024, fp);
-			int isFinal = feof(fp);
-			db.Parse(buffer, len, isFinal);
-		}
-		fclose(fp);
-
-		document = db.GetDocument();
-		db.Shutdown();
-
-		if (!document)
-			return false;
-	
 		SetElement((Element*)document);
+		
+		if (!document->LoadFile(filename))
+			return false;
 
 		styleSheet.Load(document);
-		resources->Load(document);
+		resources->Load(&styleSheet);
 
 		FrameBuilder fb;
 		fb.Register(new Frame());
@@ -78,7 +64,7 @@ namespace Ash
 		window->RegisterEvents(window);
 
 		IWindow *w = (IWindow*)window;
-		w->Create(400,200);
+		w->Create(400,300);
 		w->Show(true);
 
 		styleSheet.ApplyStyle(element);
@@ -88,6 +74,7 @@ namespace Ash
 			window->Layout();
 
 		resources->Dump();
+		scriptEngine.TestScript();
 		return true;
 	}
 

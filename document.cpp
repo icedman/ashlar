@@ -17,6 +17,7 @@ code.google.com/p/ashlar
 */
 
 #include "document.h"
+#include "docbuilder.h"
 
 namespace Dom
 {
@@ -59,5 +60,28 @@ namespace Dom
 	TextNode* DOMDocument::createTextNode()
 	{
 		return new TextNode();
+	}
+
+	bool DOMDocument::LoadFile(const char* filename)
+	{
+		DOMBuilder db;
+		db.Initialize(this);
+
+		FILE *fp = fopen(filename, "r");
+		if (!fp)
+			return false;
+
+		while(!feof(fp))
+		{
+			char buffer[1024];
+			unsigned short len = fread(buffer, 1, 1024, fp);
+			int isFinal = feof(fp);
+			db.Parse(buffer, len, isFinal);
+		}
+		fclose(fp);
+
+		db.Shutdown();
+
+		return true;
 	}
 }
