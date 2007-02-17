@@ -29,6 +29,8 @@ namespace Dom
 	public:
 		DOMDocument();
 		DOMDocument(DOMString *name);
+
+		virtual bool LoadFile(const char* filename);
 		
 		Attribute* createAttribute(DOMString *name);
 		CDataSection* createCDataSection();

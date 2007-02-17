@@ -40,6 +40,7 @@ namespace Dom
 	{
 	public:
 	
+		bool LoadFile(const char* filename);
 		bool Load(Element *element);
 		bool AddStyle(Element *style);
 

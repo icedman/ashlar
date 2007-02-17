@@ -98,7 +98,7 @@ namespace Ash
 	bool Window::Create(int w, int h)
 	{
 		window.RegisterClass(0, _T("Ashlar"));
-		window.Create(_T("Ashlar"), _T("Ashlar Prototype"), w, h, 200, 200, WS_SIZEBOX | WS_SYSMENU);
+		window.Create(_T("Ashlar"), _T("Ashlar Prototype"), 400, 200, w, h, WS_SIZEBOX | WS_SYSMENU);
 		window.ShowWindow(SW_SHOW);
 		return true;
 	}

@@ -18,18 +18,18 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include "windowframe.h"
-#include "button.h"
-
 #include "document.h"
-#include "stylesheet.h"
 #include "docbuilder.h"
+#include "stylesheet.h"
+#include "windowframe.h"
 #include "framebuilder.h"
 #include "resources.h"
+#include "scriptengine.h"
 
 using namespace Dom;
 using namespace Layout;
 using namespace Res;
+using namespace Script;
 
 namespace Ash
 {
@@ -50,13 +50,13 @@ namespace Ash
 		StyleSheet* GetStyleSheet() { return &styleSheet; }
 		DOMDocument* GetDocument() { return (DOMDocument*)element; }
 		ResourceManager* GetResources() { return resources; }
-		// ScriptEngine* GetScriptEngine()
+		ScriptEngine* GetScriptEngine() { return &scriptEngine; }
 
 	private:
 
 		StyleSheet			styleSheet;
 		ResourceManager	*resources;
-		// JavaScript *scriptEngine;
+		ScriptEngine		scriptEngine;
 	};
 
 }

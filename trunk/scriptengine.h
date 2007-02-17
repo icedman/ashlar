@@ -18,26 +18,30 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include "document.h"
-#include "xmlparser.h"
+#include "common.h"
+#include "debug.h"
+#include <js/src/jsapi.h>
 
-namespace Dom
+namespace Script
 {
-	//! DOM Tree builder
-	/*!
-	Builds a DOM model during parsing of an xml file
-	*/
-	class DOMBuilder : public XmlParser
+	class ScriptEngine
 	{
 	public:
-		bool Initialize(DOMDocument *d = 0);
-		void Shutdown();
-		void OnStartElement(const XML_Char *name, const XML_Char **atts);
-		void OnEndElement(const XML_Char *name);
-		void OnComment(const XML_Char *comment);
-		void OnCharacterData(const XML_Char *data, int len);
+		ScriptEngine();
+		~ScriptEngine();
 
-		DOMDocument* GetDocument() { if (!nodeStack.Size()) return 0; return (DOMDocument*)nodeStack.GetAt(0); }
-		NodeList nodeStack;
+		bool Initialize();
+		void Shutdown();
+
+		bool RunScript(const char *script, long len);
+		bool TestScript();
+
+	private:
+		static JSClass global;
+		JSObject  *jsGlobal;
+		JSRuntime *jsRt;
+		JSContext *jsCx;
+
+		TRACE
 	};
 }

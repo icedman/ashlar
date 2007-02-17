@@ -56,6 +56,14 @@ namespace Events
 		}
 	}
 
+	bool EventManager::AddListener(int eventId, EventListener *pListener)
+	{
+		if (HasEvent(&Event(eventId, pListener)))
+			return true;
+
+		return AddListener(new Event(eventId, pListener));
+	}
+
 	bool EventManager::AddListener(Event* pEvent)
 	{
 		return Push(pEvent);
@@ -64,6 +72,18 @@ namespace Events
 	bool EventManager::RemoveListener(Event* pEvent)
 	{
 		return Remove(pEvent);
+	}
+
+	bool EventManager::HasEvent(Event *pEvent)
+	{
+		Event *e = GetFirst();
+		while(e)
+		{
+			if (pEvent->eventId == e->eventId && pEvent->listener == e->listener)
+				return true;
+			e = e->next;
+		}
+		return false;
 	}
 
 	// MouseEvents

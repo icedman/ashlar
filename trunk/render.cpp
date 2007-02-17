@@ -127,9 +127,9 @@ namespace Render
 		if (draw)
 		{
 			DrawFrame(pFrame);
-			printf("render %s (%d, %d)-(%d, %d)\n", pFrame->GetName(), r.left, r.top, r.right, r.bottom);
+			//printf("render %s (%d, %d)-(%d, %d)\n", pFrame->GetName(), r.left, r.top, r.right, r.bottom);
 		} else {
-			printf("skip render %s (%d, %d)-(%d, %d)\n", pFrame->GetName(), r.left, r.top, r.right, r.bottom);
+			//printf("skip render %s (%d, %d)-(%d, %d)\n", pFrame->GetName(), r.left, r.top, r.right, r.bottom);
 		}
 
 		// render children
@@ -229,7 +229,8 @@ namespace Render
 
 		// Draw Text
 		Element *e = f->GetElement();
-		SafeNode *label = SafeNode(e).GetValue("label");
+		SafeNode snode(e);
+		SafeNode *label = snode.GetValue("label");
 		if (label->Value())
 		{
 			Push();
@@ -331,6 +332,7 @@ namespace Render
 	void RenderEngine::DrawText(Frame *f, const char *text)
 	{
 		Rect r;
+		LayoutInfo *li = &f->frameStyle.layout;
 		FrameStyle *fs = &f->frameStyle;
 
 		ResourceManager *rm = ResourceManager::GetInstance();
@@ -349,8 +351,29 @@ namespace Render
 		cairo_select_font_face (cairo, rc->GetName()->c_str(),  CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 		cairo_text_extents (cairo, text, &extents);
 
-		tx = x + ((x2 - x)/2 - (extents.width/2));
-		ty = y + ((y2 - y)/2 + (extents.height/2));
+		switch(li->align)
+		{
+		case LEFT:
+			tx = x;
+			break;
+		case RIGHT:
+			tx = x + (x2 - x) - extents.width;
+			break;
+		default:
+			tx = x + ((x2 - x)/2 - (extents.width/2));
+		}
+
+		switch(li->verticalAlign)
+		{
+		case TOP:
+			ty = y + extents.height;
+			break;
+		case BOTTOM:
+			ty = y2;
+			break;
+		default:
+			ty = y + ((y2 - y)/2 + (extents.height/2));
+		}
 
 		double rr, gg, bb;
 		GetColor(fs->font.color, rr, gg, bb);

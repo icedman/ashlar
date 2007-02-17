@@ -26,7 +26,6 @@ using namespace Events;
 
 namespace Layout
 {
-
 	class Button : public HFrame
 	{
 	public:

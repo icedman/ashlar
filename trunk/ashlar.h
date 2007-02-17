@@ -44,6 +44,9 @@ code.google.com/p/ashlar
 #include "xmlparser.h"
 #include "docbuilder.h"
 
+// script
+#include "scriptengine.h"
+
 // widget
 #include "widget.h"
 

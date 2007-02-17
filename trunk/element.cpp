@@ -211,20 +211,16 @@ namespace Dom
 	Attribute::Attribute()
 	{
 		nodeType = ATTRIBUTE_NODE;
-		isId = false;
 	}
 
-	Attribute::Attribute(DOMString *name, DOMString *value, bool id)
+	Attribute::Attribute(DOMString *name, DOMString *value)
 	{
 		nodeType = ATTRIBUTE_NODE;
-		isId = false;
-
 		nodeName = *name;
 		if (value)
 		{
 			nodeValue = *value;
 		}
-		isId= id; 
 	}
 
 	// TextNode
