@@ -16,35 +16,26 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include <debug.h>
+#pragma once
 
-#ifdef DEBUG
-int objCount = 0;
-#endif
+#include <dom/element.h>
+#include <dom/xmlparser.h>
 
-#include <common.h>
-
-Ref::Ref()
+namespace Dom
 {
-#ifdef DEBUG
-	objCount++;
-#endif
-	//printf("create %d\n", this);
-}
+	//! DOM Document class
+	class DOMDocument : public Element
+	{
+	public:
+		DOMDocument();
+		DOMDocument(DOMString *name);
 
-Ref::~Ref()
-{
-#ifdef DEBUG
-	objCount--;
-#endif
-	//printf("free %d\n", this);
-}
-
-int Ref::GetCount()
-{
-#ifndef DEBUG
-	return 0;
-#else
-	return objCount;
-#endif
+		virtual bool LoadFile(const char* filename);
+		
+		Attribute* createAttribute(DOMString *name);
+		CDataSection* createCDataSection();
+		Comment* createComment();
+		Element* createElement(DOMString *tagName);
+		TextNode* createTextNode();
+	};
 }

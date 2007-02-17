@@ -18,17 +18,17 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include "document.h"
-#include "docbuilder.h"
-#include "stylesheet.h"
-#include "windowframe.h"
-#include "framebuilder.h"
-#include "resources.h"
-#include "scriptengine.h"
+#include <dom/document.h>
+#include <dom/docbuilder.h>
+#include <dom/stylesheet.h>
+#include <layout/windowframe.h>
+#include <layout/framebuilder.h>
+#include <render/resources.h>
+#include <script/scriptengine.h>
 
 using namespace Dom;
 using namespace Layout;
-using namespace Res;
+using namespace Render;
 using namespace Script;
 
 namespace Ash

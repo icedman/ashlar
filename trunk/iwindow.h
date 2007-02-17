@@ -18,8 +18,8 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include "common.h"
-#include "rect.h"
+#include <common.h>
+#include <rect.h>
 
 namespace Ash
 {

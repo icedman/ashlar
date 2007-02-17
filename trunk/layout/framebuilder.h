@@ -16,35 +16,31 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include <debug.h>
+#pragma once
 
-#ifdef DEBUG
-int objCount = 0;
-#endif
+#include <layout/frames.h>
+#include <dom/document.h>
 
-#include <common.h>
+using namespace Dom;
 
-Ref::Ref()
+namespace Layout
 {
-#ifdef DEBUG
-	objCount++;
-#endif
-	//printf("create %d\n", this);
-}
+	class FrameBuilder
+	{
+	public:
+		FrameBuilder();
+		~FrameBuilder();
 
-Ref::~Ref()
-{
-#ifdef DEBUG
-	objCount--;
-#endif
-	//printf("free %d\n", this);
-}
+		bool Register(Frame* f);
+		void Unregister(Frame* f);
+		void Free();
 
-int Ref::GetCount()
-{
-#ifndef DEBUG
-	return 0;
-#else
-	return objCount;
-#endif
+		Frame* Build(DOMDocument *doc);
+		Frame* BuildFrames(Element *element);
+		Frame* CreateFrame(Element *element);
+
+		FrameList frameTemplates;
+		FrameList frameStack;
+		Frame* root;
+	};
 }

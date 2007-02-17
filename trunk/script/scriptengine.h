@@ -16,35 +16,37 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include <debug.h>
-
-#ifdef DEBUG
-int objCount = 0;
-#endif
+#pragma once
 
 #include <common.h>
+#include <debug.h>
+#include <js/src/jsapi.h>
 
-Ref::Ref()
+namespace Script
 {
-#ifdef DEBUG
-	objCount++;
-#endif
-	//printf("create %d\n", this);
-}
+	class ScriptEngine
+	{
+	public:
+		ScriptEngine();
+		~ScriptEngine();
 
-Ref::~Ref()
-{
-#ifdef DEBUG
-	objCount--;
-#endif
-	//printf("free %d\n", this);
-}
+		bool Initialize();
+		void Shutdown();
 
-int Ref::GetCount()
-{
-#ifndef DEBUG
-	return 0;
-#else
-	return objCount;
-#endif
+		bool RegisterFunctions(JSFunctionSpec *funcs);
+		bool RunScript(const char *script, long len);
+		bool TestScript();
+
+		JSRuntime* GetRuntime() { return jsRt; }
+		JSObject*  GetGlobalObject() { return jsGlobal; }
+		JSContext* GetContext() { return jsCx; }
+
+	private:
+		static JSClass jsGlobalClass;
+		JSRuntime *jsRt;
+		JSObject  *jsGlobal;
+		JSContext *jsCx;
+
+		TRACE
+	};
 }

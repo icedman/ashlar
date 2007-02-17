@@ -18,73 +18,11 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include "window.h"
-#include "events.h"
+#include <window.h>
+#include <events/events.h>
 
 namespace Ash
 {
-	LRESULT NativeWindow::OnCreate( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
-	{
-		iwindow->OnCreate();
-		return 0;
-	}
-
-	LRESULT NativeWindow::OnDestroy( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
-	{
-		iwindow->OnDestroy();
-		PostQuitMessage(0);
-		return 0;
-	}
-
-	LRESULT NativeWindow::OnEraseBackground( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
-	{
-		return 0;
-	}
-
-	LRESULT NativeWindow::OnSize( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
-	{
-		RECT r;
-		GetClientRect(m_hWnd, &r);
-		iwindow->OnSize(&Rect(r.left, r.top, r.right, r.bottom));
-		return 0;
-	}
-
-	LRESULT NativeWindow::OnPaint( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
-	{
-		PAINTSTRUCT ps;
-		BeginPaint(m_hWnd,&ps);
-		iwindow->OnDraw(ps.hdc, (Rect*)&ps.rcPaint);
-		EndPaint(m_hWnd,&ps);
-		return 0;
-	}
-
-	LRESULT NativeWindow::OnMouseEvent( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
-	{
-		Point p;
-		p.x=LOWORD(lparam);
-		p.y=HIWORD(lparam);
-
-		switch(msg)
-		{
-		case WM_LBUTTONDOWN:
-			iwindow->OnMouseDown(Events::LBUTTON, p);
-			break;
-		case WM_RBUTTONDOWN:
-			iwindow->OnMouseDown(Events::RBUTTON, p);
-			break;
-		case WM_LBUTTONUP:
-			iwindow->OnMouseUp(Events::LBUTTON, p);
-			break;
-		case WM_RBUTTONUP:
-			iwindow->OnMouseUp(Events::RBUTTON, p);
-			break;
-		case WM_MOUSEMOVE:
-			iwindow->OnMouseMove(p);
-			break;
-		}
-		return 0;
-	}
-
 	Window::Window()
 	{
 		window.iwindow = this;

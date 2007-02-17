@@ -18,10 +18,14 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include "common.h"
+#include <common.h>
+#include <iwindow.h>
 
+// ms windows
 #include <tchar.h>
 #include <windows.h>
+
+using namespace Ash;
 
 namespace OSWin
 {
@@ -162,5 +166,4 @@ namespace OSWin
 		}
 		return (DefWindowProc(hWnd, uMsg, wParam, lParam));
 	}
-
 }

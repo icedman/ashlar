@@ -18,7 +18,7 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include "debug.h"
+#include <debug.h>
 
 namespace Ash
 {

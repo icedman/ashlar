@@ -16,35 +16,29 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include <debug.h>
+#pragma once
 
-#ifdef DEBUG
-int objCount = 0;
-#endif
+#include <layout/layout.h>
 
-#include <common.h>
-
-Ref::Ref()
+namespace Layout
 {
-#ifdef DEBUG
-	objCount++;
-#endif
-	//printf("create %d\n", this);
-}
+	// todo: delete this, make xul:grid
 
-Ref::~Ref()
-{
-#ifdef DEBUG
-	objCount--;
-#endif
-	//printf("free %d\n", this);
-}
+	class Row : public HFrame
+	{
+	public:
+		virtual bool Layout();
+		virtual const char* GetName() { return "row"; }
+		virtual Frame* Create() { return new Row(); }
+		FRAMETYPE(HBOX, Frame)
+	};
 
-int Ref::GetCount()
-{
-#ifndef DEBUG
-	return 0;
-#else
-	return objCount;
-#endif
+	class Table : public VFrame
+	{
+	public:
+		virtual bool Layout();
+		virtual const char* GetName() { return "table"; }
+		virtual Frame* Create() { return new Table(); }
+		FRAMETYPE(HBOX, Frame)
+	};
 }

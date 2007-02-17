@@ -16,10 +16,10 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include "common.h"
+#include <common.h>
 #include "widget.h"
-#include "resources.h"
-#include "safenode.h"
+#include <render/resources.h>
+#include <dom/safenode.h>
 
 using namespace Ash;
 
