@@ -55,7 +55,7 @@ namespace Layout
 	{
 		root = 0;
 		BuildFrames(doc);
-		root->Dump();
+		//root->Dump();
 		return root;
 	}
 

@@ -43,7 +43,7 @@ namespace OSWin
 	LRESULT NativeWindow::OnSize( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
 	{
 		RECT r;
-		GetClientRect(m_hWnd, &r);
+		GetClientRect(hWnd, &r);
 		iwindow->OnSize(&Rect(r.left, r.top, r.right, r.bottom));
 		return 0;
 	}
@@ -51,9 +51,9 @@ namespace OSWin
 	LRESULT NativeWindow::OnPaint( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
 	{
 		PAINTSTRUCT ps;
-		BeginPaint(m_hWnd,&ps);
+		BeginPaint(hWnd,&ps);
 		iwindow->OnDraw(ps.hdc, (Rect*)&ps.rcPaint);
-		EndPaint(m_hWnd,&ps);
+		EndPaint(hWnd,&ps);
 		return 0;
 	}
 

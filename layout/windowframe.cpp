@@ -30,9 +30,9 @@ namespace Layout
 		SetRect(r);
 		Layout();
 
-		HDC hdc = GetWindowDC(window.m_hWnd);
+		HDC hdc = GetWindowDC(window.hWnd);
 		render.InitBuffer(hdc, r);
-		ReleaseDC(window.m_hWnd, hdc);
+		ReleaseDC(window.hWnd, hdc);
 	}
 
 	void WindowFrame::OnDraw(HDC hdc, Rect *rc)
@@ -74,6 +74,6 @@ namespace Layout
 
 	void WindowFrame::Redraw()
 	{
-		RedrawWindow(window.m_hWnd, 0, 0, RDW_NOERASE | RDW_INVALIDATE | RDW_INTERNALPAINT);
+		RedrawWindow(window.hWnd, 0, 0, RDW_NOERASE | RDW_INVALIDATE | RDW_INTERNALPAINT);
 	}
 }

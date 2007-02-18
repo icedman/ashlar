@@ -93,7 +93,7 @@ namespace Render
 
 	bool RenderEngine::Render(Frame *pFrame, const Rect *pClip)
 	{
-		if (!hdc)
+		if (!hdc || !cairo)
 		{
 			return false;
 		}
@@ -382,6 +382,9 @@ namespace Render
 
 	bool RenderEngine::GetTextExtents(FrameStyle *fs, const char* text, double &width, double &height)
 	{
+		if (!cairo)
+			return false;
+
 		width = 0;
 		height = 0;
 

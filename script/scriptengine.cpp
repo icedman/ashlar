@@ -17,10 +17,27 @@ code.google.com/p/ashlar
 */
 
 #include <script/scriptengine.h>
+#include <script/jsw.h>
 
 namespace Script
 {
-	JSClass ScriptEngine::jsGlobalClass =
+
+	static JSBool echo (JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+	{
+		if (argc)
+		{
+			JSString *jstr = JS_ValueToString(cx, argv[0]);
+			printf("%s", JS_GetStringBytes(jstr));
+		}
+		printf("\n");
+		return JS_TRUE;
+	}
+
+	JSW_BEGIN_FUNCTION_MAP(scriptFuncs)
+		JSW_ADD_FUNCTION("echo", echo, 1)
+		JSW_END_FUNCTION_MAP
+
+		JSClass ScriptEngine::jsGlobalClass =
 	{
 		"Global", 0,
 		JS_PropertyStub,  JS_PropertyStub,JS_PropertyStub, JS_PropertyStub,
@@ -30,7 +47,6 @@ namespace Script
 	ScriptEngine::ScriptEngine()
 	{
 		jsRt = 0;
-		jsCx = 0;
 	}
 
 	ScriptEngine::~ScriptEngine()
@@ -52,7 +68,14 @@ namespace Script
 		if (!jsGlobal)
 			return false;
 
+		RegisterFunctions(scriptFuncs);
+
 		return JS_InitStandardClasses(jsCx, jsGlobal);
+	}
+
+	JSObject * ScriptEngine::RegisterObject(JSClass *jsClass)
+	{
+		return JS_NewObject(jsCx, jsClass, 0, 0);
 	}
 
 	bool ScriptEngine::RegisterFunctions(JSFunctionSpec *funcs)
@@ -83,8 +106,17 @@ namespace Script
 		JSBool res = JS_EvaluateScript(jsCx, jsGlobal, script, len, NULL, 0, &rval);
 		if (res == JS_TRUE)
 		{
-			printf("js:%d\n", JSVAL_TO_INT(rval));
+			/*
+			JSString *str = JS_ValueToString(jsCx, rval);
+			if (JS_GetStringLength(str) > 0)
+			{
+				printf("%s\n", (char*)JS_GetStringBytes(str));
+			}
+			*/
+		} else {
+			printf("error!\n");
 		}
+		JS_GC(jsCx);
 		return ( res == JS_TRUE);
 	}
 

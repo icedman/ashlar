@@ -25,6 +25,7 @@ code.google.com/p/ashlar
 #include <layout/framebuilder.h>
 #include <render/resources.h>
 #include <script/scriptengine.h>
+#include <script/jselement.h>
 
 using namespace Dom;
 using namespace Layout;
@@ -57,6 +58,8 @@ namespace Ash
 		StyleSheet			styleSheet;
 		ResourceManager	*resources;
 		ScriptEngine		scriptEngine;
+
+		JSElement *jsElement;
 	};
 
 }

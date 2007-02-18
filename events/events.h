@@ -33,6 +33,7 @@ namespace Events
 	const unsigned short ONMOUSEMOVE = 3;
 	const unsigned short ONMOUSEENTER = 4;
 	const unsigned short ONMOUSEOUT = 5;
+	const unsigned short ONMOUSECLICK = 6;
 
 	//! Mouse
 	const unsigned short LBUTTON = 1;

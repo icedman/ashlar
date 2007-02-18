@@ -47,7 +47,7 @@ namespace OSWin
 	if (bHandled) { return result; }
 
 #define END_MSG_HANDLER \
-	return ( DefWindowProc( m_hWnd, uMsg, wParam, lParam )); }
+	return ( DefWindowProc( hWnd, uMsg, wParam, lParam )); }
 
 	//! Native window base class
 	/*!
@@ -58,7 +58,7 @@ namespace OSWin
 	public:
 		Window()
 		{
-			m_hWnd=NULL;
+			hWnd=NULL;
 		}
 
 		~Window()
@@ -68,14 +68,14 @@ namespace OSWin
 
 		BOOL RegisterClass(HINSTANCE hInstance, const TCHAR* lpszClass)
 		{
-			m_hInstance=hInstance;
+			hInstance=hInstance;
 
 			WNDCLASS wc;
 
 			wc.lpszClassName = lpszClass;
 			wc.lpfnWndProc = WinProc;
 			wc.style = CS_VREDRAW | CS_HREDRAW;
-			wc.hInstance = m_hInstance;
+			wc.hInstance = hInstance;
 			wc.hIcon = NULL;
 			wc.hCursor = LoadCursor( NULL, IDC_ARROW );
 			wc.lpszMenuName = NULL;
@@ -93,31 +93,30 @@ namespace OSWin
 
 		BOOL Create(const TCHAR* lpszClass,const TCHAR* lpszTitle,int x,int y,int w,int h,DWORD style,DWORD exStyle=0,HWND hwndParent=NULL)
 		{
-			m_hWnd = CreateWindowEx( exStyle, lpszClass, lpszTitle,style,
+			hWnd = CreateWindowEx( exStyle, lpszClass, lpszTitle,style,
 				x, y,
 				w, h,
 				hwndParent,
 				NULL,
-				m_hInstance,
+				hInstance,
 				(LPVOID)this);
-
-			return (m_hWnd!=NULL);
+			return (hWnd!=NULL);
 		}
 
 
 		VOID UpdateWindow()
 		{
-			::UpdateWindow(m_hWnd);
+			::UpdateWindow(hWnd);
 		}
 
 		VOID ShowWindow(int cmd = SW_SHOW)
 		{
-			::ShowWindow(m_hWnd,cmd);
+			::ShowWindow(hWnd,cmd);
 		}
 
 		VOID DestroyWindow()
 		{
-			::DestroyWindow(m_hWnd);
+			::DestroyWindow(hWnd);
 		}
 
 		virtual BOOL OnCreate() { return TRUE; }
@@ -125,7 +124,7 @@ namespace OSWin
 		virtual VOID OnKeyUp(LONG key) {}
 		virtual VOID OnDraw(HDC hdc,LPRECT rc) {}
 
-		virtual LRESULT CALLBACK WindowsProc(UINT uMsg, WPARAM wParam, LPARAM lParam) { return DefWindowProc( m_hWnd, uMsg, wParam, lParam ); }
+		virtual LRESULT CALLBACK WindowsProc(UINT uMsg, WPARAM wParam, LPARAM lParam) { return DefWindowProc( hWnd, uMsg, wParam, lParam ); }
 
 	protected:
 
@@ -144,8 +143,8 @@ namespace OSWin
 		}
 
 	public:
-		HWND m_hWnd;
-		HINSTANCE m_hInstance;
+		HWND hWnd;
+		HINSTANCE hInstance;
 	};
 
 	static LRESULT CALLBACK WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -154,14 +153,14 @@ namespace OSWin
 		if (uMsg==WM_CREATE) {
 			LPCREATESTRUCT cs=(LPCREATESTRUCT)lParam;
 			w=reinterpret_cast<Window*>(cs->lpCreateParams);
-			w->m_hWnd=hWnd;
+			w->hWnd=hWnd;
 			SetWindowLong(hWnd,GWL_USERDATA,(LONG)w);
 			w->OnCreate();
 		} else {
 			w=reinterpret_cast<Window*>(GetWindowLong(hWnd,GWL_USERDATA));
 		}
 		if (w) {
-			w->m_hWnd = hWnd;
+			w->hWnd = hWnd;
 			return (w->WindowsProc(uMsg,wParam,lParam));
 		}
 		return (DefWindowProc(hWnd, uMsg, wParam, lParam));
