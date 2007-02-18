@@ -1,7 +1,23 @@
 <?xml version="1.0"?>
 <window>
 	<stylesheet src="style.xul"/>
-	<button label="button abc" width="120" height="40"/>
+	<button label="button abc" width="120" height="40">
+		<event name="onClick">
+			<![CDATA[
+			
+			s = "";
+			nl = widget.getElementsByTagName('button');
+			for(i=0; i<nl.length();i++)
+			{
+				el = nl.item(i);
+				el.setAttribute('label', 'btn' + i);
+				s += el.getAttribute('label') + "<\n";
+			}
+			s;
+			
+			]]>
+		</event>
+	</button>
 	<button label="button b"/>
 	<vbox flex="1" align="right">
 		<hbox flex="1" align="center" valign="middle">
@@ -19,6 +35,29 @@
 					<color offset="255">#e5e5e5</color>
 				</gradient>
 			</style>
+			<event name="onClick">
+				<![CDATA[
+				
+				function test()
+				{
+					return "test";
+				}
+				
+				w = widget.firstChild();
+				w.hasChildNodes();
+				c = w.firstChild();
+				while(c)
+				{
+					if (c.nodeName == 'button')
+					{
+						c.setAttribute('label','hello');
+						echo (">" + c.nodeName);
+					}
+					c = c.nextSibling();
+				}
+
+				]]>
+			</event>
 		</button>
 	</vbox>
 </window>

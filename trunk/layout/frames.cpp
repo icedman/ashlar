@@ -20,8 +20,9 @@ code.google.com/p/ashlar
 #include <layout/frames.h>
 #include <layout/framestyle.h>
 #include <layout/windowframe.h>
-#include <dom/stylesheet.h>
 #include <events/events.h>
+#include <dom/stylesheet.h>
+#include <dom/safenode.h>
 
 using namespace Events;
 
@@ -254,17 +255,24 @@ namespace Layout
 		case ONMOUSEUP:
 			if (GetState() == PRESSED)
 			{
-				//printf("OnClick!\n");
-				printf("unfreed objects:%d\n", Ref::GetCount());
+				OnMouseEvents(ONMOUSECLICK, pp);
+			}
+			SetState(HOVER);
+			break;
+		case ONMOUSECLICK:
+			printf("unfreed objects:%d\n", Ref::GetCount());
+			SafeNode snode(GetElement());
+			DOMString *script = snode.GetElement("event")->Value();
+			if (script)
+			{
 				Widget *w = (Widget*)GetParent(WIDGET);
 				if (w)
 				{
 					ScriptEngine *s = w->GetScriptEngine();
-					const char* script = "x = my_add(x, 8);";
-					s->RunScript(script, strlen(script));
+					if (s)
+						s->RunScript(script->c_str(), script->size());
 				}
 			}
-			SetState(HOVER);
 			break;
 		}
 		return true;

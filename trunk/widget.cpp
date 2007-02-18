@@ -22,38 +22,21 @@ code.google.com/p/ashlar
 #include <layout/button.h>
 
 #include <script/jsw.h>
+#include <script/jselement.h>
+#include <script/jsnodelist.h>
 
 namespace Ash
 {
-
-	static JSBool
-		my_add (JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
-	{
-		jsdouble x, y;
-
-		if (!JS_ValueToNumber(cx, argv[0], &x))
-			return JS_FALSE;
-
-		if (!JS_ValueToNumber(cx, argv[1], &y))
-			return JS_FALSE;
-
-		printf("js:%f %f\n", x, y);
-		return JS_NewDoubleValue(cx, x + y, rval);
-	}
-
-	JSW_BEGIN_FUNCTION_MAP(my_functions)
-		JSW_ADD_FUNCTION("my_add", my_add, 2)
-		JSW_END_FUNCTION_MAP
 
 	Widget::Widget()
 	{
 		resources = ResourceManager::GetInstance();
 		scriptEngine.Initialize();
-		scriptEngine.RegisterFunctions(my_functions);
 	}
 
 	Widget::~Widget()
 	{
+		scriptEngine.Shutdown();
 		Free();
 	}
 
@@ -63,7 +46,7 @@ namespace Ash
 		WindowFrame *window = 0;
 
 		SetElement((Element*)document);
-		
+
 		if (!document->LoadFile(filename))
 			return false;
 
@@ -96,8 +79,25 @@ namespace Ash
 		for(int i=0; i<2; i++)
 			window->Layout();
 
+		Dump();
+		document->Dump();
 		resources->Dump();
-		scriptEngine.TestScript();
+
+		JSObject *go = scriptEngine.GetGlobalObject();
+		JSContext *cx = scriptEngine.GetContext();
+
+		JSElement::JSInit(cx, go);
+		JSNodeList::JSInit(cx, go);
+		JSObject *obj = JS_DefineObject(cx, go, "widget", &JSElement::jswClass, 0, JSPROP_PERMANENT);
+		if (obj)
+		{
+			JSClass *cls = JS_GetClass(obj);
+			JSElement *jse = new JSElement();
+			jse->SetPrivate(element, false);
+			JS_SetPrivate(cx, obj, jse);
+			JSElement *p = (JSElement*) JS_GetPrivate(cx, obj);
+		}
+
 		return true;
 	}
 

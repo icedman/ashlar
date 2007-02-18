@@ -40,37 +40,39 @@ Franky Braem - wxJS
 #define JSW_END_FUNCTION_MAP {0} };
 
 //!  Property declaration macros
-#define JSW_BEGIN_PROPERTY_MAP(_class) JSPropertySpec _class::m_properties[] = {
+#define JSW_BEGIN_PROPERTY_MAP(_class) JSPropertySpec _class::properties[] = {
 #define JSW_ADD_PROPERTY(_name, _native, _flags) { _name, _native, _flags },
 #define JSW_END_PROPERTY_MAP {0} };
 
 //!  Method declaration macros
-#define JSW_BEGIN_METHOD_MAP(_class) JSFunctionSpec _class::m_methods[] = {
+#define JSW_BEGIN_METHOD_MAP(_class) JSFunctionSpec _class::methods[] = {
 #define JSW_ADD_METHOD(_name, _native, _nargs) { _name, _native, _nargs, 0, 0 },
 #define JSW_END_METHOD_MAP {0} };
 
 //!  Class name declaration macro
-#define JSW_CLASS_NAME(_class, _name) const char* _class::m_jsClassName = _name;
+#define JSW_CLASS_NAME(_class, _name) const char* _class::jsClassName = _name;
 
 //!  JSWBaseClass 
 /*!
 Base class for export objects
 */
-template<class T_Port, class T_Priv>
+template<class T_Proto, class T_Priv>
 class JSWBaseClass
 {
 public:
 
 	//!< Constructor
-	JSWBaseClass() : m_pPrivate(NULL)
-	{
-	}
+	JSWBaseClass() : pPrivate(NULL), bAutoDelete(true)
+	{}
 
 	//!< Constructor
 	virtual ~JSWBaseClass()
 	{
-		delete m_pPrivate;
-		m_pPrivate = NULL;
+		if (pPrivate && bAutoDelete)
+		{
+			delete pPrivate;
+			pPrivate = NULL;
+		}
 	}
 
 	//!< JSGetProperty
@@ -78,7 +80,7 @@ public:
 	{
 		if (JSVAL_IS_INT(id)) 
 		{
-			T_Port *p = (T_Port *) JS_GetPrivate(cx, obj);
+			T_Proto *p = (T_Proto *) JS_GetPrivate(cx, obj);
 			if (p)
 			{
 				T_Priv *priv = p->GetPrivate();
@@ -93,7 +95,7 @@ public:
 	{
 		if (JSVAL_IS_INT(id)) 
 		{
-			T_Port *p = (T_Port *) JS_GetPrivate(cx, obj);
+			T_Proto *p = (T_Proto *) JS_GetPrivate(cx, obj);
 			if (p)
 			{
 				T_Priv *priv = p->GetPrivate();
@@ -106,7 +108,7 @@ public:
 	//!< JSConstructor
 	static JSBool JSConstructor(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 	{
-		T_Port *priv = new T_Port();
+		T_Proto *priv = new T_Proto();
 		priv->SetPrivate(new T_Priv());
 		JS_SetPrivate(cx, obj, (void *) priv);
 		return JS_TRUE;
@@ -115,7 +117,7 @@ public:
 	//!< JSDestructor
 	static void JSDestructor(JSContext *cx, JSObject *obj)
 	{
-		T_Port *priv = (T_Port*) JS_GetPrivate(cx, obj);
+		T_Proto *priv = (T_Proto*) JS_GetPrivate(cx, obj);
 		delete priv;
 		priv = NULL;
 	}
@@ -123,24 +125,25 @@ public:
 	//!< JSInit
 	static JSObject* JSInit(JSContext *cx, JSObject *obj, JSObject *proto = NULL)
 	{
-		JSObject *newProtoObj = JS_InitClass(cx, obj, proto, &m_jswClass, 
-			T_Port::JSConstructor, 0,
-			NULL, T_Port::m_methods,
+		JSObject *newProtoObj = JS_InitClass(cx, obj, proto, &jswClass, 
+			T_Proto::JSConstructor, 0,
+			NULL, T_Proto::methods,
 			NULL, NULL);
-		JS_DefineProperties(cx, newProtoObj, T_Port::m_properties);
+		JS_DefineProperties(cx, newProtoObj, T_Proto::properties);
 		return newProtoObj;
 	}
 
 	//!< SetPrivate - save native class
-	void SetPrivate(T_Priv *priv)
+	void SetPrivate(T_Priv *priv, bool bDelete = true)
 	{
-		m_pPrivate = priv; 
+		bAutoDelete = bDelete;
+		pPrivate = priv; 
 	}
 
 	//!< GetPrivate - get native class
 	T_Priv* GetPrivate() 
 	{
-		return m_pPrivate; 
+		return pPrivate; 
 	}
 
 #if 0
@@ -151,30 +154,31 @@ public:
 	static JSBool GetProperty(T_Priv* priv, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
 #endif
 
-protected:
+public:
 
-	T_Priv *m_pPrivate;							/*!< native class pointer */
-	static JSClass m_jswClass;					/*!< class definition */
-	static const char* m_jsClassName;		/*!< class name */
-	static JSPropertySpec m_properties[];
-	static JSFunctionSpec m_methods[];
+	T_Priv *pPrivate;							/*!< native class pointer */
+	bool bAutoDelete;
+	static JSClass jswClass;				/*!< class definition */
+	static const char* jsClassName;		/*!< class name */
+	static JSPropertySpec properties[];
+	static JSFunctionSpec methods[];
 };
 
-//!  JSWBaseClass::m_jswClass
+//!  JSWBaseClass::jswClass
 /*!
 Base class definition
 */
-template<class T_Port, class T_Priv>
-JSClass JSWBaseClass<T_Port, T_Priv>::m_jswClass = 
+template<class T_Proto, class T_Priv>
+JSClass JSWBaseClass<T_Proto, T_Priv>::jswClass = 
 { 
-	JSWBaseClass<T_Port, T_Priv>::m_jsClassName,
+	JSWBaseClass<T_Proto, T_Priv>::jsClassName,
 	JSCLASS_HAS_PRIVATE | JSCLASS_NEW_ENUMERATE,
-	JS_PropertyStub, // JSWBaseClass<T_Port, T_Priv>::JSAddProperty,
+	JS_PropertyStub, // JSWBaseClass<T_Proto, T_Priv>::JSAddProperty,
 	JS_PropertyStub,
-	JSWBaseClass<T_Port, T_Priv>::JSGetProperty,
-	JSWBaseClass<T_Port, T_Priv>::JSSetProperty,
-	JS_EnumerateStub, // (JSEnumerateOp) JSWBaseClass<T_Port, T_Priv>::JSEnumerate,
-	JS_ResolveStub,   // JSWBaseClass<T_Port, T_Priv>::JSResolve,
+	JSWBaseClass<T_Proto, T_Priv>::JSGetProperty,
+	JSWBaseClass<T_Proto, T_Priv>::JSSetProperty,
+	JS_EnumerateStub, // (JSEnumerateOp) JSWBaseClass<T_Proto, T_Priv>::JSEnumerate,
+	JS_ResolveStub,   // JSWBaseClass<T_Proto, T_Priv>::JSResolve,
 	JS_ConvertStub,
-	JSWBaseClass<T_Port, T_Priv>::JSDestructor
+	JSWBaseClass<T_Proto, T_Priv>::JSDestructor
 };

@@ -37,6 +37,7 @@ namespace Dom
 	{
 		XmlParser::Shutdown();
 		nodeStack.Clear();
+		printf("dom builder done\n");
 	}
 
 	void DOMBuilder::OnStartElement(const XML_Char *name, const XML_Char **attr)

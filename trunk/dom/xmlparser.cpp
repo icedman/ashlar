@@ -110,6 +110,7 @@ namespace Dom
 	void XmlParser::Shutdown()
 	{
 		parser = 0;
+		printf("parser done\n");
 	}
 
 	bool XmlParser::Parse(const char* data, int len, int isFinal)

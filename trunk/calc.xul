@@ -1,34 +1,37 @@
-<?xml version="1.0"?>
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!-- simple xul sample -->
-<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<vbox flex="1" align="right">
-		<style>
-			<margin>20</margin>
-			<padding right="10"/>
+﻿<?xml version="1.0"?>
+<window>
+	<stylesheet src="style.xul">
+		<style name="button.nums">
+			<layout width="32" height="32"/>
 		</style>
-		<hbox flex="1" align="center" valign="middle">
-			<style>
-				<gradient type="linear" x="0" y="0" x2="0" y2="255">
-					<color offset="0">#d5d5d5</color>
-					<color offset="150">#c0c0c0</color>
-					<color offset="255">#e5e5e5</color>
-				</gradient>
-			</style>
+		<style name="button.op">
+			<layout width="32" height="32"/>
+		</style>
+	</stylesheet>
+	<vbox flex="1">
+		<hbox flex="1">
+			<button class="nums" label="7"/>
+			<button class="nums" label="8"/>
+			<button class="nums" label="9"/>
+			<button class="op" label="/"/>
 		</hbox>
-		<box>
-			<button label="button" width="60" height="40">
-				<onClick>
-					<![CDATA[ alert("hello world!"); ]]>
-				</onClick>
-				<style>
-					<gradient type="radial" x="125" y="125" x2="125" y2="125" radius="10" radius2="255">
-						<color offset="0">#d5d5d5</color>
-						<color offset="250">#c0c0c0</color>
-						<color offset="255">#e5e5e5</color>
-					</gradient>
-				</style>
-			</button>
-		</box>
+		<hbox flex="1">
+			<button class="nums" label="4"/>
+			<button class="nums" label="5"/>
+			<button class="nums" label="6"/>
+			<button class="op" label="*"/>
+		</hbox>
+		<hbox flex="1">
+			<button class="nums" label="1"/>
+			<button class="nums" label="2"/>
+			<button class="nums" label="3"/>
+			<button class="op" label="+"/>
+		</hbox>
+		<hbox flex="1">
+			<button class="nums" label="0"/>
+			<button class="op"/>
+			<button class="op"/>
+			<button class="op" label="-"/>
+		</hbox>
 	</vbox>
 </window>
