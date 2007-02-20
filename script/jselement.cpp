@@ -75,10 +75,7 @@ JSBool JSElement::firstChild(JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		Element *c = (Element*)e->FirstChild();
 		if (!c)
 			return JS_TRUE;
-		JSElement *jse = new JSElement();
-		jse->SetPrivate(c, false);
-		JSObject *obj = JS_NewObject(cx, &JSElement::jswClass, 0, 0);
-		JS_SetPrivate(cx, obj, jse);
+		JSObject *obj = JSElement::Create(cx, c, false);
 		*rval = OBJECT_TO_JSVAL(obj);
 	}
 	return JS_TRUE;
@@ -93,10 +90,7 @@ JSBool JSElement::lastChild(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		Element *c = (Element*)e->LastChild();
 		if (!c)
 			return JS_TRUE;
-		JSElement *jse = new JSElement();
-		jse->SetPrivate(c, false);
-		JSObject *obj = JS_NewObject(cx, &JSElement::jswClass, 0, 0);
-		JS_SetPrivate(cx, obj, jse);
+		JSObject *obj = JSElement::Create(cx, c, false);
 		*rval = OBJECT_TO_JSVAL(obj);
 	}
 	return JS_TRUE;
@@ -111,10 +105,7 @@ JSBool JSElement::nextSibling(JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		Element *c = (Element*)e->NextSibling();
 		if (!c)
 			return JS_TRUE;
-		JSElement *jse = new JSElement();
-		jse->SetPrivate(c, false);
-		JSObject *obj = JS_NewObject(cx, &JSElement::jswClass, 0, 0);
-		JS_SetPrivate(cx, obj, jse);
+		JSObject *obj = JSElement::Create(cx, c, false);
 		*rval = OBJECT_TO_JSVAL(obj);
 	}
 	return JS_TRUE;
@@ -129,10 +120,7 @@ JSBool JSElement::previousSibling(JSContext *cx, JSObject *obj, uintN argc, jsva
 		Element *c = (Element*)e->PreviousSibling();
 		if (!c)
 			return JS_TRUE;
-		JSElement *jse = new JSElement();
-		jse->SetPrivate(c, false);
-		JSObject *obj = JS_NewObject(cx, &JSElement::jswClass, 0, 0);
-		JS_SetPrivate(cx, obj, jse);
+		JSObject *obj = JSElement::Create(cx, c, false);
 		*rval = OBJECT_TO_JSVAL(obj);
 	}
 	return JS_TRUE;
@@ -211,10 +199,7 @@ JSBool JSElement::getElementsByTagName(JSContext *cx, JSObject *obj, uintN argc,
 		Element *e = p->GetPrivate();
 		JSString *jstr = JS_ValueToString(cx, argv[0]);
 		NodeList2 *nl = e->GetElementsByTagName(&DOMString((char*)JS_GetStringBytes(jstr)));
-		JSNodeList *jsnl = new JSNodeList();
-		jsnl->SetPrivate(nl, true);
-		JSObject *obj = JS_NewObject(cx, &JSNodeList::jswClass, 0, 0);
-		JS_SetPrivate(cx, obj, jsnl);
+		JSObject *obj = JSNodeList::Create(cx, nl, true);
 		*rval = OBJECT_TO_JSVAL(obj);
 	}
 	return JS_TRUE;
@@ -231,10 +216,7 @@ JSBool JSElement::getElementsById(JSContext *cx, JSObject *obj, uintN argc, jsva
 		Element *e = p->GetPrivate();
 		JSString *jstr = JS_ValueToString(cx, argv[0]);
 		NodeList2 *nl = e->GetElementsById(&DOMString((char*)JS_GetStringBytes(jstr)));
-		JSNodeList *jsnl = new JSNodeList();
-		jsnl->SetPrivate(nl, true);
-		JSObject *obj = JS_NewObject(cx, &JSNodeList::jswClass, 0, 0);
-		JS_SetPrivate(cx, obj, jsnl);
+		JSObject *obj = JSNodeList::Create(cx, nl, true);
 		*rval = OBJECT_TO_JSVAL(obj);
 	}
 	return JS_TRUE;

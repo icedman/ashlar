@@ -19,13 +19,13 @@ code.google.com/p/ashlar
 #pragma once
 
 #include <dom/document.h>
-#include <dom/docbuilder.h>
 #include <dom/stylesheet.h>
-#include <layout/windowframe.h>
-#include <layout/framebuilder.h>
 #include <render/resources.h>
 #include <script/scriptengine.h>
 #include <script/jselement.h>
+#include <script/jsnodelist.h>
+#include <script/jsdocument.h>
+#include <layout/layout.h>
 
 using namespace Dom;
 using namespace Layout;
@@ -44,12 +44,12 @@ namespace Ash
 
 		FRAMETYPE(WIDGET, Frame)
 
-		//! Loads widget from an xul file
-		bool Load(const char* filename);
+			//! Loads widget from an xul file
+			bool Load(const char* filename);
 		virtual void Free();
 
 		StyleSheet* GetStyleSheet() { return &styleSheet; }
-		DOMDocument* GetDocument() { return (DOMDocument*)element; }
+		Document* GetDocument() { return (Document*)element; }
 		ResourceManager* GetResources() { return resources; }
 		ScriptEngine* GetScriptEngine() { return &scriptEngine; }
 
@@ -57,9 +57,9 @@ namespace Ash
 
 		StyleSheet			styleSheet;
 		ResourceManager	*resources;
-		ScriptEngine		scriptEngine;
+		ScriptEngine		scriptEngine; 
 
-		JSElement *jsElement;
+		JSDocument *jsDoc;
 	};
 
 }

@@ -172,6 +172,12 @@ namespace Dom
 				n = n->NextSibling();
 			}
 		}
+		if (1 && nodeValue.length())
+		{
+			printf("\n");
+			for(int i = 0; i<level; i++) printf("  ");
+			printf(">%s<", nodeValue.c_str());
+		}
 		printf("\n");
 
 		n = FirstChild();

@@ -18,12 +18,12 @@ code.google.com/p/ashlar
 
 #include <widget.h>
 #include <dom/safenode.h>
-#include <dom/styleSheet.h>
+#include <dom/stylesheet.h>
+#include <dom/docbuilder.h>
 #include <layout/button.h>
-
-#include <script/jsw.h>
-#include <script/jselement.h>
-#include <script/jsnodelist.h>
+#include <layout/label.h>
+#include <layout/windowframe.h>
+#include <layout/framebuilder.h>
 
 namespace Ash
 {
@@ -42,7 +42,7 @@ namespace Ash
 
 	bool Widget::Load(const char* filename)
 	{
-		DOMDocument *document = new DOMDocument();
+		Document *document = new Document();
 		WindowFrame *window = 0;
 
 		SetElement((Element*)document);
@@ -59,6 +59,7 @@ namespace Ash
 		fb.Register(new VFrame());
 		fb.Register(new WindowFrame());
 		fb.Register(new Button());
+		fb.Register(new Label());
 
 		window = (WindowFrame*)fb.Build(document);
 		if (!window)
@@ -68,35 +69,43 @@ namespace Ash
 
 		// register mouse events
 		window->RegisterEvents(window);
-
-		IWindow *w = (IWindow*)window;
-		w->Create(400,300);
-		w->Show(true);
-
 		styleSheet.ApplyStyle(element);
 
-		// bug: layout need to be called multiple times when no definite widths and heights are available
-		for(int i=0; i<2; i++)
-			window->Layout();
-
-		Dump();
-		document->Dump();
-		resources->Dump();
-
-		JSObject *go = scriptEngine.GetGlobalObject();
-		JSContext *cx = scriptEngine.GetContext();
-
-		JSElement::JSInit(cx, go);
-		JSNodeList::JSInit(cx, go);
-		JSObject *obj = JS_DefineObject(cx, go, "widget", &JSElement::jswClass, 0, JSPROP_PERMANENT);
-		if (obj)
+		if (1)
 		{
-			JSClass *cls = JS_GetClass(obj);
-			JSElement *jse = new JSElement();
-			jse->SetPrivate(element, false);
-			JS_SetPrivate(cx, obj, jse);
-			JSElement *p = (JSElement*) JS_GetPrivate(cx, obj);
+			Dump();
+			styleSheet.Dump();
+			document->Dump();
+			resources->Dump();
 		}
+
+		if (1)
+		{
+			JSObject *go = scriptEngine.GetGlobalObject();
+			JSContext *cx = scriptEngine.GetContext();
+
+			JSElement::JSInit(cx, go);
+			JSNodeList::JSInit(cx, go);
+			JSDocument::JSInit(cx, go);
+			JSObject *obj = JS_DefineObject(cx, go, "widget", JSDocument::GetClass(), 0, JSPROP_PERMANENT);
+			if (obj)
+			{
+				JSDocument *jsd = new JSDocument();
+				jsd->SetPrivate((Document*)element, false);
+				JS_SetPrivate(cx, obj, jsd);
+			}
+		}
+
+		SafeNode snode(document);
+		int width = snode.GetElement("window")->GetValue("width")->ValueInt(400);
+		int height = snode.GetElement("window")->GetValue("height")->ValueInt(400);
+		if (!window->CreateNewWindow(width,height))
+			return false;
+		window->ShowWindow(true);
+
+		// bug
+		for(int i=0;i<4;i++)
+			window->Layout();
 
 		return true;
 	}

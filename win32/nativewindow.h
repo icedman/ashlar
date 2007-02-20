@@ -29,6 +29,9 @@ namespace OSWin
 	class NativeWindow : public OSWin::Window
 	{
 	public:
+		NativeWindow() : iwindow(0)
+		{}
+
 		BEGIN_MSG_HANDLER
 			HANDLE_MSG(WM_CREATE, OnCreate)
 			HANDLE_MSG(WM_DESTROY, OnDestroy)

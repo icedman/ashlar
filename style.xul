@@ -2,32 +2,39 @@
 <stylesheet>
 	<style>
 		<border width="1" color="#e5e5e5"/>
+		<font>
+			<family>verdana</family>
+			<size>14</size>
+			<color>#000000</color>
+		</font>
+	</style>
+	<style name="text">
+		<layout align="center" valign="middle"/>
 	</style>
 	<style name="button">
 		<layout align="center" valign="middle"/>
 		<font>
-			<name>verdana</name>
-			<size>14</size>
 			<color>#ffffff</color>
 		</font>
 		<border width="1" color="#222222">
-			<radius leftTop="4">1</radius>
+			<radius>2</radius>
 		</border>
-		<gradient type="linear" x="0" y="0" x2="0" y2="255">
+		<margin>2</margin>
+		<fill type="linear" x="0" y="0" x2="0" y2="255">
 			<color offset="0">#666666</color>
 			<color offset="75">#aaaaaa</color>
 			<color offset="175">#777777</color>
-		</gradient>
+		</fill>
 	</style>
 	<style name="button:hover">
 		<border width="2" color="#000000"/>
 	</style>
 	<style name="button:pressed">
 		<border width="2" color="#555555"/>
-		<gradient type="linear" x="0" y="0" x2="0" y2="255">
+		<fill type="linear" x="0" y="0" x2="0" y2="255">
 			<color offset="0">#777777</color>
 			<color offset="75">#bbbbbb</color>
 			<color offset="175">#888888</color>
-		</gradient>
+		</fill>
 	</style>
 </stylesheet>

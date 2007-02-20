@@ -1,43 +1,49 @@
 <?xml version="1.0"?>
-<window>
+<window width="600" height="300">
+	<style>
+		<fill>
+			<color>#ffffff</color>
+		</fill>
+	</style>
 	<stylesheet src="style.xul"/>
 	<button label="button abc" width="120" height="40">
 		<event name="onClick">
 			<![CDATA[
 			
-			s = "";
 			nl = widget.getElementsByTagName('button');
 			for(i=0; i<nl.length();i++)
 			{
-				el = nl.item(i);
-				el.setAttribute('label', 'btn' + i);
-				s += el.getAttribute('label') + "<\n";
+				nl.item(i).setAttribute('label', 'btn' + i);
+				echo(nl.item(i).nodeName + ' ' + i);
 			}
-			s;
 			
 			]]>
 		</event>
 	</button>
 	<button label="button b"/>
 	<vbox flex="1" align="right">
+		<style>
+			<background src="frame.png"/>
+		</style>
+		<text>hello world</text>
 		<hbox flex="1" align="center" valign="middle">
 			<box>
-				<button label="button c"/>
+				<button label="button"/>
 				<button label="button d" class="classed"/>
 			</box>
 		</hbox>
 		<button label="button e">
 			<style name=":pressed">
 				<font color="#505050"/>
-				<gradient type="linear" x="0" y="0" x2="0" y2="255">
+				<fill type="linear" x="0" y="0" x2="0" y2="255">
 					<color offset="0">#d5d5d5</color>
 					<color offset="150">#c0c0c0</color>
 					<color offset="255">#e5e5e5</color>
-				</gradient>
-			</style>
+				</fill>
+		</style>
 			<event name="onClick">
 				<![CDATA[
-				
+
 				function test()
 				{
 					return "test";
@@ -51,10 +57,11 @@
 					if (c.nodeName == 'button')
 					{
 						c.setAttribute('label','hello');
-						echo (">" + c.nodeName);
+						echo (c.nodeName);
 					}
 					c = c.nextSibling();
 				}
+				echo(test());
 
 				]]>
 			</event>

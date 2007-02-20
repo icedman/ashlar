@@ -25,7 +25,8 @@ namespace Layout
 	const unsigned int VBOX = 2;
 	const unsigned int BOX = 3;
 	const unsigned int WINDOW = 100;
-	const unsigned int BUTTON = 200;
+	const unsigned int LABEL = 200;
+	const unsigned int BUTTON = 201;
 	const unsigned int WIDGET = 1000;
 
 #define FRAMETYPE(_type, _super) \

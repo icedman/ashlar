@@ -30,14 +30,14 @@ namespace Dom
 	class DOMBuilder : public XmlParser
 	{
 	public:
-		bool Initialize(DOMDocument *d = 0);
+		bool Initialize(Document *d = 0);
 		void Shutdown();
 		void OnStartElement(const XML_Char *name, const XML_Char **atts);
 		void OnEndElement(const XML_Char *name);
 		void OnComment(const XML_Char *comment);
 		void OnCharacterData(const XML_Char *data, int len);
 
-		DOMDocument* GetDocument() { if (!nodeStack.Size()) return 0; return (DOMDocument*)nodeStack.GetAt(0); }
+		Document* GetDocument() { if (!nodeStack.Size()) return 0; return (Document*)nodeStack.GetAt(0); }
 		NodeList nodeStack;
 	};
 }

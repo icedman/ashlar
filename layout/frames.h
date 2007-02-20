@@ -63,6 +63,7 @@ namespace Layout
 
 		virtual Dom::Element* SetElement(Dom::Element *e);
 		virtual Dom::Element* GetElement() { return element; }
+		virtual Dom::DOMString* GetText();
 
 		// frameType 0 is base FRAME
 		virtual bool IsType(int frameType) { return (frameType == 0); }

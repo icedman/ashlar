@@ -47,6 +47,7 @@ namespace Layout
 	const unsigned short MIDDLE = 2;
 
 	//! Graident style
+	const unsigned short SOLID = 0;
 	const unsigned short LINEAR = 1;
 	const unsigned short RADIAL = 2;
 
@@ -74,11 +75,12 @@ namespace Layout
 
 	typedef struct Font
 	{
-		// todo: more detail
-		short style;
 		long color;
 		long fontId;
 		short size;
+		short weight;
+		short italized;
+		short outlined;
 		long outlineColor;
 		short outlineWidth;
 		Shadow shadow;
@@ -87,7 +89,6 @@ namespace Layout
 	typedef struct Background
 	{
 		short style;
-		long color;
 		long imageId;
 		short imageX;
 		short imageY;
@@ -120,7 +121,6 @@ namespace Layout
 	{
 		short style;
 		long color;
-		long imageId;
 		Borders radius;
 		short bevelStyle;
 		long bevelColor;

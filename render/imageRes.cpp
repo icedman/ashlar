@@ -16,29 +16,22 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#pragma once
+#include <render/imageRes.h>
 
-#include <layout/layout.h>
-
-namespace Layout
+namespace Render
 {
-	// todo: delete this, make xul:grid
 
-	class Row : public HFrame
+	ImageRes::ImageRes(DOMString* n, DOMString *src, int i)
 	{
-	public:
-		virtual bool Layout();
-		virtual const char* GetName() { return "row"; }
-		virtual Frame* Create() { return new Row(); }
-		FRAMETYPE(HBOX, Frame)
-	};
-
-	class Table : public VFrame
-	{
-	public:
-		virtual bool Layout();
-		virtual const char* GetName() { return "table"; }
-		virtual Frame* Create() { return new Table(); }
-		FRAMETYPE(HBOX, Frame)
-	};
+		id = i;
+		type = IMAGE_RESOURCE;
+		if (n)
+		{
+			name = *n;
+		} else {
+			name = *src;
+		}
+		
+		img = Cairo::ImageSurface::create_from_png(*src);
+	}
 }

@@ -17,7 +17,6 @@ code.google.com/p/ashlar
 */
 
 #include <script/jsnodelist.h>
-#include <script/jselement.h>
 
 JSBool JSNodeList::SetProperty(NodeList2* nodelist, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp)
 {
@@ -38,11 +37,11 @@ JSBool JSNodeList::item(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	if (p->GetPrivate())
 	{
 		Element *e = (Element*)p->GetPrivate()->Item(JSVAL_TO_INT(argv[0]));
-		JSElement *jse = new JSElement();
-		jse->SetPrivate(e, false);
-		JSObject *obj = JS_NewObject(cx, &JSElement::jswClass, 0, 0);
-		JS_SetPrivate(cx, obj, jse);
-		*rval = OBJECT_TO_JSVAL(obj);
+		if (e)
+		{
+			JSObject *obj = JSElement::Create(cx, e, false);
+			*rval = OBJECT_TO_JSVAL(obj);
+		}
 	}
 	return JS_TRUE;
 }

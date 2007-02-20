@@ -18,9 +18,7 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <dom/domnode.h>
-#include <script/jsw.h>
-#include <debug.h>
+#include <script/jselement.h>
 
 using namespace Dom;
 

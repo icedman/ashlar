@@ -55,9 +55,11 @@ namespace Dom
 
 	int StringToStyle(DOMString *str, int defaultValue)
 	{
-		// gradient
+		// fill
 		if (!str)
 			return defaultValue;
+		if (*str == DOMString("solid"))
+			return SOLID;
 		if (*str == DOMString("linear"))
 			return LINEAR;
 		if (*str == DOMString("radial"))
@@ -190,16 +192,37 @@ namespace Dom
 		DOMString tmp;
 
 		ResourceManager *rm = ResourceManager::GetInstance();
-		Resource *rc = rm->GetResource(snode.GetValue("name")->Value(&tmp));
+		Resource *rc = rm->GetResource(snode.GetValue("family")->Value(&tmp));
 
 		fn.fontId = rc ? rc->GetId() : fn.fontId;
 		fn.size = snode.GetValue(&DOMString("size"))->ValueInt(fn.size);
 		fn.color = StringToColor(snode.GetValue(&DOMString("color"))->Value(), fn.color);
 	}
 
+	void GetImageXml(Background &img, DOMNode *el)
+	{
+		if (!el)
+			return;
+
+		SafeNode snode((Element*)el);
+
+		DOMString *name = snode.GetValue("name")->Value();
+		DOMString *src = snode.GetValue("src")->Value();
+		if (!name)
+			name = src;
+		if (!src)
+			return;
+
+		ResourceManager *rm = ResourceManager::GetInstance();
+		Resource *rc = rm->GetResource(name);
+
+		img.imageId = rc ? rc->GetId() : img.imageId;
+
+	}
+
 	bool StyleSheet::LoadFile(const char* filename)
 	{
-		DOMDocument doc;
+		Document doc;
 		if (!doc.LoadFile(filename))
 			return false;
 
@@ -388,14 +411,16 @@ namespace Dom
 
 				if (apply)
 				{
-					/*
-					printf("%s apply %s .%s:%s #%s\n",
-					f->GetName(),
-					selector->c_str(),
-					className->c_str(),
-					pseudoClass->c_str(),
-					id->c_str());
-					*/
+					if (0)
+					{
+						printf("%s apply %s .%s:%s #%s\n",
+							f->GetName(),
+							selector->c_str(),
+							className->c_str(),
+							pseudoClass->c_str(),
+							id->c_str());
+					}
+
 					ApplyStyle(f->frameStyle, (Element*)n);
 				}
 
@@ -425,8 +450,9 @@ namespace Dom
 		GetBordersXml(fs.border, snode.GetElement("border")->Node());
 		GetBordersXml(fs.margin, snode.GetElement("margin")->Node());
 		GetBordersXml(fs.padding, snode.GetElement("padding")->Node());
-		GetGradientXml(fs.gradient, snode.GetElement("gradient")->Node());
+		GetGradientXml(fs.gradient, snode.GetElement("fill")->Node());
 		GetFontXml(fs.font, snode.GetElement("font")->Node());
+		GetImageXml(fs.bgImage, snode.GetElement("background")->Node());
 		return true;
 	}
 }

@@ -24,4 +24,16 @@ namespace Dom
 {
 	//! DOM String, using stl
 	typedef std::string DOMString;
+
+	inline bool IsWhiteSpace(DOMString &str)
+	{
+		int space = 0;
+		const char *c = str.c_str();
+		for(int i=0;i<str.length();i++)
+		{
+			if (c[i]==' ' || c[i]=='\t' || c[i]=='\n')
+				space++;
+		}
+		return space == str.length();
+	}
 }

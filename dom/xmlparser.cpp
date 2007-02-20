@@ -109,8 +109,12 @@ namespace Dom
 
 	void XmlParser::Shutdown()
 	{
-		parser = 0;
-		printf("parser done\n");
+		if (parser)
+		{
+			XML_ParserFree(parser);
+			parser = 0;
+			//printf("parser done\n");
+		}
 	}
 
 	bool XmlParser::Parse(const char* data, int len, int isFinal)
@@ -158,6 +162,9 @@ namespace Dom
 
 	void XmlParser::OnXmlDecl(const XML_Char *version, const XML_Char *encoding, int standalone)
 	{
+		return;
+
+		// skip
 		printf("<?xml version=\"%s\"", version);
 		if (encoding)
 		{
