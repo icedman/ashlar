@@ -43,18 +43,19 @@ namespace Layout
 		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);
 		if (w)
 		{
-			SafeNode snode(GetElement());
-			SafeNode *label = snode.GetValue("label");
-			if (label->Value())
+			DOMString *text = GetText();
+			if (text)
 			{
-				Render::RenderEngine *r = &w->render;
+				Render::RenderEngine *r = w->GetRenderer();
 				double width, height;
-				if (!r->GetTextExtents(&frameStyle, label->Value()->c_str(), width, height))
-					return HFrame::Layout();
-				frameStyle.layout.width = ISASSIGNED(frameStyle.layout.width) ? frameStyle.layout.width : width;
-				frameStyle.layout.height = ISASSIGNED(frameStyle.layout.height) ? frameStyle.layout.height : height;
+				if (r->GetTextExtents(&frameStyle, text->c_str(), width, height))
+				{
+					frameStyle.layout.width = ISASSIGNED(frameStyle.layout.width) ? frameStyle.layout.width : width;
+					frameStyle.layout.height = ISASSIGNED(frameStyle.layout.height) ? frameStyle.layout.height : height;
+				}
 			}
 		}
+
 		return HFrame::Layout();
 	}
 }

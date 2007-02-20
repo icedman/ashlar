@@ -19,7 +19,8 @@ code.google.com/p/ashlar
 #pragma once
 
 #include <layout/frames.h>
-#include <cairo.h>
+#include <cairomm/context.h>
+#include <cairomm/surface.h>
 
 using namespace Ash;
 using namespace Layout;
@@ -30,40 +31,27 @@ namespace Render
 	class RenderEngine
 	{
 	public:
-		RenderEngine();
-		~RenderEngine();
+		RenderEngine() {}
+		~RenderEngine() {}
 
-		bool InitBuffer(HDC hdc, const Rect *);
-		void DestroyBuffer();
-		void Clear(long color);
-		void Blit(HDC hdc = 0);
+		bool SetupBuffer(int width, int height);
+		bool Render(Frame *frame);
+		bool DrawFrame(Frame *frame);
+		bool DrawText(Font *fn, LayoutInfo *li, const char* text, double  x, double y, double x2, double y2);
+		bool DrawBorder(Borders *br, BorderStyle *bs, double  x, double y, double x2, double y2);
+		bool DrawGradient(Gradient *gr, double x, double y, double x2, double y2);
+		bool DrawImage(Background *bg, double x, double y, double x2, double y2);
 
-		bool Render(Frame *, const Rect *clip = 0);
-		void DrawFrame(Frame *);
-		void DrawText(Frame *, const char *text);
-		void DrawRect(double x, double y, double x2, double y2);
-		void DrawBorder(Borders *br, BorderStyle *bs, double  x, double y, double x2, double y2, bool clip);
-		void DrawGradient(Gradient *gr, double x, double y, double x2, double y2);
-		
+		bool Clear();
+		bool PaintBuffer(const Cairo::RefPtr< Cairo::Context > &cx, Rect *rc);
 		bool GetTextExtents(FrameStyle *fs, const char* text, double &width, double &height);
 
 	private:
 
-		void Push();
-		void Pop();
-		void RoundToDevicePixels(const Rect *pRect, double &l, double &t, double &r, double &b);
-		long GetColor(long color, double &r, double &g, double &b);
+		inline void RoundToDevicePixels(const Rect *pRect, double &l, double &t, double &r, double &b);
 
-		HDC hdc;
-		HGDIOBJ hOld;
-		HBITMAP hBmp;
-		HDC hdcTarget;
-		Rect rect;
-		Rect clip;
-
-		cairo_t *cairo;
-		cairo_font_options_t *fontOptions;
-		cairo_pattern_t *fill;
-		cairo_surface_t *surface;
+		// surface buffer
+		Cairo::RefPtr<Cairo::ImageSurface> img;
+		Cairo::RefPtr<Cairo::Context> cr;
 	};
 }

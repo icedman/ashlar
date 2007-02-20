@@ -24,18 +24,18 @@ code.google.com/p/ashlar
 namespace Dom
 {
 	//! DOM Document class
-	class DOMDocument : public Element
+	class Document : public Element
 	{
 	public:
-		DOMDocument();
-		DOMDocument(DOMString *name);
+		Document();
+		Document(DOMString *name);
 
 		virtual bool LoadFile(const char* filename);
 		
 		Attribute* createAttribute(DOMString *name);
-		CDataSection* createCDataSection();
-		Comment* createComment();
+		CDataSection* createCDataSection(DOMString *data);
+		Comment* createComment(DOMString *data);
 		Element* createElement(DOMString *tagName);
-		TextNode* createTextNode();
+		TextNode* createTextNode(DOMString *data);
 	};
 }

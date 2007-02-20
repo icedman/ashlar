@@ -35,7 +35,7 @@ namespace Layout
 		void Unregister(Frame* f);
 		void Free();
 
-		Frame* Build(DOMDocument *doc);
+		Frame* Build(Document *doc);
 		Frame* BuildFrames(Element *element);
 		Frame* CreateFrame(Element *element);
 

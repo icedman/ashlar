@@ -19,14 +19,15 @@ code.google.com/p/ashlar
 #pragma once
 
 #include <layout/frames.h>
-#include "window.h"
 #include <layout/layout.h>
 #include <render/render.h>
 #include <layout/frametypes.h>
+#include <iwindow.h>
+#include <win32/nativewindow.h>
 
 namespace Layout
 {
-	class WindowFrame : public VFrame, public Ash::Window
+	class WindowFrame : public VFrame, public Ash::IWindow
 	{
 	public:
 		WindowFrame();
@@ -36,17 +37,32 @@ namespace Layout
 		Frame* Create() { return new WindowFrame(); }
 		FRAMETYPE(WINDOW, VFrame)
 
-		void OnSize(const Rect *r);
-		void OnDraw(HDC hdc, Rect *rc);
-		void OnMouseMove(Point p);
-		void OnMouseDown(int button, Point p);
-		void OnMouseUp(int button, Point p);
-
 		bool RegisterEvents(Frame *frame);
 		void Redraw();
 
-	public:
+		Render::RenderEngine* GetRenderer() { return &render; }
+		Events::MouseEvents* GetMouseEvents() { return &mouseEvents; }
+
+		//! IWindow Interface
+		virtual bool CreateNewWindow(int w, int h);
+		virtual void DestroyWindow();
+		virtual bool SetWindowSize(int x, int y, int w, int h);
+		virtual void ShowWindow(bool show);
+		virtual bool OnCreate();
+		virtual void OnDestroy();
+		virtual void OnSize(const Rect *rc);
+		virtual void OnKeyDown(long key);
+		virtual void OnKeyUp(long key);
+		virtual void OnMouseMove(Point p);
+		virtual void OnMouseLeave();
+		virtual void OnMouseDown(int button, Point p);
+		virtual void OnMouseUp(int button, Point p);
+		virtual void OnDraw(HDC hdc, Rect *rc);
+
+	private:
 		Render::RenderEngine render;
 		Events::MouseEvents mouseEvents;
+
+		OSWin::NativeWindow nativeWindow;
 	};
 }

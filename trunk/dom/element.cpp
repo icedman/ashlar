@@ -230,6 +230,13 @@ namespace Dom
 		nodeName = DOMString("#text"); 
 	}
 
+	TextNode::TextNode(DOMString *value)
+	{
+		nodeType = TEXT_NODE;
+		nodeName = DOMString("#text"); 
+		nodeValue = *value;
+	}
+
 	// CData Section
 	CDataSection::CDataSection()
 	{
@@ -237,11 +244,25 @@ namespace Dom
 		nodeName = DOMString("#cdata-section");
 	}
 
+	CDataSection::CDataSection(DOMString *value)
+	{
+		nodeType = CDATA_SECTION_NODE;
+		nodeName = DOMString("#cdata-section");
+		nodeValue = *value;
+	}
+
 	// Comment
 	Comment::Comment()
 	{
 		nodeType = COMMENT_NODE;
 		nodeName = DOMString("#comment");
+	}
+
+	Comment::Comment(DOMString *value)
+	{
+		nodeType = COMMENT_NODE;
+		nodeName = DOMString("#comment");
+		nodeValue = *value;
 	}
 
 }

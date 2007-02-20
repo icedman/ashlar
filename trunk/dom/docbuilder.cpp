@@ -20,13 +20,13 @@ code.google.com/p/ashlar
 
 namespace Dom
 {
-	bool DOMBuilder::Initialize(DOMDocument *d)
+	bool DOMBuilder::Initialize(Document *d)
 	{
 		if (!XmlParser::Initialize())
 			return false;
 
 		if (!d)
-			d = new DOMDocument();
+			d = new Document();
 
 		nodeStack.Clear();
 		nodeStack.Push(d);
@@ -37,7 +37,7 @@ namespace Dom
 	{
 		XmlParser::Shutdown();
 		nodeStack.Clear();
-		printf("dom builder done\n");
+		//printf("dom builder done\n");
 	}
 
 	void DOMBuilder::OnStartElement(const XML_Char *name, const XML_Char **attr)
@@ -48,13 +48,27 @@ namespace Dom
 		nodeStack.Push(child);
 
 		// attributes
-		for (int i = 0; attr[i]; i += 2) {
+		for (int i = 0; attr[i]; i += 2)
+		{
 			child->SetAttribute(&DOMString(attr[i]), &DOMString(attr[i+1]));
 		}
 	}
 
 	void DOMBuilder::OnEndElement(const XML_Char *name)
 	{
+		if (1)
+		{
+			// pesky whitespace
+			DOMNode *node = nodeStack.GetLast();
+			if (node)
+			{
+				if (IsWhiteSpace(node->nodeValue))
+				{
+					node->nodeValue = "";
+				}
+			}
+		}
+
 		nodeStack.Pop();
 	}
 

@@ -22,13 +22,13 @@ code.google.com/p/ashlar
 namespace Dom
 {
 
-	DOMDocument::DOMDocument()
+	Document::Document()
 	{
 		nodeType = DOCUMENT_NODE;
 		nodeName = DOMString("#document");
 	}
 
-	DOMDocument::DOMDocument(DOMString *name)
+	Document::Document(DOMString *name)
 	{
 		nodeType = DOCUMENT_NODE;
 		nodeName = DOMString("#document");
@@ -37,32 +37,32 @@ namespace Dom
 			nodeName = *name;
 	}
 
-	Attribute* DOMDocument::createAttribute(DOMString *name)
+	Attribute* Document::createAttribute(DOMString *name)
 	{
 		return new Attribute(name);
 	}
 
-	CDataSection* DOMDocument::createCDataSection()
+	CDataSection* Document::createCDataSection(DOMString *data)
 	{
-		return new CDataSection();
+		return new CDataSection(data);
 	}
 
-	Comment* DOMDocument::createComment()
+	Comment* Document::createComment(DOMString *data)
 	{
-		return new Comment();
+		return new Comment(data);
 	}
 
-	Element* DOMDocument::createElement(DOMString *tagName)
+	Element* Document::createElement(DOMString *tagName)
 	{
 		return new Element(tagName);
 	}
 
-	TextNode* DOMDocument::createTextNode()
+	TextNode* Document::createTextNode(DOMString *data)
 	{
-		return new TextNode();
+		return new TextNode(data);
 	}
 
-	bool DOMDocument::LoadFile(const char* filename)
+	bool Document::LoadFile(const char* filename)
 	{
 		DOMBuilder db;
 		db.Initialize(this);

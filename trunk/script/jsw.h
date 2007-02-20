@@ -61,11 +61,11 @@ class JSWBaseClass
 {
 public:
 
-	//!< Constructor
+	//!< constructor
 	JSWBaseClass() : pPrivate(NULL), bAutoDelete(true)
 	{}
 
-	//!< Constructor
+	//!< destructor
 	virtual ~JSWBaseClass()
 	{
 		if (pPrivate && bAutoDelete)
@@ -75,7 +75,7 @@ public:
 		}
 	}
 
-	//!< JSGetProperty
+	//!< get property
 	static JSBool JSGetProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
 	{
 		if (JSVAL_IS_INT(id)) 
@@ -90,7 +90,7 @@ public:
 		return JS_TRUE;
 	}
 
-	//!< JSSetProperty
+	//!< set property
 	static JSBool JSSetProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
 	{
 		if (JSVAL_IS_INT(id)) 
@@ -105,7 +105,7 @@ public:
 		return JS_TRUE;
 	}
 
-	//!< JSConstructor
+	//!< constructor function
 	static JSBool JSConstructor(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 	{
 		T_Proto *priv = new T_Proto();
@@ -114,7 +114,7 @@ public:
 		return JS_TRUE;
 	}
 
-	//!< JSDestructor
+	//!< destructor, finalize function
 	static void JSDestructor(JSContext *cx, JSObject *obj)
 	{
 		T_Proto *priv = (T_Proto*) JS_GetPrivate(cx, obj);
@@ -133,17 +133,39 @@ public:
 		return newProtoObj;
 	}
 
-	//!< SetPrivate - save native class
+	//!< save native class
 	void SetPrivate(T_Priv *priv, bool bDelete = true)
 	{
 		bAutoDelete = bDelete;
 		pPrivate = priv; 
 	}
 
-	//!< GetPrivate - get native class
+	//!< get native class
 	T_Priv* GetPrivate() 
 	{
 		return pPrivate; 
+	}
+
+	//!< is private class on auto delete
+	bool IsAutoDelete() { return bAutoDelete; }
+
+	//!< set private class to auto delete
+	void SetAutoDelete(bool bDelete) { bAutoDelete = bDelete; }
+
+	//!< get class
+	static JSClass* GetClass() { return &jswClass; }
+
+	//!< get class name
+	static const char* GetClassName() { return jsClassName; }
+
+	//!< Create new object
+	static JSObject* Create(JSContext *cx, T_Priv *priv, bool bAutoDelete = true)
+	{
+		T_Proto *proto = new T_Proto();
+		proto->SetPrivate(priv, bAutoDelete);
+		JSObject *obj = JS_NewObject(cx, T_Proto::GetClass(), 0, 0);
+		JS_SetPrivate(cx, obj, proto);
+		return obj;
 	}
 
 #if 0
@@ -154,7 +176,7 @@ public:
 	static JSBool GetProperty(T_Priv* priv, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
 #endif
 
-public:
+private:
 
 	T_Priv *pPrivate;							/*!< native class pointer */
 	bool bAutoDelete;

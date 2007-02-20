@@ -17,9 +17,10 @@ code.google.com/p/ashlar
 */
 
 #include <common.h>
-#include "widget.h"
+#include <widget.h>
 #include <render/resources.h>
 #include <dom/safenode.h>
+#include <win32/nativewindow.h>
 
 using namespace Ash;
 
@@ -27,7 +28,7 @@ int main()
 {
 	Widget *widget = new Widget();
 	if (!widget->Load("ashlar.xul"))
-		return 0;
+	PostQuitMessage(0);
 
 	printf("unfreed objects:%d\n", Ref::GetCount());
 

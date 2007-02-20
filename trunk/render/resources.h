@@ -35,19 +35,18 @@ namespace Render
 	class Resource : public Node<Resource>
 	{
 	public:
-		Resource(DOMString* n, void *d, int t, int i);
+		Resource() {}
+		Resource(DOMString* name, DOMString* src, int t, int i);
 		~Resource();
 
 		inline const DOMString* GetName() { return &name; }
-		inline void* GetData() { return data; }
 		inline int GetType() { return type; }
 		inline int GetId() { return id; }
 
 		void Dump();
 
-	private:
+	protected:
 		DOMString name;
-		void *data;
 		int type;
 		int id;
 
@@ -61,7 +60,7 @@ namespace Render
 		~ResourceManager();
 
 		bool Load(Element *element);
-		Resource* AddResource(DOMString *name, void *data, int type);
+		Resource* AddResource(DOMString *name, DOMString* src, int type);
 		Resource* GetResource(int id);
 		Resource* GetResource(DOMString *name);
 

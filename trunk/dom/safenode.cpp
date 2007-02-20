@@ -126,6 +126,8 @@ namespace Dom
 		if (snode->Value())
 			return snode;
 
+		// bug! don't go deep (Loop through childNodes instead of GetElementsByTagName)
+		// or add NodeFilteredList
 		snode = GetElement(name);
 		if (snode->Item(0)->Value())
 		{

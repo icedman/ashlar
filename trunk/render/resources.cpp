@@ -17,24 +17,29 @@ code.google.com/p/ashlar
 */
 
 #include <render/resources.h>
+#include <render/imageRes.h>
 #include <dom/safenode.h>
+
+#include <cairo.h>
 
 namespace Render
 {
-	Resource::Resource(DOMString* n, void *d, int t, int i)
+	Resource::Resource(DOMString* n, DOMString* src, int t, int i)
 	{
 		name = *n;
-		data = d;
 		type = t;
 		id = i;
+
+		// do something with source
 	}
 
 	Resource::~Resource()
-	{}
+	{
+	}
 
 	void Resource::Dump()
 	{
-		printf("res: #%d %s\n", GetId(), name.c_str());
+		printf("res: #%d %d %s\n", GetId(), type, name.c_str());
 	}
 
 	// resource manager
@@ -58,13 +63,23 @@ namespace Render
 		}
 	}
 
-	Resource* ResourceManager::AddResource(DOMString *name, void *data, int type)
+	Resource* ResourceManager::AddResource(DOMString *name, DOMString* src, int type)
 	{
 		Resource *r = GetResource(name);
 		if (r)
 			return r;
-		r = new Resource(name, data, type, ++id);
-		Push(r);
+
+		switch(type)
+		{
+		case IMAGE_RESOURCE:
+			r = new ImageRes(name, src, ++id);
+			break;
+		default:
+			r = new Resource(name, 0, type, ++id);
+		}
+
+		if (r)
+			Push(r);
 		return r;
 	}
 
@@ -99,15 +114,29 @@ namespace Render
 		for(int i=0; i<n->Length(); i++)
 		{
 			SafeNode snode((Element*)n->Item(i));
-			DOMString *v = snode.GetValue("name")->Value();
-			if (v)
+			DOMString *family = snode.GetValue("family")->Value();
+			if (family)
 			{
-				AddResource(v, 0, FONT_RESOURCE);
+				AddResource(family, 0, FONT_RESOURCE);
 			}
 		}
 		delete n;
 
 		// add images
+		n = element->GetElementsByTagName(&DOMString("background"));		
+		for(int i=0; i<n->Length(); i++)
+		{
+			SafeNode snode((Element*)n->Item(i));
+			DOMString *name = snode.GetValue("name")->Value();
+			DOMString *src = snode.GetValue("src")->Value();
+			if (src)
+			{
+				if (!name)
+					name = src;
+				AddResource(name, src, IMAGE_RESOURCE);
+			}
+		}
+		delete n;
 		return true;
 	}
 

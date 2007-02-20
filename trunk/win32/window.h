@@ -66,9 +66,13 @@ namespace OSWin
 
 		}
 
-		BOOL RegisterClass(HINSTANCE hInstance, const TCHAR* lpszClass)
+		BOOL RegisterClass(HINSTANCE hInst, const TCHAR* lpszClass)
 		{
-			hInstance=hInstance;
+			hInstance = hInst;
+			if (!hInstance)
+			{
+				hInstance = GetModuleHandle(0);
+			}
 
 			WNDCLASS wc;
 

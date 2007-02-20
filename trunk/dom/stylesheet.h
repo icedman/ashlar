@@ -30,13 +30,15 @@ namespace Dom
 	inline int StringToAlign(DOMString *str, int defaultValue);
 	inline int StringToStyle(DOMString *str, int defaultValue);
 	inline long StringToColor(DOMString *str, long defaultValue);
+
 	void GetBorderStyleXml(BorderStyle &bs, DOMNode *el);
 	void GetLayoutXml(LayoutInfo &li, DOMNode *el);
 	void GetBordersXml(Borders &br, DOMNode *el);
 	void GetGradientXml(Gradient &gr, DOMNode *el);
 	void GetFontXml(Font &fn, DOMNode *el);
+	void GetImageXml(Background &img, DOMNode *el);
 
-	class StyleSheet : public DOMDocument
+	class StyleSheet : public Document
 	{
 	public:
 	

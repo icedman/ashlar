@@ -27,12 +27,10 @@ namespace Ash
 	class IWindow
 	{
 	public:
-		virtual bool Create(int w, int h) = 0;
-		virtual void Destroy() = 0;
-
-		virtual bool SetSize(int x, int y, int w, int h) = 0;
-		virtual void Show(bool show) = 0;
-
+		virtual bool CreateNewWindow(int w, int h) = 0;
+		virtual void DestroyWindow() = 0;
+		virtual bool SetWindowSize(int x, int y, int w, int h) = 0;
+		virtual void ShowWindow(bool show) = 0;
 		virtual bool OnCreate() = 0;
 		virtual void OnDestroy() = 0;
 		virtual void OnSize(const Rect *rc) = 0;

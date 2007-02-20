@@ -68,6 +68,7 @@ namespace Dom
 	{
 	public:
 		TextNode();
+		TextNode(DOMString *value);
 		DOMString* Data() { return &nodeValue; }
 		unsigned long Length() { return nodeValue.length(); }
 		virtual DOMNode* Create() { return new TextNode(); }
@@ -86,6 +87,7 @@ namespace Dom
 	{
 	public:
 		CDataSection();
+		CDataSection(DOMString *value);
 	};
 
 	//! DOM Comment class
@@ -93,5 +95,6 @@ namespace Dom
 	{
 	public:
 		Comment();
+		Comment(DOMString *value);
 	};
 }

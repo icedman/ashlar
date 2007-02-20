@@ -126,6 +126,23 @@ namespace Layout
 		return true;
 	}
 
+	Dom::DOMString* Frame::GetText()
+	{
+		DOMString *text = 0;
+		Element *e = GetElement();
+		if (!e)
+			return 0;
+		if (IsType(LABEL))
+		{
+			text = &e->nodeValue;
+		} else {
+			SafeNode snode(e);
+			SafeNode *label = snode.GetValue("label");
+			text = label->Value();
+		}
+		return text;
+	}
+
 	bool Frame::Layout()
 	{
 		//printf("layout %s\n", GetName());

@@ -24,12 +24,18 @@ namespace OSWin
 
 	LRESULT NativeWindow::OnCreate( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
 	{
+		if (!iwindow)
+			return 0;
+
 		iwindow->OnCreate();
 		return 0;
 	}
 
 	LRESULT NativeWindow::OnDestroy( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
 	{
+		if (!iwindow)
+			return 0;
+
 		iwindow->OnDestroy();
 		PostQuitMessage(0);
 		return 0;
@@ -42,6 +48,9 @@ namespace OSWin
 
 	LRESULT NativeWindow::OnSize( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
 	{
+		if (!iwindow)
+			return 0;
+
 		RECT r;
 		GetClientRect(hWnd, &r);
 		iwindow->OnSize(&Rect(r.left, r.top, r.right, r.bottom));
@@ -50,6 +59,9 @@ namespace OSWin
 
 	LRESULT NativeWindow::OnPaint( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
 	{
+		if (!iwindow)
+			return 0;
+
 		PAINTSTRUCT ps;
 		BeginPaint(hWnd,&ps);
 		iwindow->OnDraw(ps.hdc, (Rect*)&ps.rcPaint);
@@ -59,6 +71,9 @@ namespace OSWin
 
 	LRESULT NativeWindow::OnMouseEvent( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
 	{
+		if (!iwindow)
+			return 0;
+
 		Point p;
 		p.x=LOWORD(lparam);
 		p.y=HIWORD(lparam);

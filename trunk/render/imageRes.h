@@ -16,8 +16,25 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include <layout/table.h>
+#pragma once
 
-namespace Layout
+#include <render/resources.h>
+#include <cairomm/surface.h>
+
+using namespace Dom;
+
+namespace Render
 {
+
+	class ImageRes : public Resource
+	{
+	public:
+		ImageRes(DOMString* name, DOMString *src, int id);
+
+		Cairo::RefPtr<Cairo::ImageSurface> GetSurface() { return img; }
+
+	private:
+		Cairo::RefPtr<Cairo::ImageSurface> img;
+	};
+
 }
