@@ -148,10 +148,10 @@ namespace Layout
 
 			// verticalAlign
 			int verticalAlignOffset = 0;
-			if (frameStyle.layout.verticalAlign == MIDDLE)
+			if (frameStyle.layout.verticalAlign == ALIGN_MIDDLE)
 			{
 				verticalAlignOffset = (hh >> 1) - (li->rect.Height() >> 1);
-			} else if (frameStyle.layout.verticalAlign == BOTTOM) {
+			} else if (frameStyle.layout.verticalAlign == ALIGN_BOTTOM) {
 				verticalAlignOffset = hh - li->rect.Height();
 			}
 
@@ -159,10 +159,10 @@ namespace Layout
 			int alignOffset = 0;
 			if (!hasFlex)
 			{
-				if (frameStyle.layout.align == CENTER)
+				if (frameStyle.layout.align == ALIGN_CENTER)
 				{
 					alignOffset = (flexSpace >> 1);
-				} else if (frameStyle.layout.align == RIGHT) {
+				} else if (frameStyle.layout.align == ALIGN_RIGHT) {
 					alignOffset = flexSpace;
 				}
 			}
@@ -328,10 +328,10 @@ namespace Layout
 
 			// align
 			int alignOffset = 0;
-			if (frameStyle.layout.align == CENTER)
+			if (frameStyle.layout.align == ALIGN_CENTER)
 			{
 				alignOffset = (ww >> 1) - (li->rect.Width() >> 1);
-			} else if (frameStyle.layout.align == RIGHT) {
+			} else if (frameStyle.layout.align == ALIGN_RIGHT) {
 				alignOffset = ww - li->rect.Width();
 			}
 
@@ -339,10 +339,10 @@ namespace Layout
 			int verticalAlignOffset = 0;
 			if (!hasFlex)
 			{
-				if (frameStyle.layout.verticalAlign == MIDDLE)
+				if (frameStyle.layout.verticalAlign == ALIGN_MIDDLE)
 				{
 					verticalAlignOffset = (flexSpace >> 1);
-				} else if (frameStyle.layout.verticalAlign == BOTTOM) {
+				} else if (frameStyle.layout.verticalAlign == ALIGN_BOTTOM) {
 					verticalAlignOffset = flexSpace;
 				}
 			}

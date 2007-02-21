@@ -17,7 +17,6 @@ code.google.com/p/ashlar
 */
 
 #include <widget.h>
-#include <dom/safenode.h>
 #include <dom/stylesheet.h>
 #include <dom/docbuilder.h>
 #include <layout/button.h>
@@ -42,17 +41,14 @@ namespace Ash
 
 	bool Widget::Load(const char* filename)
 	{
+		// load document
 		Document *document = new Document();
-		WindowFrame *window = 0;
-
 		SetElement((Element*)document);
 
 		if (!document->LoadFile(filename))
 			return false;
 
-		styleSheet.Load(document);
-		resources->Load(&styleSheet);
-
+		// build frame tree
 		FrameBuilder fb;
 		fb.Register(new Frame());
 		fb.Register(new HFrame());
@@ -60,25 +56,16 @@ namespace Ash
 		fb.Register(new WindowFrame());
 		fb.Register(new Button());
 		fb.Register(new Label());
+		fb.Build(this, document);
 
-		window = (WindowFrame*)fb.Build(document);
-		if (!window)
-			return 0;
+		// load stylesheets & resources
+		styleSheet.Load(document);
+		resources->Load(&styleSheet);
 
-		AddFrame(window);
+		// apply style
+		styleSheet.ApplyStyle(document);
 
-		// register mouse events
-		window->RegisterEvents(window);
-		styleSheet.ApplyStyle(element);
-
-		if (1)
-		{
-			Dump();
-			styleSheet.Dump();
-			document->Dump();
-			resources->Dump();
-		}
-
+		// setup script engine
 		if (1)
 		{
 			JSObject *go = scriptEngine.GetGlobalObject();
@@ -96,16 +83,26 @@ namespace Ash
 			}
 		}
 
-		SafeNode snode(document);
-		int width = snode.GetElement("window")->GetValue("width")->ValueInt(400);
-		int height = snode.GetElement("window")->GetValue("height")->ValueInt(400);
-		if (!window->CreateNewWindow(width,height))
-			return false;
-		window->ShowWindow(true);
+		// setup windows
+		NodeList2 *nl = document->GetElementsByTagName(&DOMString("window"));
+		for(int i=0; i<nl->Length(); i++)
+		{
+			Element *e = (Element*)nl->Item(i);
+			WindowFrame *window = (WindowFrame*)e->GetData();
+			if (!window)
+				continue;
 
-		// bug
-		for(int i=0;i<4;i++)
-			window->Layout();
+			window->Initialize();
+		}
+		delete nl;
+
+		if (0)
+		{
+			Dump();
+			styleSheet.Dump();
+			document->Dump();
+			resources->Dump();
+		}
 
 		return true;
 	}

@@ -18,7 +18,6 @@ code.google.com/p/ashlar
 
 #include <render/render.h>
 #include <render/resources.h>
-#include <render/imageRes.h>
 #include <layout/frametypes.h>
 #include <dom/safenode.h>
 
@@ -33,6 +32,12 @@ namespace Render
 
 	void RenderEngine::RoundToDevicePixels(const Rect *pRect, double &l, double &t, double &r, double &b)
 	{
+		l = pRect->left;
+		t = pRect->top;
+		r = pRect->right;
+		b = pRect->bottom;
+		return;
+
 		// todo: where is round()?
 
 		double x = pRect->left;
@@ -59,8 +64,7 @@ namespace Render
 
 	bool RenderEngine::SetupBuffer(int width, int height)
 	{
-		cr.clear();
-		img.clear();
+		DestroyBuffer();
 		img = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, width, height);
 		cr = Cairo::Context::create(img);
 
@@ -69,6 +73,12 @@ namespace Render
 		fntOpts.set_antialias(Cairo::ANTIALIAS_SUBPIXEL);
 		cr->set_font_options(fntOpts);
 		return true;
+	}
+
+	void RenderEngine::DestroyBuffer()
+	{
+		cr.clear();
+		img.clear();
 	}
 
 	bool RenderEngine::Clear()
@@ -101,6 +111,8 @@ namespace Render
 	{
 		if (!cr)
 			return false;
+
+		//return false;
 
 		LayoutInfo *li = &frame->frameStyle.layout;
 		bool draw = true;
@@ -162,16 +174,11 @@ namespace Render
 		if (fs->bgImage.imageId)
 		{
 			cr->save();
-			cr->rectangle(x, y, w, h);
+			DrawBorder(&fs->border, &fs->borderStyle, x, y, x2, y2);
+			cr->clip();
 			DrawImage(&fs->bgImage, x, y, x2, y2);
 			cr->restore();
 		}
-
-		// border
-		cr->save();
-		DrawBorder(&fs->border, &fs->borderStyle, x, y, x2, y2);
-		cr->stroke();
-		cr->restore();
 
 		// text
 		DOMString *text = frame->GetText();
@@ -183,6 +190,12 @@ namespace Render
 			DrawText(&fs->font, &fs->layout, text->c_str(), x, y, x2, y2);
 			cr->restore();
 		}
+
+		// border
+		cr->save();
+		DrawBorder(&fs->border, &fs->borderStyle, x, y, x2, y2);
+		cr->stroke();
+		cr->restore();
 
 		return true;
 	}
@@ -206,10 +219,10 @@ namespace Render
 
 		switch(li->align)
 		{
-		case LEFT:
+		case ALIGN_LEFT:
 			tx = x;
 			break;
-		case RIGHT:
+		case ALIGN_RIGHT:
 			tx = x + (x2 - x) - extents.width;
 			break;
 		default:
@@ -218,10 +231,10 @@ namespace Render
 
 		switch(li->verticalAlign)
 		{
-		case TOP:
+		case ALIGN_TOP:
 			ty = y + extents.height;
 			break;
-		case BOTTOM:
+		case ALIGN_BOTTOM:
 			ty = y2;
 			break;
 		default:
@@ -292,7 +305,7 @@ namespace Render
 
 		Cairo::RefPtr<Cairo::Pattern> pattern;
 
-		if (gr->colorCount>1 && (gr->style == LINEAR || gr->style == RADIAL))
+		if (gr->colorCount>1 && (gr->style == FILL_GRADIENT_LINEAR || gr->style == FILL_GRADIENT_RADIAL))
 		{
 			Cairo::RefPtr<Cairo::Gradient> gradient;
 
@@ -301,7 +314,7 @@ namespace Render
 			double gx2 = w * ((double)gr->x2 / 255);
 			double gy2 = h * ((double)gr->y2 / 255);
 
-			if (gr->style == LINEAR) {
+			if (gr->style == FILL_GRADIENT_LINEAR) {
 				gradient = Cairo::LinearGradient::create(x + gx, y + gy, x + gx2, y + gy2);
 			} else {
 				double radius = w * ((double)gr->radius / 255);
@@ -334,31 +347,6 @@ namespace Render
 		return true;
 	}
 
-	bool RenderEngine::DrawImage(Background *bg, double x, double y, double x2, double y2)
-	{
-		if (!cr)
-			return false;
-
-		ResourceManager *rm = ResourceManager::GetInstance();
-		ImageRes *rc = (ImageRes*)rm->GetResource(bg->imageId);
-		if (!rc)
-			return false;
-
-		Cairo::RefPtr<Cairo::ImageSurface> surface = rc->GetSurface();
-		if (!surface)
-			return false;
-
-		cr->translate(x, y);
-
-		double sw = surface->get_width();
-		double sh = surface->get_height();
-		cr->scale((x2-x)/ sw, (y2-y)/ sh);
-		cr->set_source(surface, 0, 0);
-		cr->fill();
-
-		return true;
-	}
-
 	bool RenderEngine::GetTextExtents(FrameStyle *fs, const char* text, double &width, double &height)
 	{
 		if (!cr)
@@ -379,6 +367,7 @@ namespace Render
 		cr->get_text_extents(text, extents);
 		cr->restore();
 
+		// help!
 		width = extents.width + 20;
 		height = extents.height + 20;
 

@@ -51,11 +51,14 @@ namespace Layout
 		frameTemplates.Remove(f);
 	}
 
-	Frame* FrameBuilder::Build(Document *doc)
+	Frame* FrameBuilder::Build(Frame* root, Document *doc)
 	{
-		root = 0;
+		if (!root)
+			return 0;
+
+		frameStack.Push(root);
 		BuildFrames(doc);
-		//root->Dump();
+
 		return root;
 	}
 
@@ -64,12 +67,6 @@ namespace Layout
 		Frame *frame = CreateFrame(element);
 		if (frame)
 		{
-			if (!root && frame->IsType(WINDOW))
-			{
-				root = frame;
-				printf("%s\n", frame->GetName());
-			}
-
 			Frame *parent = frameStack.GetLast();
 			if (parent)
 			{

@@ -19,12 +19,39 @@ code.google.com/p/ashlar
 #pragma once
 
 #include <layout/windowframe.h>
+#include <dom/safenode.h>
 #include <cairomm/win32_surface.h>
+
+using namespace Dom;
 
 namespace Layout
 {
+
 	WindowFrame::WindowFrame()
 	{
+	}
+
+	bool WindowFrame::Initialize()
+	{
+		// register mouse events
+		RegisterEvents(this);
+
+		// init dimension
+		frameStyle.layout.x = !ISASSIGNED(frameStyle.layout.x) ? 0 : frameStyle.layout.x;
+		frameStyle.layout.y = !ISASSIGNED(frameStyle.layout.y) ? 0 : frameStyle.layout.y;
+		frameStyle.layout.width = !ISASSIGNED(frameStyle.layout.width) ? 100 : frameStyle.layout.width;
+		frameStyle.layout.height = !ISASSIGNED(frameStyle.layout.height) ? 100 : frameStyle.layout.height;
+
+		if (!CreateNewWindow(frameStyle.layout.x, frameStyle.layout.y, frameStyle.layout.width, frameStyle.layout.height))
+			return false;
+
+		ShowWindow(true);
+
+		// bug
+		for(int i=0;i<4;i++)
+			Layout();
+
+		return true;
 	}
 
 	bool WindowFrame::RegisterEvents(Frame *frame)
@@ -48,17 +75,18 @@ namespace Layout
 	}
 
 	// IWindow
-	bool WindowFrame::CreateNewWindow(int w, int h)
+	bool WindowFrame::CreateNewWindow(int x, int y, int w, int h)
 	{
 		DWORD dwStyle = WS_SIZEBOX | WS_SYSMENU;
-		//DWORD dwStyle = WS_POPUP;
+		DWORD dwExStyle = 0;
+		//dwExStyle = WS_EX_LAYERED;
+		//dwStyle = WS_POPUP;
 		nativeWindow.iwindow = static_cast<IWindow*>(this);
 		nativeWindow.RegisterClass(0, GetName());
 		if (!nativeWindow.Create(GetName(), GetName(),
-					200, 0, w, h + 20, dwStyle, 0))
-		{
+			x, y, w, h + 20, dwStyle, dwExStyle)) // +20 for title bar
 			return false;
-		}
+
 		return true;
 	}
 

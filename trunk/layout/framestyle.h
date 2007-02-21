@@ -31,29 +31,36 @@ namespace Layout
 #define GRADIENT_COLOR_LIMIT 4
 
 	//! Frame pseudo classes (button:pressed)
-	const unsigned short NORMAL = 0;
-	const unsigned short PRESSED = 1;
-	const unsigned short DISABLED = 2;
-	const unsigned short ACTIVE = 3;
-	const unsigned short HOVER = 4;
-	const unsigned short VISITED = 5;
+	const unsigned short STATE_NORMAL = 0;
+	const unsigned short STATE_PRESSED = 1;
+	const unsigned short STATE_DISABLED = 2;
+	const unsigned short STATE_ACTIVE = 3;
+	const unsigned short STATE_HOVER = 4;
+	const unsigned short STATE_VISITED = 5;
 	
 	//! Alignment values
-	const unsigned short LEFT = 0;
-	const unsigned short RIGHT = 1;
-	const unsigned short CENTER = 2;
-	const unsigned short TOP = 0;
-	const unsigned short BOTTOM = 1;
-	const unsigned short MIDDLE = 2;
+	const unsigned short ALIGN_LEFT = 0;
+	const unsigned short ALIGN_RIGHT = 1;
+	const unsigned short ALIGN_CENTER = 2;
+	const unsigned short ALIGN_TOP = 0;
+	const unsigned short ALIGN_BOTTOM = 1;
+	const unsigned short ALIGN_MIDDLE = 2;
 
 	//! Graident style
-	const unsigned short SOLID = 0;
-	const unsigned short LINEAR = 1;
-	const unsigned short RADIAL = 2;
+	const unsigned short FILL_SOLID = 0;
+	const unsigned short FILL_GRADIENT_LINEAR = 1;
+	const unsigned short FILL_GRADIENT_RADIAL = 2;
 
-	//! Background
-	const unsigned short FILL  = 1;
-	const unsigned short IMAGE = 2;
+	//! Position
+	const unsigned short POSITION_FLOW = 0;
+	const unsigned short POSITION_ABSOLUTE = 1;
+	const unsigned short POSITION_RELATIVE = 2;
+
+	//! Image extend
+	const unsigned short EXTEND_NONE = 0;
+	const unsigned short EXTEND_REPEAT = 1;
+	const unsigned short EXTEND_STRETCH = 2;
+	const unsigned short EXTEND_HIDDEN = 3;
 
 	//! Layout information data structure
 	typedef struct Borders
@@ -88,10 +95,10 @@ namespace Layout
 
 	typedef struct Background
 	{
-		short style;
 		long imageId;
-		short imageX;
-		short imageY;
+		short extend;
+		Borders slice;
+		Borders sliceExtend;
 	} Background;
 
 	typedef struct Gradient

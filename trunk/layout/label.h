@@ -16,30 +16,21 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#pragma once
-
 #include <layout/frames.h>
-#include <dom/document.h>
+#include <layout/frametypes.h>
+#include <layout/layout.h>
 
-using namespace Dom;
+using namespace Events;
 
 namespace Layout
 {
-	class FrameBuilder
+	class Label : public HFrame
 	{
 	public:
-		FrameBuilder();
-		~FrameBuilder();
+		virtual const char* GetName() { return "text"; }
+		virtual Frame* Create() { return new Label(); }
+		FRAMETYPE(LABEL, Frame)
 
-		bool Register(Frame* f);
-		void Unregister(Frame* f);
-		void Free();
-
-		Frame* Build(Frame* root, Document *doc);
-		Frame* BuildFrames(Element *element);
-		Frame* CreateFrame(Element *element);
-
-		FrameList frameTemplates;
-		FrameList frameStack;
+		virtual bool Layout();
 	};
 }
