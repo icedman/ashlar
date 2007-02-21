@@ -1,7 +1,23 @@
 <?xml version="1.0"?>
 <stylesheet>
+	<style name="window">
+		<layout>
+			<width>200</width>
+			<height>200</height>
+		</layout>
+		<background src="frame.png">
+			<slice>
+				<center extend="stretch"/>
+				<left extend="stretch">18</left>
+				<top extend="repeat">18</top>
+				<right extend="stretch">22</right>
+				<bottom extend="repeat">22</bottom>
+			</slice>
+		</background>
+		<padding>14</padding>
+	</style>
 	<style>
-		<border width="1" color="#e5e5e5"/>
+		<border width="0" color="#e5e5e5"/>
 		<font>
 			<family>verdana</family>
 			<size>14</size>

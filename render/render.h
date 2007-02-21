@@ -35,6 +35,8 @@ namespace Render
 		~RenderEngine() {}
 
 		bool SetupBuffer(int width, int height);
+		void DestroyBuffer();
+
 		bool Render(Frame *frame);
 		bool DrawFrame(Frame *frame);
 		bool DrawText(Font *fn, LayoutInfo *li, const char* text, double  x, double y, double x2, double y2);

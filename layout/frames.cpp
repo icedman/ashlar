@@ -31,7 +31,7 @@ namespace Layout
 	// Frame
 	Frame::Frame() 
 	{
-		frameState = NORMAL;
+		frameState = STATE_NORMAL;
 		parentFrame = 0;
 		element = 0;
 		SetStyleDefaults(frameStyle);
@@ -85,10 +85,10 @@ namespace Layout
 
 		switch(frameState)
 		{
-		case PRESSED:
+		case STATE_PRESSED:
 			element->SetAttribute(&DOMString("#pseudoClass"),&DOMString("pressed"));
 			break;
-		case HOVER:
+		case STATE_HOVER:
 			element->SetAttribute(&DOMString("#pseudoClass"),&DOMString("hover"));
 			break;
 		default:
@@ -255,26 +255,26 @@ namespace Layout
 
 		if (!r.Contains(mInfo->point))
 		{
-			if (GetState() == PRESSED || GetState() == HOVER)
-				SetState(NORMAL);
+			if (GetState() == STATE_PRESSED || GetState() == STATE_HOVER)
+				SetState(STATE_NORMAL);
 			return true;
 		}
 
 		switch(eid)
 		{
 		case ONMOUSEMOVE:
-			if (GetState() != PRESSED && GetState() != HOVER)
-				SetState(HOVER);
+			if (GetState() != STATE_PRESSED && GetState() != STATE_HOVER)
+				SetState(STATE_HOVER);
 			break;
 		case ONMOUSEDOWN:
-			SetState(PRESSED);
+			SetState(STATE_PRESSED);
 			break;
 		case ONMOUSEUP:
-			if (GetState() == PRESSED)
+			if (GetState() == STATE_PRESSED)
 			{
 				OnMouseEvents(ONMOUSECLICK, pp);
 			}
-			SetState(HOVER);
+			SetState(STATE_HOVER);
 			break;
 		case ONMOUSECLICK:
 			printf("unfreed objects:%d\n", Ref::GetCount());

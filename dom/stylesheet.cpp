@@ -34,41 +34,56 @@ namespace Dom
 		s = sid;
 	}
 
-	int StringToAlign(DOMString *str, int defaultValue)
+	int StringToAlign(DOMString *value, int defaultValue)
 	{
-		if (!str)
+		DOMString str;
+		if (!value)
 			return defaultValue;
-		if (*str == DOMString("left"))
-			return LEFT;
-		if (*str == DOMString("right"))
-			return RIGHT;
-		if (*str == DOMString("center"))
-			return CENTER;
-		if (*str == DOMString("top"))
-			return TOP;
-		if (*str == DOMString("bottom"))
-			return BOTTOM;
-		if (*str == DOMString("middle"))
-			return MIDDLE;
+
+		str = *value;
+
+		if (str == DOMString("left"))
+			return ALIGN_LEFT;
+		if (str == DOMString("right"))
+			return ALIGN_RIGHT;
+		if (str == DOMString("center"))
+			return ALIGN_CENTER;
+		if (str == DOMString("top"))
+			return ALIGN_TOP;
+		if (str == DOMString("bottom"))
+			return ALIGN_BOTTOM;
+		if (str == DOMString("middle"))
+			return ALIGN_MIDDLE;
 		return defaultValue;
 	}
 
-	int StringToStyle(DOMString *str, int defaultValue)
+	int StringToStyle(DOMString *value, int defaultValue)
 	{
-		// fill
-		if (!str)
+		DOMString str;
+		if (!value)
 			return defaultValue;
-		if (*str == DOMString("solid"))
-			return SOLID;
-		if (*str == DOMString("linear"))
-			return LINEAR;
-		if (*str == DOMString("radial"))
-			return RADIAL;
-		// background
-		if (*str == DOMString("fill"))
-			return FILL;
-		if (*str == DOMString("image"))
-			return IMAGE;
+
+		str = *value;
+
+		// fill
+		if (str == DOMString("solid"))
+			return FILL_SOLID;
+		if (str == DOMString("linear"))
+			return FILL_GRADIENT_LINEAR;
+		if (str == DOMString("radial"))
+			return FILL_GRADIENT_RADIAL;
+		// position
+		if (str == DOMString("absolute"))
+			return POSITION_ABSOLUTE;
+		if (str == DOMString("relative"))
+			return POSITION_RELATIVE;
+		// extend
+		if (str == DOMString("stretch"))
+			return EXTEND_STRETCH;
+		if (str == DOMString("repeat"))
+			return EXTEND_REPEAT;
+		if (str == DOMString("hide"))
+			return EXTEND_HIDDEN;
 		return defaultValue;
 	}
 
@@ -217,7 +232,24 @@ namespace Dom
 		Resource *rc = rm->GetResource(name);
 
 		img.imageId = rc ? rc->GetId() : img.imageId;
+		img.extend = StringToStyle(snode.GetValue(&DOMString("extend"))->Value(), img.extend);
 
+		GetSliceExtendXml(img.sliceExtend, snode.GetElement("slice")->Node());
+		GetBordersXml(img.slice, snode.GetElement("slice")->Node());
+		img.extend = StringToStyle(snode.GetElement("slice")->GetElement(&DOMString("center"))->GetAttribute("extend")->Value(), img.extend);
+	}
+
+	void GetSliceExtendXml(Borders &ex, DOMNode *el)
+	{
+		if (!el)
+			return;
+
+		SafeNode snode((Element*)el);
+
+		ex.left = StringToStyle(snode.GetElement(&DOMString("left"))->GetAttribute("extend")->Value(), ex.left);
+		ex.right = StringToStyle(snode.GetElement(&DOMString("right"))->GetAttribute("extend")->Value(), ex.right);
+		ex.top = StringToStyle(snode.GetElement(&DOMString("top"))->GetAttribute("extend")->Value(), ex.top);
+		ex.bottom = StringToStyle(snode.GetElement(&DOMString("bottom"))->GetAttribute("extend")->Value(), ex.bottom);
 	}
 
 	bool StyleSheet::LoadFile(const char* filename)
@@ -248,8 +280,8 @@ namespace Dom
 		{
 			AddStyle((Element*)nl->Item(i));
 		}
-
 		delete nl;
+
 		return true;
 	}
 

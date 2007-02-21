@@ -20,7 +20,6 @@ code.google.com/p/ashlar
 
 namespace Render
 {
-
 	ImageRes::ImageRes(DOMString* n, DOMString *src, int i)
 	{
 		id = i;
@@ -31,7 +30,6 @@ namespace Render
 		} else {
 			name = *src;
 		}
-		
 		img = Cairo::ImageSurface::create_from_png(*src);
 	}
 }

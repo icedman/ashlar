@@ -37,6 +37,7 @@ namespace Layout
 		Frame* Create() { return new WindowFrame(); }
 		FRAMETYPE(WINDOW, VFrame)
 
+		bool Initialize();
 		bool RegisterEvents(Frame *frame);
 		void Redraw();
 
@@ -44,7 +45,7 @@ namespace Layout
 		Events::MouseEvents* GetMouseEvents() { return &mouseEvents; }
 
 		//! IWindow Interface
-		virtual bool CreateNewWindow(int w, int h);
+		virtual bool CreateNewWindow(int x, int y, int w, int h);
 		virtual void DestroyWindow();
 		virtual bool SetWindowSize(int x, int y, int w, int h);
 		virtual void ShowWindow(bool show);

@@ -33,8 +33,8 @@ namespace Layout
 		frameStyle.layout.height = UNASSIGNED;
 		frameStyle.layout.display = true;
 		frameStyle.layout.visible = true;
-		frameStyle.layout.align = LEFT;
-		frameStyle.layout.align = TOP;
+		frameStyle.layout.align = ALIGN_LEFT;
+		frameStyle.layout.align = ALIGN_TOP;
 
 		// margins
 		frameStyle.margin.width = 4;

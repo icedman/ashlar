@@ -37,6 +37,7 @@ namespace Dom
 	void GetGradientXml(Gradient &gr, DOMNode *el);
 	void GetFontXml(Font &fn, DOMNode *el);
 	void GetImageXml(Background &img, DOMNode *el);
+	void GetSliceExtendXml(Borders &ex, DOMNode *el);
 
 	class StyleSheet : public Document
 	{
