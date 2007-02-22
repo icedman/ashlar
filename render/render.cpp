@@ -23,7 +23,7 @@ code.google.com/p/ashlar
 
 namespace Render
 {
-	inline void GetColor(long color, double &r, double &g, double &b)
+	void GetColor(long color, double &r, double &g, double &b)
 	{
 		r = (double)GetRValue(color) / 255;
 		g = (double)GetGValue(color) / 255;
@@ -86,11 +86,23 @@ namespace Render
 		if (!cr)
 			return false;
 
-		cr->save();
-		cr->set_source_rgb(1, 1, 1);
-		cr->paint();
-		cr->restore();
+		// is this function is cairo?
+		unsigned char *data = img->get_data();
+		int size = img->get_width() * img->get_height() * 4;
+		memset(data, 0, size);
 
+		return true;
+	}
+
+	bool RenderEngine::Clear(double r, double g, double b, double a)
+	{
+		if (!cr)
+			return false;
+
+		cr->save();
+		cr->set_source_rgba(r, g, b, a);
+		cr->paint_with_alpha(a);
+		cr->restore();
 		return true;
 	}
 
@@ -104,99 +116,6 @@ namespace Render
 		cx->rectangle(rc->left, rc->top, rc->Width(), rc->Height());
 		cx->fill();
 		cx->restore();
-		return true;
-	}
-
-	bool RenderEngine::Render(Frame *frame)
-	{
-		if (!cr)
-			return false;
-
-		//return false;
-
-		LayoutInfo *li = &frame->frameStyle.layout;
-		bool draw = true;
-
-		Rect r;
-		frame->GetRect(&r);
-
-		// skip invisible
-		draw &= (li->visible && li->display);
-		draw &= (r.Width() > 0 && r.Height() > 0);
-
-		if (draw)
-		{
-			DrawFrame(frame);
-			printf("render %s (%d, %d)-(%d, %d)\n", frame->GetName(), r.left, r.top, r.right, r.bottom);
-		} else {
-			printf("skip render %s (%d, %d)-(%d, %d)\n", frame->GetName(), r.left, r.top, r.right, r.bottom);
-		}
-
-		// render children
-		FrameList *frames = frame->GetFrames();
-		Frame *f = frames->GetFirst();
-		while(f)
-		{
-			Render(f);
-			f = f->next;
-		}
-		return true;
-	}
-
-	bool RenderEngine::DrawFrame(Frame *frame)
-	{
-		if (!cr)
-			return false;
-
-		Rect r;
-		LayoutInfo *li = &frame->frameStyle.layout;
-		FrameStyle *fs = &frame->frameStyle;
-		Gradient *gr = &fs->gradient;
-
-		double x, y, x2, y2;
-
-		frame->GetBorderRect(&r);
-		RoundToDevicePixels(&r, x, y, x2, y2);
-
-		double w = x2-x;
-		double h = y2-y;
-
-		// fill
-		if (fs->gradient.colorCount>0)
-		{
-			cr->save();
-			DrawBorder(&fs->border, &fs->borderStyle, x, y, x2, y2);
-			DrawGradient(&fs->gradient, x, y, x2, y2);
-			cr->restore();
-		}
-
-		// image
-		if (fs->bgImage.imageId)
-		{
-			cr->save();
-			DrawBorder(&fs->border, &fs->borderStyle, x, y, x2, y2);
-			cr->clip();
-			DrawImage(&fs->bgImage, x, y, x2, y2);
-			cr->restore();
-		}
-
-		// text
-		DOMString *text = frame->GetText();
-		if (text && fs->font.fontId)
-		{
-			cr->save();
-			DrawBorder(&fs->border, &fs->borderStyle, x, y, x2, y2);
-			cr->clip();
-			DrawText(&fs->font, &fs->layout, text->c_str(), x, y, x2, y2);
-			cr->restore();
-		}
-
-		// border
-		cr->save();
-		DrawBorder(&fs->border, &fs->borderStyle, x, y, x2, y2);
-		cr->stroke();
-		cr->restore();
-
 		return true;
 	}
 

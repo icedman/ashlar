@@ -16,36 +16,36 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include <layout/label.h>
+#include <layout/image.h>
 #include <layout/windowframe.h>
-#include <dom/safenode.h>
-
-using namespace Dom;
+#include <render/resources.h>
+#include <render/imageRes.h>
+#include <dom/stylesheet.h>
 
 namespace Layout
 {
-	bool Label::Layout()
+	bool Image::Layout()
 	{
-		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);
-		if (w)
-		{
-			DOMString *text = GetText();
-			if (text)
-			{
-				Render::RenderEngine *r = w->GetRenderer();
-				double width, height;
-				if (r->GetTextExtents(&frameStyle, text->c_str(), width, height))
-				{
-					frameStyle.layout.width = ISASSIGNED(frameStyle.layout.width) ? frameStyle.layout.width : width;
-					frameStyle.layout.height = ISASSIGNED(frameStyle.layout.height) ? frameStyle.layout.height : height;
-				}
-			}
-		}
+		GetImageXml(frameStyle.bgImage, GetElement());
+		
+		ResourceManager *rm = ResourceManager::GetInstance();
+		ImageRes *rc = (ImageRes*)rm->GetResource(frameStyle.bgImage.imageId);
+		if (!rc)
+			return false;
 
-		return HFrame::Layout();
+		Cairo::RefPtr<Cairo::ImageSurface> surface = rc->GetSurface();
+		if (!surface)
+			return false;
+
+		int w = surface->get_width();
+		int h = surface->get_height();
+
+		frameStyle.layout.width = ISASSIGNED(frameStyle.layout.width) ? frameStyle.layout.width : w;
+		frameStyle.layout.height = ISASSIGNED(frameStyle.layout.height) ? frameStyle.layout.height : h;
+		return true;
 	}
 
-	void Label::Draw(RenderEngine *render)
+	void Image::Draw(RenderEngine *render)
 	{
 		LayoutInfo *li = &frameStyle.layout;
 		bool draw = true;
@@ -61,14 +61,15 @@ namespace Layout
 			return;
 
 		double x, y, x2, y2;
-		
+
 		GetBorderRect(&r);
 		x = r.left;
 		y = r.top;
 		x2 = x + r.Width();
 		y2 = y + r.Height();
 
-		// draw basic frame
-		DrawFrame(render, x, y, x2, y2, GetText());
+		// load image
+		GetImageXml(frameStyle.bgImage, GetElement());
+		DrawFrame(render, x, y, x2, y2);
 	}
 }

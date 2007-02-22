@@ -122,7 +122,7 @@ namespace Render
 		}
 		delete n;
 
-		// add images
+		// add backgrounds
 		n = element->GetElementsByTagName(&DOMString("background"));		
 		for(int i=0; i<n->Length(); i++)
 		{
@@ -137,6 +137,23 @@ namespace Render
 			}
 		}
 		delete n;
+
+		// add images
+		n = element->GetElementsByTagName(&DOMString("image"));		
+		for(int i=0; i<n->Length(); i++)
+		{
+			SafeNode snode((Element*)n->Item(i));
+			DOMString *name = snode.GetValue("name")->Value();
+			DOMString *src = snode.GetValue("src")->Value();
+			if (src)
+			{
+				if (!name)
+					name = src;
+				AddResource(name, src, IMAGE_RESOURCE);
+			}
+		}
+		delete n;
+
 		return true;
 	}
 

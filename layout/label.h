@@ -32,5 +32,6 @@ namespace Layout
 		FRAMETYPE(LABEL, Frame)
 
 		virtual bool Layout();
+		virtual void Draw(RenderEngine *render);
 	};
 }

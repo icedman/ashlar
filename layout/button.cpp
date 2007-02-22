@@ -58,4 +58,34 @@ namespace Layout
 
 		return HFrame::Layout();
 	}
+
+	void Button::Draw(RenderEngine *render)
+	{
+		LayoutInfo *li = &frameStyle.layout;
+		bool draw = true;
+
+		Rect r;
+		GetRect(&r);
+
+		// skip invisible
+		draw &= (li->visible && li->display);
+		draw &= (r.Width() > 0 && r.Height() > 0);
+
+		if (!draw)
+			return;
+
+		double x, y, x2, y2;
+		
+		GetBorderRect(&r);
+		x = r.left;
+		y = r.top;
+		x2 = x + r.Width();
+		y2 = y + r.Height();
+
+		// draw basic frame
+		DrawFrame(render, x, y, x2, y2, GetText());
+
+		// draw children
+		DrawChildren(render);
+	}
 }

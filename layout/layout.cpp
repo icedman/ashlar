@@ -44,6 +44,9 @@ namespace Layout
 		ww = ww > 0 ? ww : 0;
 		hh = hh > 0 ? hh : 0;
 
+		double sx = xx;
+		double sy = yy;
+
 		// clear calculations
 		frameStyle.layout.totalFlex = 0;
 		frameStyle.layout.totalChildWidths = 0;
@@ -96,11 +99,16 @@ namespace Layout
 
 			// set default metrics
 			li->rect.Set(xx, yy, xx + fw, yy + fh);
-			if (li->floating || !li->display)
+			if (li->position != POSITION_FLOW || !li->display)
 			{
 				// floating frame
 				int fx = ISASSIGNED(li->x)? li->x : xx;
 				int fy = ISASSIGNED(li->y)? li->y : yy;
+				if (li->position == POSITION_RELATIVE)
+				{
+					fx += sx;
+					fy += sy;
+				}
 				li->rect.Set(fx, fy, fx + fw, fy + fh);
 				f = f->next;
 				continue;
@@ -139,7 +147,7 @@ namespace Layout
 		while(f)
 		{
 			LayoutInfo *li = &f->frameStyle.layout;
-			if (li->floating || !li->display)
+			if (li->position != POSITION_FLOW || !li->display)
 			{
 				f->Layout();
 				f = f->next;
@@ -224,6 +232,9 @@ namespace Layout
 		ww = ww > 0 ? ww : 0;
 		hh = hh > 0 ? hh : 0; 
 
+		double sx = xx;
+		double sy = yy;
+
 		// clear calculations
 		frameStyle.layout.totalFlex = 0;
 		frameStyle.layout.totalChildWidths = 0;
@@ -276,11 +287,16 @@ namespace Layout
 
 			// set default metrics
 			li->rect.Set(xx, yy, xx + fw, yy + fh);
-			if (li->floating || !li->display)
+			if (li->position != POSITION_FLOW || !li->display)
 			{
 				// floating frame
 				int fx = ISASSIGNED(li->x)? li->x : xx;
 				int fy = ISASSIGNED(li->y)? li->y : yy;
+				if (li->position == POSITION_RELATIVE)
+				{
+					fx += sx;
+					fy += sy;
+				}
 				li->rect.Set(fx, fy, fx + fw, fy + fh);
 				f = f->next;
 				continue;
@@ -319,7 +335,7 @@ namespace Layout
 		while(f)
 		{
 			LayoutInfo *li = &f->frameStyle.layout;
-			if (li->floating || !li->display)
+			if (li->position != POSITION_FLOW || !li->display)
 			{
 				f->Layout();
 				f = f->next;

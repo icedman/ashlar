@@ -23,10 +23,14 @@ code.google.com/p/ashlar
 #include <rect.h>
 #include <list.h>
 #include <layout/framestyle.h>
+#include <dom/domstring.h>
 #include <dom/element.h>
 #include <events/events.h>
+#include <render/render.h>
 
 using namespace Ash;
+using namespace Render;
+using namespace Dom;
 
 namespace Layout
 {
@@ -59,6 +63,10 @@ namespace Layout
 		virtual Frame* Create() { return new Frame(); }
 		virtual void SetState(int state);
 		virtual int GetState() { return frameState; }
+		virtual void Draw(RenderEngine *render);
+		virtual void DrawFrame(RenderEngine *render, double x, double y, double x2, double y2, DOMString *text = 0);
+		virtual void DrawFrameText(RenderEngine *render, DOMString *text, double x, double y, double x2, double y2);
+		virtual void DrawChildren(RenderEngine *render);
 		virtual void Redraw();
 
 		virtual Dom::Element* SetElement(Dom::Element *e);

@@ -131,6 +131,7 @@ namespace Dom
 		li.flex = snode.GetValue(&DOMString("flex"))->ValueInt(li.flex);
 		li.align = StringToAlign(snode.GetValue(&DOMString("align"))->Value(), li.align);
 		li.verticalAlign = StringToAlign(snode.GetValue(&DOMString("valign"))->Value(), li.verticalAlign);
+		li.position = StringToStyle(snode.GetValue(&DOMString("position"))->Value(), li.position);
 	}
 
 	void GetBordersXml(Borders &br, DOMNode *el)

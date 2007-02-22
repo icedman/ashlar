@@ -28,15 +28,18 @@ int main()
 {
 	Widget *widget = new Widget();
 	if (!widget->Load("ashlar.xul"))
-	PostQuitMessage(0);
+		PostQuitMessage(0);
 
 	printf("unfreed objects:%d\n", Ref::GetCount());
 
 	MSG msg;
-	while (GetMessage(&msg, 0, 0, 0))
-	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+	while( GetMessage(&msg, NULL, 0, 0) ) {
+
+		if( PeekMessage(&msg, 0, 0, 0, PM_REMOVE) )
+			if( msg.message == WM_QUIT ) break;
+
+		TranslateMessage( &msg );
+		DispatchMessage( &msg );
 	}
 
 	delete widget;

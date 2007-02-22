@@ -21,6 +21,7 @@ code.google.com/p/ashlar
 #include <dom/docbuilder.h>
 #include <layout/button.h>
 #include <layout/label.h>
+#include <layout/image.h>
 #include <layout/windowframe.h>
 #include <layout/framebuilder.h>
 
@@ -56,10 +57,12 @@ namespace Ash
 		fb.Register(new WindowFrame());
 		fb.Register(new Button());
 		fb.Register(new Label());
+		fb.Register(new Image());
 		fb.Build(this, document);
 
 		// load stylesheets & resources
 		styleSheet.Load(document);
+		resources->Load(document);
 		resources->Load(&styleSheet);
 
 		// apply style
