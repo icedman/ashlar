@@ -49,8 +49,11 @@ namespace Dom
 		return n;
 	}
 
-	NodeList2* Element::GetElementsByTagName(DOMString *tagName)
+	NodeList2* Element::GetElementsByTagName(DOMString *tagName, bool deep)
 	{
+		if (!deep && nodeType == DOCUMENT_NODE)
+			deep = true;
+
 		NodeList2 *n = new NodeList2();
 		DOMNode *e = FirstChild();
 		while(e)
@@ -59,10 +62,9 @@ namespace Dom
 			{
 				n->push_back(e);
 			}
-			// deep
-			if (1)
+			if (deep)
 			{
-				NodeList2 *nn = ((Element *)e)->GetElementsByTagName(tagName);
+				NodeList2 *nn = ((Element *)e)->GetElementsByTagName(tagName, true);
 				for(int i=0; i<nn->Length(); i++)
 				{
 					n->push_back(nn->Item(i));
@@ -79,8 +81,11 @@ namespace Dom
 		return GetElementsByAttribute(&DOMString("id"), id);
 	}
 
-	NodeList2* Element::GetElementsByAttribute(DOMString *attr, DOMString *value)
+	NodeList2* Element::GetElementsByAttribute(DOMString *attr, DOMString *value, bool deep)
 	{
+		if (!deep && nodeType == DOCUMENT_NODE)
+			deep = true;
+
 		NodeList2 *n = new NodeList2();
 		DOMNode *e = FirstChild();
 		while(e)
@@ -93,10 +98,9 @@ namespace Dom
 					n->push_back(e);
 				}
 			}
-			// deep
-			if (1)
+			if (deep)
 			{
-				NodeList2 *nn = ((Element *)e)->GetElementsByAttribute(attr, value);
+				NodeList2 *nn = ((Element *)e)->GetElementsByAttribute(attr, value, true);
 				for(int i=0; i<nn->Length(); i++)
 				{
 					n->push_back(nn->Item(i));

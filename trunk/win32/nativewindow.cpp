@@ -18,12 +18,33 @@ code.google.com/p/ashlar
 
 #include <win32/nativewindow.h>
 #include <events/events.h>
+#include <cairomm/context.h>
+#include <cairomm/win32_surface.h>
+
 
 namespace OSWin
 {
-
 	LRESULT NativeWindow::OnCreate( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
 	{
+		// init transparency
+
+		pSetLayeredWindowAttributes = 0;
+		pUpdateLayeredWindow = 0;
+
+		OSVERSIONINFO os = { sizeof(os) };
+		GetVersionEx(&os);
+		BOOL isWin2k = ( VER_PLATFORM_WIN32_NT == os.dwPlatformId && os.dwMajorVersion >= 5 ); 
+
+		if (isWin2k)
+		{
+			HMODULE hUser32 = GetModuleHandle(_T("USER32.DLL"));
+			pSetLayeredWindowAttributes = (lpfnSetLayeredWindowAttributes)GetProcAddress(hUser32, 
+				"SetLayeredWindowAttributes");
+
+			pUpdateLayeredWindow = (lpfnUpdateLayeredWindow)GetProcAddress(hUser32, 
+				"UpdateLayeredWindow");
+		}
+
 		if (!iwindow)
 			return 0;
 
@@ -93,10 +114,79 @@ namespace OSWin
 			iwindow->OnMouseUp(Events::RBUTTON, p);
 			break;
 		case WM_MOUSEMOVE:
+			SetFocus(hWnd);
 			iwindow->OnMouseMove(p);
 			break;
 		}
 		return 0;
+	}
+
+	BOOL NativeWindow::DragWindow()
+	{
+		SendMessage(hWnd, WM_NCLBUTTONDOWN, HTCAPTION,NULL);
+		return 1;
+	}
+
+	BOOL NativeWindow::SetAlphaChannel(Cairo::RefPtr<Cairo::Surface> alpha)
+	{
+		if (!pSetLayeredWindowAttributes ||	!pUpdateLayeredWindow)
+			return 0;
+
+		DWORD dwExStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+
+		if (!alpha)
+		{	
+			dwExStyle = dwExStyle &~ WS_EX_LAYERED;
+			SetWindowLong(hWnd, GWL_EXSTYLE, dwExStyle);
+			return true;
+		} else {
+			dwExStyle = dwExStyle | WS_EX_LAYERED;
+			SetWindowLong(hWnd, GWL_EXSTYLE, dwExStyle);
+		}
+
+		//pSetLayeredWindowAttributes(hWnd, RGB(255,0,255), (255 / 50) * 100, LWA_COLORKEY);
+
+		Rect r;
+		GetWindowRect(hWnd, &r);
+
+		BLENDFUNCTION blend;
+		blend.AlphaFormat = AC_SRC_ALPHA;
+		blend.BlendFlags = 0;
+		blend.BlendOp = AC_SRC_OVER;
+		blend.SourceConstantAlpha = 255;
+
+		Cairo::RefPtr<Cairo::Win32Surface> surface = Cairo::Win32Surface::create(Cairo::FORMAT_ARGB32, r.Width(), r.Height());
+		Cairo::RefPtr<Cairo::Context> cx = Cairo::Context::create(surface);
+
+		cx->save();
+		cx->set_source(alpha, 0, 0);
+		cx->rectangle(0, 0, r.Width(), r.Height());
+		cx->fill();
+		cx->restore();
+
+		HDC screendc = GetDC(0);
+		HDC memdc = surface->get_dc();
+
+		//BitBlt(screendc, 0, 0, 50, 50, memdc, 0, 0, SRCCOPY);
+
+		POINT ptSrc = {0, 0};
+		POINT ptDst = {r.left, r.top};
+		SIZE  sz = {r.Width(), r.Height()};
+
+		pUpdateLayeredWindow(
+			hWnd,
+			screendc,
+			&ptDst,
+			&sz,
+			memdc,
+			&ptSrc,
+			0,
+			&blend,
+			LWA_ALPHA
+			);
+
+		ReleaseDC(0, screendc);
+		return 1;
 	}
 
 }

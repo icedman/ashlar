@@ -28,7 +28,7 @@ using namespace Layout;
 
 namespace Render
 {
-	// TODO: image position(x,y) when extend is EXTEND_NONE
+	// TODO: image position(x,y) when extend is EXTEND_NONE and position is POSITION_RELATIVE
 
 	bool RenderEngine::DrawImage(Background *bg, double x, double y, double x2, double y2)
 	{

@@ -1,5 +1,13 @@
 <?xml version="1.0"?>
 <stylesheet>
+	<style>
+		<border width="0" color="#e5e5e5"/>
+		<font>
+			<family>verdana</family>
+			<size>14</size>
+			<color>#000000</color>
+		</font>
+	</style>
 	<style name="window">
 		<layout>
 			<width>200</width>
@@ -15,14 +23,6 @@
 			</slice>
 		</background>
 		<padding>14</padding>
-	</style>
-	<style>
-		<border width="0" color="#e5e5e5"/>
-		<font>
-			<family>verdana</family>
-			<size>14</size>
-			<color>#000000</color>
-		</font>
 	</style>
 	<style name="text">
 		<layout align="center" valign="middle"/>

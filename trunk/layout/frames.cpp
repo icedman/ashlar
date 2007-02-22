@@ -230,6 +230,108 @@ namespace Layout
 		}
 	}
 
+	void Frame::Draw(RenderEngine *render)
+	{
+		LayoutInfo *li = &frameStyle.layout;
+		bool draw = true;
+
+		Rect r;
+		GetRect(&r);
+
+		// skip invisible
+		draw &= (li->visible && li->display);
+		draw &= (r.Width() > 0 && r.Height() > 0);
+
+		if (!draw)
+			return;
+
+		double x, y, x2, y2;
+		
+		GetBorderRect(&r);
+		x = r.left;
+		y = r.top;
+		x2 = x + r.Width();
+		y2 = y + r.Height();
+
+		// draw basic frame
+		DrawFrame(render, x, y, x2, y2);
+
+		// draw children
+		DrawChildren(render);
+	}
+
+	void Frame::DrawFrame(RenderEngine *render, double x, double y, double x2, double y2, DOMString *text)
+	{
+		Cairo::RefPtr<Cairo::Context> cr = render->GetBufferContext();
+
+		if (!cr)
+			return;
+
+		Rect r;
+		LayoutInfo *li = &frameStyle.layout;
+		Gradient *gr = &frameStyle.gradient;
+
+		double w = x2-x;
+		double h = y2-y;
+
+		// fill
+		if (gr->colorCount>0)
+		{
+			cr->save();
+			render->DrawBorder(&frameStyle.border, &frameStyle.borderStyle, x, y, x2, y2);
+			render->DrawGradient(gr, x, y, x2, y2);
+			cr->restore();
+		}
+
+		// image
+		if (frameStyle.bgImage.imageId)
+		{
+			cr->save();
+			render->DrawBorder(&frameStyle.border, &frameStyle.borderStyle, x, y, x2, y2);
+			cr->clip();
+			render->DrawImage(&frameStyle.bgImage, x, y, x2, y2);
+			cr->restore();
+		}
+
+		// text
+		if (text)
+			DrawFrameText(render, text, x, y, x2, y2);
+
+		// border
+		cr->save();
+		render->DrawBorder(&frameStyle.border, &frameStyle.borderStyle, x, y, x2, y2);
+		cr->stroke();
+		cr->restore();
+	}
+
+	void Frame::DrawFrameText(RenderEngine *render, DOMString *text, double x, double y, double x2, double y2)
+	{
+		Cairo::RefPtr<Cairo::Context> cr = render->GetBufferContext();
+
+		if (!cr || !text)
+			return;
+
+		if (frameStyle.font.fontId)
+		{
+			cr->save();
+			render->DrawBorder(&frameStyle.border, &frameStyle.borderStyle, x, y, x2, y2);
+			cr->clip();
+			render->DrawText(&frameStyle.font, &frameStyle.layout, text->c_str(), x, y, x2, y2);
+			cr->restore();
+		}
+	}
+
+	void Frame::DrawChildren(RenderEngine *render)
+	{
+		// draw children
+		Frame *f = frames.GetFirst();
+		while(f)
+		{
+			f->Draw(render);
+			f = f->next;
+		}
+	}
+
 	void Frame::Redraw()
 	{
 		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);

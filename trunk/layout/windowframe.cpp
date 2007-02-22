@@ -78,13 +78,11 @@ namespace Layout
 	bool WindowFrame::CreateNewWindow(int x, int y, int w, int h)
 	{
 		DWORD dwStyle = WS_SIZEBOX | WS_SYSMENU;
-		DWORD dwExStyle = 0;
-		//dwExStyle = WS_EX_LAYERED;
-		//dwStyle = WS_POPUP;
+		dwStyle = WS_POPUP;
 		nativeWindow.iwindow = static_cast<IWindow*>(this);
 		nativeWindow.RegisterClass(0, GetName());
 		if (!nativeWindow.Create(GetName(), GetName(),
-			x, y, w, h + 20, dwStyle, dwExStyle)) // +20 for title bar
+			x, y, w, h, dwStyle, 0))
 			return false;
 
 		return true;
@@ -136,6 +134,11 @@ namespace Layout
 
 	void WindowFrame::OnMouseDown(int button, Point p)
 	{
+		if (0 && button == 1)
+		{
+			nativeWindow.DragWindow();
+			return;
+		}
 		mouseEvents.OnMouseEvent(Events::ONMOUSEDOWN, button, p.x, p.y);
 	}
 
@@ -146,14 +149,20 @@ namespace Layout
 
 	void WindowFrame::OnDraw(HDC hdc, Rect *rc)
 	{
-		Cairo::RefPtr<Cairo::Win32Surface> surface = Cairo::Win32Surface::create(hdc);
-		Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
-
-		if (!cr)
-			return;
-
-		render.Clear();
-		render.Render(this);
-		render.PaintBuffer(cr, rc);
+		if (1)
+		{
+			// transparent windows
+			render.Clear();
+			Draw(&render);
+			nativeWindow.SetAlphaChannel(render.GetBuffer());
+		} else {
+			Cairo::RefPtr<Cairo::Win32Surface> surface = Cairo::Win32Surface::create(hdc);
+			Cairo::RefPtr<Cairo::Context> cx = Cairo::Context::create(surface);
+			if (!cx)
+				return;
+			render.Clear(1, 1, 1, 1);
+			Draw(&render);
+			render.PaintBuffer(cx, rc);
+		}
 	}
 }

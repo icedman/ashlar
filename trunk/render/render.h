@@ -18,7 +18,7 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <layout/frames.h>
+#include <layout/framestyle.h>
 #include <cairomm/context.h>
 #include <cairomm/surface.h>
 
@@ -27,6 +27,8 @@ using namespace Layout;
 
 namespace Render
 {
+	inline void GetColor(long color, double &r, double &g, double &b);
+
 	//! Rendering engine
 	class RenderEngine
 	{
@@ -37,16 +39,18 @@ namespace Render
 		bool SetupBuffer(int width, int height);
 		void DestroyBuffer();
 
-		bool Render(Frame *frame);
-		bool DrawFrame(Frame *frame);
 		bool DrawText(Font *fn, LayoutInfo *li, const char* text, double  x, double y, double x2, double y2);
 		bool DrawBorder(Borders *br, BorderStyle *bs, double  x, double y, double x2, double y2);
 		bool DrawGradient(Gradient *gr, double x, double y, double x2, double y2);
 		bool DrawImage(Background *bg, double x, double y, double x2, double y2);
 
 		bool Clear();
+		bool Clear(double r, double g, double b, double a);
 		bool PaintBuffer(const Cairo::RefPtr< Cairo::Context > &cx, Rect *rc);
 		bool GetTextExtents(FrameStyle *fs, const char* text, double &width, double &height);
+
+		Cairo::RefPtr<Cairo::Surface> GetBuffer() { return img; }
+		Cairo::RefPtr<Cairo::Context> GetBufferContext() { return cr; }
 
 	private:
 

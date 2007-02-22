@@ -144,7 +144,7 @@ namespace Layout
 		short flex;
 		short align;
 		short verticalAlign;
-		bool floating;
+		short position;
 		bool display;
 		bool visible;
 		// calculated values

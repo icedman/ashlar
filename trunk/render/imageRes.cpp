@@ -30,6 +30,11 @@ namespace Render
 		} else {
 			name = *src;
 		}
-		img = Cairo::ImageSurface::create_from_png(*src);
+
+		try {
+			img = Cairo::ImageSurface::create_from_png(*src);
+		} catch (Cairo::logic_error) {
+			printf("error loading png\n");
+		}
 	}
 }

@@ -1,7 +1,14 @@
 <?xml version="1.0"?>
 <widget>
-	<window name="tinyWindow">
-		<button label="window">
+	<window name="tinyWindow" x="400" width="400">
+		<style>
+			<margin>
+				<left>50</left>
+				<top>50</top>
+			</margin>
+		</style>
+		<image src="res/clouds.png" position="absolute" x="0" y="0"/>
+		<button label="weather" position="absolute" x="250" y="150">
 			<event name="onClick">
 				<![CDATA[
 				
@@ -67,18 +74,6 @@
 					return "test";
 				}
 				
-				w = widget.firstChild();
-				w.hasChildNodes();
-				c = w.firstChild();
-				while(c)
-				{
-					if (c.nodeName == 'button')
-					{
-						c.setAttribute('label','hello');
-						echo (c.nodeName);
-					}
-					c = c.nextSibling();
-				}
 				echo(test());
 
 				]]>

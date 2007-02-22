@@ -19,11 +19,37 @@ code.google.com/p/ashlar
 #pragma once
 
 #include <win32/window.h>
+#include <cairomm/win32_surface.h>
 
 using namespace Ash;
 
 namespace OSWin
 {
+
+#ifndef WS_EX_LAYERED
+#define WS_EX_LAYERED           0x00080000
+#define LWA_COLORKEY            0x00000001
+#define LWA_ALPHA               0x00000002
+#endif
+
+	typedef BOOL (WINAPI *lpfnSetLayeredWindowAttributes)(
+		HWND hWnd,
+		COLORREF crKey,
+		BYTE bAlpha,
+		DWORD dwFlags
+		);
+
+	typedef BOOL (WINAPI *lpfnUpdateLayeredWindow)(
+		HWND hwnd,
+		HDC hdcDst,
+		POINT *pptDst,
+		SIZE *psize,
+		HDC hdcSrc,
+		POINT *pptSrc,
+		COLORREF crKey,
+		BLENDFUNCTION *pblend,
+		DWORD dwFlags
+		);
 
 	//! Native win32 window implementation
 	class NativeWindow : public OSWin::Window
@@ -51,10 +77,18 @@ namespace OSWin
 		LRESULT OnEraseBackground( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
 		LRESULT OnSize( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
 		LRESULT OnPaint( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
-		LRESULT OnMouseEvent( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );		
+		LRESULT OnMouseEvent( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
+
+		BOOL DragWindow();
+		BOOL SetAlphaChannel(Cairo::RefPtr<Cairo::Surface> surface);
 
 	public:
 		IWindow *iwindow;
+
+		// transparency
+		lpfnSetLayeredWindowAttributes pSetLayeredWindowAttributes;
+		lpfnUpdateLayeredWindow pUpdateLayeredWindow;
+
 	};
 
 }

@@ -18,26 +18,18 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <layout/layout.h>
+#include <layout/frames.h>
 #include <layout/frametypes.h>
-#include <events/events.h>
-
-using namespace Events;
 
 namespace Layout
 {
-	class Button : public HFrame
+	class Image : public Frame
 	{
-	public:
-		virtual const char* GetName() { return "button"; }
-		virtual Frame* Create() { return new Button(); }
-		FRAMETYPE(BUTTON, HFrame)
+		virtual const char* GetName() { return "image"; }
+		virtual Frame* Create() { return new Image(); }
+		FRAMETYPE(IMAGE, Frame)	
 
 		virtual bool Layout();
 		virtual void Draw(RenderEngine *render);
-
-		virtual bool OnEvent(int eid, void *pp);
-		virtual bool RegisterEvents(EventManager *manager);
 	};
-
 }
