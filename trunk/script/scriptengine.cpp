@@ -73,16 +73,6 @@ namespace Script
 		return JS_InitStandardClasses(jsCx, jsGlobal);
 	}
 
-	JSObject * ScriptEngine::RegisterObject(JSClass *jsClass)
-	{
-		return JS_NewObject(jsCx, jsClass, 0, 0);
-	}
-
-	bool ScriptEngine::RegisterFunctions(JSFunctionSpec *funcs)
-	{
-		return (JS_DefineFunctions(jsCx, jsGlobal, funcs) == JS_TRUE);
-	}
-
 	void ScriptEngine::Shutdown()
 	{
 		if (jsCx)
@@ -99,6 +89,7 @@ namespace Script
 
 	bool ScriptEngine::RunScript(const char *script, long len)
 	{
+		// todo add error checking
 		if (!jsCx)
 			return false;
 
@@ -110,14 +101,15 @@ namespace Script
 			JSString *str = JS_ValueToString(jsCx, rval);
 			if (JS_GetStringLength(str) > 0)
 			{
-				printf("%s\n", (char*)JS_GetStringBytes(str));
+			printf("%s\n", (char*)JS_GetStringBytes(str));
 			}
 			*/
 		} else {
 			printf("error!\n");
 		}
+
 		JS_GC(jsCx);
-		return ( res == JS_TRUE);
+		return (res == JS_TRUE);
 	}
 
 	bool ScriptEngine::TestScript()
@@ -125,4 +117,24 @@ namespace Script
 		const char *script = "x = 32;";
 		return RunScript(script, 7);
 	}
+
+	bool ScriptEngine::DefineObject(const char* name, JSClass *jsClass, void *priv)
+	{
+		if (!jsCx)
+			return false;
+
+		JSObject *obj = JS_DefineObject(jsCx, jsGlobal, name, jsClass, 0, JSPROP_PERMANENT);
+		if (obj)
+		{
+			JS_SetPrivate(jsCx, obj, priv);
+		}
+		return true;
+	}
+
+	bool ScriptEngine::RegisterFunctions(JSFunctionSpec *funcs)
+	{
+		return (JS_DefineFunctions(jsCx, jsGlobal, funcs) == JS_TRUE);
+	}
+
+
 }

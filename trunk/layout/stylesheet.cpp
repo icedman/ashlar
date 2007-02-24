@@ -16,15 +16,17 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include <dom/stylesheet.h>
 #include <dom/safenode.h>
+#include <layout/stylesheet.h>
 #include <layout/frames.h>
 #include <render/resources.h>
+#include <color.h>
 
-using namespace Layout;
+using namespace Ash;
 using namespace Render;
+using namespace Dom;
 
-namespace Dom
+namespace Layout
 {
 
 	inline void ObjectToId(DOMString &s, void *p)
@@ -100,12 +102,13 @@ namespace Dom
 		DOMString rgb(tmp, 0, 6);
 		DOMString alpha(tmp, 6);
 		long clr = strtol(rgb.c_str(), (char**)rgb.c_str() + 6, 16);
-		int rr = GetRValue(clr);
-		int gg = GetGValue(clr);
-		int bb = GetBValue(clr);
+
+		int rr = GetRed(clr);
+		int gg = GetGreen(clr);
+		int bb = GetBlue(clr);
 
 		// switch rr & bb
-		return RGB(bb, gg, rr);
+		return Rgb(bb, gg, rr);
 	}
 
 	void GetBorderStyleXml(BorderStyle &bs, DOMNode *el)
@@ -207,7 +210,7 @@ namespace Dom
 		SafeNode snode((Element*)el);
 		DOMString tmp;
 
-		ResourceManager *rm = ResourceManager::GetInstance();
+		Resources *rm = Resources::GetInstance();
 		Resource *rc = rm->GetResource(snode.GetValue("family")->Value(&tmp));
 
 		fn.fontId = rc ? rc->GetId() : fn.fontId;
@@ -229,7 +232,7 @@ namespace Dom
 		if (!src)
 			return;
 
-		ResourceManager *rm = ResourceManager::GetInstance();
+		Resources *rm = Resources::GetInstance();
 		Resource *rc = rm->GetResource(name);
 
 		img.imageId = rc ? rc->GetId() : img.imageId;

@@ -27,11 +27,13 @@ namespace Layout
 	class Label : public HFrame
 	{
 	public:
-		virtual const char* GetName() { return "text"; }
+		Label();
+		virtual const char* GetName() { return "label"; }
 		virtual Frame* Create() { return new Label(); }
 		FRAMETYPE(LABEL, Frame)
 
-		virtual bool Layout();
-		virtual void Draw(RenderEngine *render);
+		virtual bool Prelayout();
+		virtual Dom::DOMString* GetText();
+		virtual void Draw(Render::Rasterizer *render);
 	};
 }

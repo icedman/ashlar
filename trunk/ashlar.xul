@@ -1,17 +1,18 @@
 <?xml version="1.0"?>
 <widget>
+	<stylesheet src="style.xul"/>
 	<window name="tinyWindow" x="400" width="400">
 		<style>
 			<margin>
-				<left>50</left>
-				<top>50</top>
+				<left>20</left>
+				<top>20</top>
 			</margin>
 		</style>
-		<image src="res/clouds.png" position="absolute" x="0" y="0"/>
-		<button label="weather" position="absolute" x="250" y="150">
-			<event name="onClick">
+		<image src="res/clouds.png" position="absolute" x="0" y="-30"/>
+		<button label="weather" position="absolute" x="250" y="80">
+			<onClick>
 				<![CDATA[
-				
+
 			nl = widget.getElementsByTagName('window');
 			for(i=0; i<nl.length();i++)
 			{
@@ -19,7 +20,7 @@
 			}
 
 			]]>
-			</event>
+			</onClick>
 		</button>
 	</window>
 	<window name="mainWindow" x="400" y="200" width="600" height="300">
@@ -28,9 +29,8 @@
 				<color>#ffffff</color>
 			</fill>
 		</style>
-		<stylesheet src="style.xul"/>
 		<button label="button abc" width="120" height="40">
-			<event name="onClick">
+			<onClick>
 				<![CDATA[
 			
 			nl = widget.getElementsByTagName('button');
@@ -41,7 +41,7 @@
 			}
 			
 			]]>
-			</event>
+			</onClick>
 		</button>
 		<button label="button b"/>
 		<vbox flex="1" align="right">
@@ -50,7 +50,7 @@
 					<bottom>30</bottom>
 				</padding>
 			</style>
-			<text>hello world</text>
+			<label>hello world</label>
 			<hbox flex="1" align="center" valign="middle">
 				<box>
 					<button label="button"/>
@@ -66,7 +66,7 @@
 						<color offset="255">#e5e5e5</color>
 					</fill>
 				</style>
-				<event name="onClick">
+				<onClick>
 					<![CDATA[
 
 				function test()
@@ -77,7 +77,7 @@
 				echo(test());
 
 				]]>
-				</event>
+				</onClick>
 			</button>
 		</vbox>
 	</window>

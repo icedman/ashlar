@@ -25,11 +25,12 @@ namespace Layout
 {
 	class Image : public Frame
 	{
+		public:
 		virtual const char* GetName() { return "image"; }
 		virtual Frame* Create() { return new Image(); }
 		FRAMETYPE(IMAGE, Frame)	
 
 		virtual bool Layout();
-		virtual void Draw(RenderEngine *render);
+		virtual void Draw(Render::Rasterizer *render);
 	};
 }

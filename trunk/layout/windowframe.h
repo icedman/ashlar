@@ -39,10 +39,7 @@ namespace Layout
 
 		bool Initialize();
 		bool RegisterEvents(Frame *frame);
-		void Redraw();
-
-		Render::RenderEngine* GetRenderer() { return &render; }
-		Events::MouseEvents* GetMouseEvents() { return &mouseEvents; }
+		virtual void Redraw();
 
 		//! IWindow Interface
 		virtual bool CreateNewWindow(int x, int y, int w, int h);
@@ -60,10 +57,13 @@ namespace Layout
 		virtual void OnMouseUp(int button, Point p);
 		virtual void OnDraw(HDC hdc, Rect *rc);
 
+		Render::Rasterizer* GetRenderer() { return &render; }
+		Events::MouseEvents* GetMouseEvents() { return &mouseEvents; }
+
 	private:
-		Render::RenderEngine render;
+		Render::Rasterizer render;
 		Events::MouseEvents mouseEvents;
 
-		OSWin::NativeWindow nativeWindow;
+		PlatformDependent::NativeWindow nativeWindow;
 	};
 }

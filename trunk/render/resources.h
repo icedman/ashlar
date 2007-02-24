@@ -53,18 +53,18 @@ namespace Render
 		TRACE
 	};
 
-	class ResourceManager : public List<Resource>
+	class Resources : public List<Resource>
 	{
 	public:
-		ResourceManager();
-		~ResourceManager();
+		Resources();
+		~Resources();
 
 		bool Load(Element *element);
 		Resource* AddResource(DOMString *name, DOMString* src, int type);
 		Resource* GetResource(int id);
 		Resource* GetResource(DOMString *name);
 
-		static ResourceManager* GetInstance();
+		static Resources* GetInstance();
 
 		void Dump();
 		void Free();

@@ -30,6 +30,7 @@ code.google.com/p/ashlar
 #include <layout/framebuilder.h>
 #include <layout/framestyle.h>
 #include <layout/frametypes.h>
+#include <layout/stylesheet.h>
 
 // rendering
 #include <render/render.h>
@@ -46,7 +47,6 @@ code.google.com/p/ashlar
 #include <dom/xmlparser.h>
 #include <dom/docbuilder.h>
 #include <dom/safenode.h>
-#include <dom/stylesheet.h>
 
 // script
 #include <script/scriptengine.h>

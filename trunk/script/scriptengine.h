@@ -37,7 +37,7 @@ namespace Script
 		bool RunScript(const char *script, long len);
 		bool TestScript();
 
-		JSObject * ScriptEngine::RegisterObject(JSClass *jsClass);
+		bool DefineObject(const char* name, JSClass *jsClass, void *priv);
 
 		JSRuntime* GetRuntime() { return jsRt; }
 		JSObject*  GetGlobalObject() { return jsGlobal; }

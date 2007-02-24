@@ -20,8 +20,8 @@ code.google.com/p/ashlar
 #include <layout/frames.h>
 #include <layout/framestyle.h>
 #include <layout/windowframe.h>
+#include <layout/stylesheet.h>
 #include <events/events.h>
-#include <dom/stylesheet.h>
 #include <dom/safenode.h>
 
 using namespace Events;
@@ -40,37 +40,6 @@ namespace Layout
 	Frame::~Frame()
 	{
 		Free();
-	}
-
-	bool Frame::SetParent(Frame* parent)
-	{
-		parentFrame = (Frame*)parent;
-		return true;
-	}
-
-	Frame* Frame::GetRoot()
-	{
-		if (parentFrame)
-		{
-			return parentFrame->GetRoot();
-		}
-		return 0;
-	}
-
-	Frame* Frame::GetParent()
-	{
-		return parentFrame;
-	}
-
-	Frame* Frame::GetParent(int frameType)
-	{
-		if (parentFrame)
-		{
-			if (parentFrame->IsType(frameType))
-				return parentFrame;
-			return parentFrame->GetParent(frameType);
-		}
-		return 0;
 	}
 
 	void Frame::SetState(int state)
@@ -103,6 +72,38 @@ namespace Layout
 		Redraw();
 	}
 
+	// frame tree
+	bool Frame::SetParent(Frame* parent)
+	{
+		parentFrame = (Frame*)parent;
+		return true;
+	}
+
+	Frame* Frame::GetRoot()
+	{
+		if (parentFrame)
+		{
+			return parentFrame->GetRoot();
+		}
+		return 0;
+	}
+
+	Frame* Frame::GetParent()
+	{
+		return parentFrame;
+	}
+
+	Frame* Frame::GetParent(int frameType)
+	{
+		if (parentFrame)
+		{
+			if (parentFrame->IsType(frameType))
+				return parentFrame;
+			return parentFrame->GetParent(frameType);
+		}
+		return 0;
+	}
+
 	bool Frame::AddFrame(Frame* pFrame)
 	{
 		frames.Push(pFrame);
@@ -126,31 +127,20 @@ namespace Layout
 		return true;
 	}
 
-	Dom::DOMString* Frame::GetText()
+	// layout
+	bool Frame::Prelayout()
 	{
-		DOMString *text = 0;
-		Element *e = GetElement();
-		if (!e)
-			return 0;
-		if (IsType(LABEL))
-		{
-			text = &e->nodeValue;
-		} else {
-			SafeNode snode(e);
-			SafeNode *label = snode.GetValue("label");
-			text = label->Value();
-		}
-		return text;
+		return true;
 	}
 
 	bool Frame::Layout()
 	{
-		//printf("layout %s\n", GetName());
-		return true;
-	}
-
-	bool Frame::OnEvent(int eventId, void *)
-	{
+		Frame *f = frames.GetFirst();
+		while(f)
+		{
+			f->Prelayout();
+			f = f->next;
+		}
 		return true;
 	}
 
@@ -194,43 +184,8 @@ namespace Layout
 		return true;
 	}
 
-	void Frame::Free()
-	{
-		if (parentFrame)
-		{
-			parentFrame->RemoveFrame(this);
-		}
-
-		// free child frames
-		Frame *f;
-		while(f = frames.GetFirst())
-		{
-			delete f;
-		}
-	}
-
-	void Frame::Dump()
-	{
-		int level = 0;
-		Frame *f = parentFrame;
-		while(f)
-		{
-			f = f->parentFrame;
-			level++;
-		}
-
-		for(int i = 0; i<level; i++) printf("  ");
-		printf("%s %d\n", GetName(), GetElement());
-
-		f = frames.GetFirst();
-		while(f)
-		{
-			f->Dump();
-			f = f->next;
-		}
-	}
-
-	void Frame::Draw(RenderEngine *render)
+	// render
+	void Frame::Draw(Rasterizer *render)
 	{
 		LayoutInfo *li = &frameStyle.layout;
 		bool draw = true;
@@ -246,7 +201,7 @@ namespace Layout
 			return;
 
 		double x, y, x2, y2;
-		
+
 		GetBorderRect(&r);
 		x = r.left;
 		y = r.top;
@@ -260,7 +215,7 @@ namespace Layout
 		DrawChildren(render);
 	}
 
-	void Frame::DrawFrame(RenderEngine *render, double x, double y, double x2, double y2, DOMString *text)
+	void Frame::DrawFrame(Rasterizer *render, double x, double y, double x2, double y2, DOMString *text)
 	{
 		Cairo::RefPtr<Cairo::Context> cr = render->GetBufferContext();
 
@@ -304,7 +259,7 @@ namespace Layout
 		cr->restore();
 	}
 
-	void Frame::DrawFrameText(RenderEngine *render, DOMString *text, double x, double y, double x2, double y2)
+	void Frame::DrawFrameText(Rasterizer *render, DOMString *text, double x, double y, double x2, double y2)
 	{
 		Cairo::RefPtr<Cairo::Context> cr = render->GetBufferContext();
 
@@ -316,12 +271,12 @@ namespace Layout
 			cr->save();
 			render->DrawBorder(&frameStyle.border, &frameStyle.borderStyle, x, y, x2, y2);
 			cr->clip();
-			render->DrawText(&frameStyle.font, &frameStyle.layout, text->c_str(), x, y, x2, y2);
+			render->DrawTextLine(&frameStyle.font, &frameStyle.layout, text->c_str(), x, y, x2, y2);
 			cr->restore();
 		}
 	}
 
-	void Frame::DrawChildren(RenderEngine *render)
+	void Frame::DrawChildren(Rasterizer *render)
 	{
 		// draw children
 		Frame *f = frames.GetFirst();
@@ -341,11 +296,26 @@ namespace Layout
 		}
 	}
 
+	// dom
 	Dom::Element* Frame::SetElement(Dom::Element *e)
 	{
 		if (!element)
 			element = e;
 		return element;
+	}
+
+	Dom::DOMString* Frame::GetText()
+	{
+		Element *e = GetElement();
+		if (e)
+			return &e->nodeValue;
+		return 0;
+	}
+
+	// events
+	bool Frame::OnEvent(int eventId, void *)
+	{
+		return true;
 	}
 
 	bool Frame::OnMouseEvents(int eid, void *pp)
@@ -365,34 +335,46 @@ namespace Layout
 		switch(eid)
 		{
 		case ONMOUSEMOVE:
-			if (GetState() != STATE_PRESSED && GetState() != STATE_HOVER)
-				SetState(STATE_HOVER);
-			break;
+			{
+				if (GetState() != STATE_PRESSED && GetState() != STATE_HOVER)
+					SetState(STATE_HOVER);
+				break;
+			}
 		case ONMOUSEDOWN:
-			SetState(STATE_PRESSED);
-			break;
+			{
+				SetState(STATE_PRESSED);
+				break;
+			}
 		case ONMOUSEUP:
-			if (GetState() == STATE_PRESSED)
 			{
-				OnMouseEvents(ONMOUSECLICK, pp);
-			}
-			SetState(STATE_HOVER);
-			break;
-		case ONMOUSECLICK:
-			printf("unfreed objects:%d\n", Ref::GetCount());
-			SafeNode snode(GetElement());
-			DOMString *script = snode.GetElement("event")->Value();
-			if (script)
-			{
-				Widget *w = (Widget*)GetParent(WIDGET);
-				if (w)
+				if (GetState() == STATE_PRESSED)
 				{
-					ScriptEngine *s = w->GetScriptEngine();
-					if (s)
-						s->RunScript(script->c_str(), script->size());
+					OnMouseEvents(ONMOUSECLICK, pp);
 				}
+				SetState(STATE_HOVER);
+				break;
 			}
-			break;
+		case ONMOUSECLICK:
+			{
+				printf("unfreed objects:%d\n", Ref::GetCount());
+				SafeNode snode(GetElement());
+				DOMString *script = snode.GetValue("onClick")->Value();
+				if (script)
+				{
+					Widget *w = (Widget*)GetParent(WIDGET);
+					if (w)
+					{
+						ScriptEngine *s = w->GetScriptEngine();
+						if (s)
+							s->RunScript(script->c_str(), script->size());
+					}
+				}
+				break;
+			}
+		case ONMOUSEOUT:
+			{
+				break;
+			}
 		}
 		return true;
 	}
@@ -400,5 +382,41 @@ namespace Layout
 	bool Frame::OnKeyEvents(int eid, void *pp)
 	{
 		return true;
+	}
+
+	void Frame::Free()
+	{
+		if (parentFrame)
+		{
+			parentFrame->RemoveFrame(this);
+		}
+
+		// free child frames
+		Frame *f;
+		while(f = frames.GetFirst())
+		{
+			delete f;
+		}
+	}
+
+	void Frame::Dump()
+	{
+		int level = 0;
+		Frame *f = parentFrame;
+		while(f)
+		{
+			f = f->parentFrame;
+			level++;
+		}
+
+		for(int i = 0; i<level; i++) printf("  ");
+		printf("%s %d\n", GetName(), GetElement());
+
+		f = frames.GetFirst();
+		while(f)
+		{
+			f->Dump();
+			f = f->next;
+		}
 	}
 }

@@ -148,6 +148,10 @@ namespace Layout
 		bool display;
 		bool visible;
 		// calculated values
+		short presetX;
+		short presetY;
+		short presetWidth;
+		short presetHeight;
 		short totalFlex;
 		short totalChildWidths;
 		short totalChildHeights;

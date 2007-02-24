@@ -21,6 +21,8 @@ code.google.com/p/ashlar
 #include <common.h>
 #include <rect.h>
 
+#include <windows.h> // HDC
+
 namespace Ash
 {
 	//! IWindow abstract class

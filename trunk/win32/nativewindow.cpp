@@ -22,7 +22,7 @@ code.google.com/p/ashlar
 #include <cairomm/win32_surface.h>
 
 
-namespace OSWin
+namespace PlatformDependent
 {
 	LRESULT NativeWindow::OnCreate( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
 	{
@@ -113,6 +113,9 @@ namespace OSWin
 		case WM_RBUTTONUP:
 			iwindow->OnMouseUp(Events::RBUTTON, p);
 			break;
+		case WM_MOUSELEAVE:
+			iwindow->OnMouseLeave();
+			break;
 		case WM_MOUSEMOVE:
 			SetFocus(hWnd);
 			iwindow->OnMouseMove(p);
@@ -127,7 +130,13 @@ namespace OSWin
 		return 1;
 	}
 
-	BOOL NativeWindow::SetAlphaChannel(Cairo::RefPtr<Cairo::Surface> alpha)
+	BOOL NativeWindow::Redraw()
+	{
+		RedrawWindow(hWnd, 0, 0, RDW_NOERASE | RDW_INVALIDATE | RDW_INTERNALPAINT);
+		return 1;
+	}
+
+	BOOL NativeWindow::SetAlphaChannel(Cairo::RefPtr<Cairo::Surface> alpha, int trans)
 	{
 		if (!pSetLayeredWindowAttributes ||	!pUpdateLayeredWindow)
 			return 0;
@@ -144,34 +153,30 @@ namespace OSWin
 			SetWindowLong(hWnd, GWL_EXSTYLE, dwExStyle);
 		}
 
-		//pSetLayeredWindowAttributes(hWnd, RGB(255,0,255), (255 / 50) * 100, LWA_COLORKEY);
-
-		Rect r;
+		RECT r;
 		GetWindowRect(hWnd, &r);
 
 		BLENDFUNCTION blend;
 		blend.AlphaFormat = AC_SRC_ALPHA;
 		blend.BlendFlags = 0;
 		blend.BlendOp = AC_SRC_OVER;
-		blend.SourceConstantAlpha = 255;
+		blend.SourceConstantAlpha = trans;
 
-		Cairo::RefPtr<Cairo::Win32Surface> surface = Cairo::Win32Surface::create(Cairo::FORMAT_ARGB32, r.Width(), r.Height());
+		Cairo::RefPtr<Cairo::Win32Surface> surface = Cairo::Win32Surface::create(Cairo::FORMAT_ARGB32, r.right - r.left, r.bottom - r.top);
 		Cairo::RefPtr<Cairo::Context> cx = Cairo::Context::create(surface);
 
 		cx->save();
 		cx->set_source(alpha, 0, 0);
-		cx->rectangle(0, 0, r.Width(), r.Height());
+		cx->rectangle(0, 0, r.right - r.left, r.bottom - r.top);
 		cx->fill();
 		cx->restore();
 
 		HDC screendc = GetDC(0);
 		HDC memdc = surface->get_dc();
 
-		//BitBlt(screendc, 0, 0, 50, 50, memdc, 0, 0, SRCCOPY);
-
 		POINT ptSrc = {0, 0};
 		POINT ptDst = {r.left, r.top};
-		SIZE  sz = {r.Width(), r.Height()};
+		SIZE  sz = { r.right - r.left, r.bottom - r.top};
 
 		pUpdateLayeredWindow(
 			hWnd,

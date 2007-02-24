@@ -21,9 +21,16 @@ code.google.com/p/ashlar
 #include <dom/safenode.h>
 
 using namespace Dom;
+using namespace Render;
 
 namespace Layout
 {
+	Button::Button()
+	{
+		frameStyle.layout.align = ALIGN_CENTER;
+		frameStyle.layout.verticalAlign = ALIGN_MIDDLE;
+	}
+
 	bool Button::OnEvent(int eid, void *pInfo)
 	{
 		OnMouseEvents(eid, pInfo);
@@ -38,15 +45,21 @@ namespace Layout
 		return true;
 	}
 
-	bool Button::Layout()
+	bool Button::Prelayout()
 	{
+		if (frameStyle.layout.flex)
+			return true;
+
+		//frameStyle.layout.width = frameStyle.layout.presetWidth;
+		//frameStyle.layout.height = frameStyle.layout.presetHeight;
+
 		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);
 		if (w)
 		{
 			DOMString *text = GetText();
 			if (text)
 			{
-				Render::RenderEngine *r = w->GetRenderer();
+				Render::Rasterizer *r = w->GetRenderer();
 				double width, height;
 				if (r->GetTextExtents(&frameStyle, text->c_str(), width, height))
 				{
@@ -56,10 +69,22 @@ namespace Layout
 			}
 		}
 
-		return HFrame::Layout();
+		return HFrame::Prelayout();
 	}
 
-	void Button::Draw(RenderEngine *render)
+	DOMString* Button::GetText()
+	{
+		Element *e = GetElement();
+		if (e)
+		{
+			SafeNode snode(e);
+			SafeNode *label = snode.GetAttribute("label");
+			return label->Value();
+		}
+		return 0;
+	}
+
+	void Button::Draw(Rasterizer *render)
 	{
 		LayoutInfo *li = &frameStyle.layout;
 		bool draw = true;
@@ -75,7 +100,7 @@ namespace Layout
 			return;
 
 		double x, y, x2, y2;
-		
+
 		GetBorderRect(&r);
 		x = r.left;
 		y = r.top;

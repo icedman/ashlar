@@ -27,19 +27,20 @@ using namespace Layout;
 
 namespace Render
 {
+
 	inline void GetColor(long color, double &r, double &g, double &b);
 
 	//! Rendering engine
-	class RenderEngine
+	class Rasterizer
 	{
 	public:
-		RenderEngine() {}
-		~RenderEngine() {}
+		Rasterizer() {}
+		~Rasterizer() {}
 
 		bool SetupBuffer(int width, int height);
 		void DestroyBuffer();
 
-		bool DrawText(Font *fn, LayoutInfo *li, const char* text, double  x, double y, double x2, double y2);
+		bool DrawTextLine(Font *fn, LayoutInfo *li, const char* text, double  x, double y, double x2, double y2);
 		bool DrawBorder(Borders *br, BorderStyle *bs, double  x, double y, double x2, double y2);
 		bool DrawGradient(Gradient *gr, double x, double y, double x2, double y2);
 		bool DrawImage(Background *bg, double x, double y, double x2, double y2);

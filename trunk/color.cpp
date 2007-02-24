@@ -16,34 +16,31 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#include <common.h>
-#include <widget.h>
-#include <render/resources.h>
-#include <dom/safenode.h>
-#include <win32/nativewindow.h>
+#include <color.h>
+#include <windows.h>
 
-using namespace Ash;
-
-int main()
+namespace Ash
 {
-	Widget *widget = new Widget();
-	if (!widget->Load("grid.xul"))
-		PostQuitMessage(0);
 
-	printf("unfreed objects:%d\n", Ref::GetCount());
-
-	MSG msg;
-	while( GetMessage(&msg, NULL, 0, 0) ) {
-
-		if( PeekMessage(&msg, 0, 0, 0, PM_REMOVE) )
-			if( msg.message == WM_QUIT ) break;
-
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+	long Rgb(short r, short g, short b)
+	{
+		return RGB(r,g,b);
 	}
 
-	delete widget;
+	long GetRed(long rgb)
+	{
+		return GetRValue(rgb);
+	}
 
-	printf("unfreed objects:%d\n", Ref::GetCount());
-	return 0;
+	long GetGreen(long rgb)
+	{
+		return GetGValue(rgb);
+	}
+
+	long GetBlue(long rgb)
+	{
+		return GetBValue(rgb);
+	}
+
+
 }

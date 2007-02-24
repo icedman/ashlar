@@ -30,12 +30,12 @@ namespace Render
 {
 	// TODO: image position(x,y) when extend is EXTEND_NONE and position is POSITION_RELATIVE
 
-	bool RenderEngine::DrawImage(Background *bg, double x, double y, double x2, double y2)
+	bool Rasterizer::DrawImage(Background *bg, double x, double y, double x2, double y2)
 	{
 		if (!cr)
 			return false;
 
-		ResourceManager *rm = ResourceManager::GetInstance();
+		Resources *rm = Resources::GetInstance();
 		ImageRes *rc = (ImageRes*)rm->GetResource(bg->imageId);
 		if (!rc)
 			return false;
@@ -145,37 +145,42 @@ namespace Render
 
 			double ww = x2-x-l-r;
 
-			cr->save();
-			cr->rectangle(x + l, y, ww, t);
-
-			switch(bg->sliceExtend.top)
+			if (ww)
 			{
-			case EXTEND_REPEAT:
-				{
-					Cairo::RefPtr<Cairo::SurfacePattern> tmpPattern  = Cairo::SurfacePattern::create(tmpSurface);
-					tmpPattern->set_extend(Cairo::EXTEND_REPEAT);
-					cr->translate(x + l, y);
-					cr->set_source(tmpPattern);
-					break;
-				} 
-			case EXTEND_STRETCH:
-				{
-					double accw = 2;
-					if (ww<=tw)
-						accw = 0;
-					cr->translate(x + l - accw, y);
-					cr->scale(ww/(tw-(accw*2)), 1);
-					cr->set_source(tmpSurface, 0, 0);
-					break;
-				}
-			case EXTEND_NONE:
-				cr->translate(x + l, y);
-				cr->set_source(tmpSurface, 0, 0);
-			}
 
-			if (bg->sliceExtend.top!=EXTEND_HIDDEN)
-				cr->fill();
-			cr->restore();
+				cr->save();
+				cr->rectangle(x + l, y, ww, t);
+
+				switch(bg->sliceExtend.top)
+				{
+				case EXTEND_REPEAT:
+					{
+						Cairo::RefPtr<Cairo::SurfacePattern> tmpPattern  = Cairo::SurfacePattern::create(tmpSurface);
+						tmpPattern->set_extend(Cairo::EXTEND_REPEAT);
+						cr->translate(x + l, y);
+						cr->set_source(tmpPattern);
+						break;
+					} 
+				case EXTEND_STRETCH:
+					{
+						double accw = 2;
+						if (ww<=tw)
+							accw = 0;
+						cr->translate(x + l - accw, y);
+						cr->scale(ww/(tw-(accw*2)), 1);
+						cr->set_source(tmpSurface, 0, 0);
+						break;
+					}
+				case EXTEND_NONE:
+					cr->translate(x + l, y);
+					cr->set_source(tmpSurface, 0, 0);
+				}
+
+				if (bg->sliceExtend.top!=EXTEND_HIDDEN)
+					cr->fill();
+				cr->restore();
+
+			}
 		}
 
 		// bottom
@@ -194,41 +199,46 @@ namespace Render
 
 			double ww = x2-x-l-r;
 
-			cr->save();
-			cr->rectangle(x + l, y2-b, ww, b);
-
-			switch(bg->sliceExtend.bottom)
+			if (ww>0)
 			{
-			case EXTEND_REPEAT:
-				{
-					Cairo::RefPtr<Cairo::SurfacePattern> tmpPattern  = Cairo::SurfacePattern::create(tmpSurface);
-					tmpPattern->set_extend(Cairo::EXTEND_REPEAT);
-					cr->translate(x + l, y2-b);
-					cr->set_source(tmpPattern);
-					break;
-				}
-			case EXTEND_STRETCH: 
-				{
-					double accw = 2;
-					if (ww<=tw)
-						accw = 0;
-					cr->translate(x + l -accw, y2-b);
-					cr->scale(ww/(tw-(accw*2)), 1);
-					cr->set_source(tmpSurface, 0, 0);
-					break;
-				}
-			case EXTEND_NONE:
-				cr->translate(x + l, y2-b);
-				cr->set_source(tmpSurface, 0, 0);
-			}
 
-			if (bg->sliceExtend.bottom!=EXTEND_HIDDEN)
-				cr->fill();
-			cr->restore();
+				cr->save();
+				cr->rectangle(x + l, y2-b, ww, b);
+
+				switch(bg->sliceExtend.bottom)
+				{
+				case EXTEND_REPEAT:
+					{
+						Cairo::RefPtr<Cairo::SurfacePattern> tmpPattern  = Cairo::SurfacePattern::create(tmpSurface);
+						tmpPattern->set_extend(Cairo::EXTEND_REPEAT);
+						cr->translate(x + l, y2-b);
+						cr->set_source(tmpPattern);
+						break;
+					}
+				case EXTEND_STRETCH: 
+					{
+						double accw = 2;
+						if (ww<=tw)
+							accw = 0;
+						cr->translate(x + l -accw, y2-b);
+						cr->scale(ww/(tw-(accw*2)), 1);
+						cr->set_source(tmpSurface, 0, 0);
+						break;
+					}
+				case EXTEND_NONE:
+					cr->translate(x + l, y2-b);
+					cr->set_source(tmpSurface, 0, 0);
+				}
+
+				if (bg->sliceExtend.bottom!=EXTEND_HIDDEN)
+					cr->fill();
+				cr->restore();
+
+			}
 		}
 
 		// left
-		if (l)
+		if (l>0)
 		{
 			Cairo::RefPtr<Cairo::ImageSurface> tmpSurface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, l, sh-t-b);
 			Cairo::RefPtr<Cairo::Context> tmpCx = Cairo::Context::create(tmpSurface);
@@ -243,41 +253,46 @@ namespace Render
 
 			double hh = y2-y-t-b;
 
-			cr->save();
-			cr->rectangle(x, y+t, l, hh);
-
-			switch(bg->sliceExtend.left)
+			if (hh>0)
 			{
-			case EXTEND_REPEAT:
-				{
-					Cairo::RefPtr<Cairo::SurfacePattern> tmpPattern  = Cairo::SurfacePattern::create(tmpSurface);
-					tmpPattern->set_extend(Cairo::EXTEND_REPEAT);
-					cr->translate(x, y+t);
-					cr->set_source(tmpPattern);
-					break;
-				}
-			case EXTEND_STRETCH:
-				{
-					double acch = 2;
-					if (hh<=th)
-						acch = 0;
-					cr->translate(x, y+t-acch);
-					cr->scale(1, hh/(th-(acch*2)));
-					cr->set_source(tmpSurface, 0, 0);
-					break;
-				}
-			case EXTEND_NONE:
-				cr->translate(x, y+t);
-				cr->set_source(tmpSurface, 0, 0);
-			}
 
-			if (bg->sliceExtend.left!=EXTEND_HIDDEN)
-				cr->fill();
-			cr->restore();
+				cr->save();
+				cr->rectangle(x, y+t, l, hh);
+
+				switch(bg->sliceExtend.left)
+				{
+				case EXTEND_REPEAT:
+					{
+						Cairo::RefPtr<Cairo::SurfacePattern> tmpPattern  = Cairo::SurfacePattern::create(tmpSurface);
+						tmpPattern->set_extend(Cairo::EXTEND_REPEAT);
+						cr->translate(x, y+t);
+						cr->set_source(tmpPattern);
+						break;
+					}
+				case EXTEND_STRETCH:
+					{
+						double acch = 2;
+						if (hh<=th)
+							acch = 0;
+						cr->translate(x, y+t-acch);
+						cr->scale(1, hh/(th-(acch*2)));
+						cr->set_source(tmpSurface, 0, 0);
+						break;
+					}
+				case EXTEND_NONE:
+					cr->translate(x, y+t);
+					cr->set_source(tmpSurface, 0, 0);
+				}
+
+				if (bg->sliceExtend.left!=EXTEND_HIDDEN)
+					cr->fill();
+				cr->restore();
+
+			}
 		}
 
 		// right
-		if (r)
+		if (r>0)
 		{
 			Cairo::RefPtr<Cairo::ImageSurface> tmpSurface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, r, sh-t-b);
 			Cairo::RefPtr<Cairo::Context> tmpCx = Cairo::Context::create(tmpSurface);
@@ -292,37 +307,42 @@ namespace Render
 
 			double hh = y2-y-t-b;
 
-			cr->save();
-			cr->rectangle(x2-r, y+t, r, hh);
-
-			switch(bg->sliceExtend.right)
+			if (hh>0)
 			{
-			case EXTEND_REPEAT:
-				{
-					Cairo::RefPtr<Cairo::SurfacePattern> tmpPattern  = Cairo::SurfacePattern::create(tmpSurface);
-					tmpPattern->set_extend(Cairo::EXTEND_REPEAT);
-					cr->translate(x2-r, y+t);
-					cr->set_source(tmpPattern);
-					break;
-				}
-			case EXTEND_STRETCH:
-				{
-					double acch = 2;
-					if (hh<=th)
-						acch = 0;
-					cr->translate(x2-r, y+t-acch);
-					cr->scale(1, hh/(th-(acch*2)));
-					cr->set_source(tmpSurface, 0, 0);
-					break;
-				}
-			case EXTEND_NONE:
-				cr->translate(x2-r, y+t);
-				cr->set_source(tmpSurface, 0, 0);
-			}
 
-			if (bg->sliceExtend.right!=EXTEND_HIDDEN)
-				cr->fill();
-			cr->restore();
+				cr->save();
+				cr->rectangle(x2-r, y+t, r, hh);
+
+				switch(bg->sliceExtend.right)
+				{
+				case EXTEND_REPEAT:
+					{
+						Cairo::RefPtr<Cairo::SurfacePattern> tmpPattern  = Cairo::SurfacePattern::create(tmpSurface);
+						tmpPattern->set_extend(Cairo::EXTEND_REPEAT);
+						cr->translate(x2-r, y+t);
+						cr->set_source(tmpPattern);
+						break;
+					}
+				case EXTEND_STRETCH:
+					{
+						double acch = 2;
+						if (hh<=th)
+							acch = 0;
+						cr->translate(x2-r, y+t-acch);
+						cr->scale(1, hh/(th-(acch*2)));
+						cr->set_source(tmpSurface, 0, 0);
+						break;
+					}
+				case EXTEND_NONE:
+					cr->translate(x2-r, y+t);
+					cr->set_source(tmpSurface, 0, 0);
+				}
+
+				if (bg->sliceExtend.right!=EXTEND_HIDDEN)
+					cr->fill();
+				cr->restore();
+
+			}
 		}
 
 		// center
@@ -344,40 +364,45 @@ namespace Render
 			double ww = x2-x-l-r;
 			double hh = y2-y-t-b;
 
-			cr->save();
-			cr->rectangle(x+l, y+t, ww, hh);
-
-			switch(bg->extend)
+			if (ww>0 && hh>0)
 			{
-			case EXTEND_REPEAT:
-				{
-					Cairo::RefPtr<Cairo::SurfacePattern> tmpPattern  = Cairo::SurfacePattern::create(tmpSurface);
-					tmpPattern->set_extend(Cairo::EXTEND_REPEAT);
-					cr->translate(x+l, y+t);
-					cr->set_source(tmpPattern);
-					break;
-				}
-			case EXTEND_STRETCH:
-				{
-					double accw = 2;
-					double acch = 2;
-					if (ww<=tw)
-						accw = 0;
-					if (hh<=th)
-						acch = 0;
-					cr->translate(x+l-accw, y+t-acch);
-					cr->scale(ww/(tw-(accw*2)), hh/(th-(acch*2)));
-					cr->set_source(tmpSurface, 0, 0);
-					break;
-				}
-			case EXTEND_NONE:
-				cr->translate(x+l, y+t);
-				cr->set_source(tmpSurface, 0, 0);
-			}
 
-			if (bg->extend!=EXTEND_HIDDEN)
-				cr->fill();
-			cr->restore();
+				cr->save();
+				cr->rectangle(x+l, y+t, ww, hh);
+
+				switch(bg->extend)
+				{
+				case EXTEND_REPEAT:
+					{
+						Cairo::RefPtr<Cairo::SurfacePattern> tmpPattern  = Cairo::SurfacePattern::create(tmpSurface);
+						tmpPattern->set_extend(Cairo::EXTEND_REPEAT);
+						cr->translate(x+l, y+t);
+						cr->set_source(tmpPattern);
+						break;
+					}
+				case EXTEND_STRETCH:
+					{
+						double accw = 2;
+						double acch = 2;
+						if (ww<=tw)
+							accw = 0;
+						if (hh<=th)
+							acch = 0;
+						cr->translate(x+l-accw, y+t-acch);
+						cr->scale(ww/(tw-(accw*2)), hh/(th-(acch*2)));
+						cr->set_source(tmpSurface, 0, 0);
+						break;
+					}
+				case EXTEND_NONE:
+					cr->translate(x+l, y+t);
+					cr->set_source(tmpSurface, 0, 0);
+				}
+
+				if (bg->extend!=EXTEND_HIDDEN)
+					cr->fill();
+				cr->restore();
+
+			}
 		}
 
 		return true;
