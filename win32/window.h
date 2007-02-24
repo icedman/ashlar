@@ -27,7 +27,7 @@ code.google.com/p/ashlar
 
 using namespace Ash;
 
-namespace OSWin
+namespace PlatformDependent
 {
 
 	static LRESULT CALLBACK WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

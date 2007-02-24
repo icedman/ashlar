@@ -23,7 +23,7 @@ code.google.com/p/ashlar
 
 using namespace Ash;
 
-namespace OSWin
+namespace PlatformDependent
 {
 
 #ifndef WS_EX_LAYERED
@@ -52,7 +52,7 @@ namespace OSWin
 		);
 
 	//! Native win32 window implementation
-	class NativeWindow : public OSWin::Window
+	class NativeWindow : public PlatformDependent::Window
 	{
 	public:
 		NativeWindow() : iwindow(0)
@@ -80,7 +80,8 @@ namespace OSWin
 		LRESULT OnMouseEvent( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
 
 		BOOL DragWindow();
-		BOOL SetAlphaChannel(Cairo::RefPtr<Cairo::Surface> surface);
+		BOOL Redraw();
+		BOOL SetAlphaChannel(Cairo::RefPtr<Cairo::Surface> surface, int trans = 255);
 
 	public:
 		IWindow *iwindow;

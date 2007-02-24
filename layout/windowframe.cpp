@@ -24,6 +24,8 @@ code.google.com/p/ashlar
 
 using namespace Dom;
 
+#define TRANS 0
+
 namespace Layout
 {
 
@@ -42,15 +44,12 @@ namespace Layout
 		frameStyle.layout.width = !ISASSIGNED(frameStyle.layout.width) ? 100 : frameStyle.layout.width;
 		frameStyle.layout.height = !ISASSIGNED(frameStyle.layout.height) ? 100 : frameStyle.layout.height;
 
+		// title bar
 		if (!CreateNewWindow(frameStyle.layout.x, frameStyle.layout.y, frameStyle.layout.width, frameStyle.layout.height))
 			return false;
 
+		Layout();
 		ShowWindow(true);
-
-		// bug
-		for(int i=0;i<4;i++)
-			Layout();
-
 		return true;
 	}
 
@@ -71,14 +70,15 @@ namespace Layout
 
 	void WindowFrame::Redraw()
 	{
-		RedrawWindow(nativeWindow.hWnd, 0, 0, RDW_NOERASE | RDW_INVALIDATE | RDW_INTERNALPAINT);
+		nativeWindow.Redraw();
 	}
 
 	// IWindow
 	bool WindowFrame::CreateNewWindow(int x, int y, int w, int h)
 	{
 		DWORD dwStyle = WS_SIZEBOX | WS_SYSMENU;
-		dwStyle = WS_POPUP;
+		if (TRANS)
+			dwStyle = WS_POPUP;
 		nativeWindow.iwindow = static_cast<IWindow*>(this);
 		nativeWindow.RegisterClass(0, GetName());
 		if (!nativeWindow.Create(GetName(), GetName(),
@@ -114,8 +114,8 @@ namespace Layout
 	void WindowFrame::OnSize(const Rect *rc)
 	{
 		SetRect(rc);
-		Layout();
 		render.SetupBuffer(rc->Width(), rc->Height());
+		Layout();
 	}
 
 	void WindowFrame::OnKeyDown(long key)
@@ -130,7 +130,9 @@ namespace Layout
 	}
 
 	void WindowFrame::OnMouseLeave()
-	{}
+	{
+		mouseEvents.OnMouseEvent(Events::ONMOUSEOUT, 0, 0, 0);
+	}
 
 	void WindowFrame::OnMouseDown(int button, Point p)
 	{
@@ -149,9 +151,8 @@ namespace Layout
 
 	void WindowFrame::OnDraw(HDC hdc, Rect *rc)
 	{
-		if (1)
+		if (TRANS)
 		{
-			// transparent windows
 			render.Clear();
 			Draw(&render);
 			nativeWindow.SetAlphaChannel(render.GetBuffer());

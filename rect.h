@@ -21,17 +21,14 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <common.h>
-
-// POINT & RECT
-#include <windows.h>
-#include <math.h>
-
 namespace Ash {
 
-	class Point : public POINT
+	class Point
 	{
 	public:
+
+		long x;
+		long y;
 
 		Point()
 		{}
@@ -89,9 +86,14 @@ namespace Ash {
 		return p;
 	}
 
-	class Rect : public RECT
+	class Rect
 	{
 	public:
+
+		long left;
+		long top;
+		long right;
+		long bottom;
 
 		Rect()
 		{}
@@ -130,15 +132,6 @@ namespace Ash {
 		bool Contains( const Point& Point ) const
 		{
 			return Point.x >= left && Point.x < right && Point.y >= top && Point.y < bottom;
-		}
-
-		bool Overlap( const Rect& r) const
-		{
-			int w = Width() + r.Width();
-			int h = Height() + r.Height();
-			int ww = abs(left - r.right);
-			int hh = abs(top - r.bottom);
-			return (ww < w && hh < h);
 		}
 
 		void Move( long x, long y )

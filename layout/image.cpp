@@ -18,9 +18,11 @@ code.google.com/p/ashlar
 
 #include <layout/image.h>
 #include <layout/windowframe.h>
+#include <layout/stylesheet.h>
 #include <render/resources.h>
 #include <render/imageRes.h>
-#include <dom/stylesheet.h>
+
+using namespace Render;
 
 namespace Layout
 {
@@ -28,8 +30,8 @@ namespace Layout
 	{
 		GetImageXml(frameStyle.bgImage, GetElement());
 		
-		ResourceManager *rm = ResourceManager::GetInstance();
-		ImageRes *rc = (ImageRes*)rm->GetResource(frameStyle.bgImage.imageId);
+		Render::Resources *rm = Render::Resources::GetInstance();
+		Render::ImageRes *rc = (ImageRes*)rm->GetResource(frameStyle.bgImage.imageId);
 		if (!rc)
 			return false;
 
@@ -45,7 +47,7 @@ namespace Layout
 		return true;
 	}
 
-	void Image::Draw(RenderEngine *render)
+	void Image::Draw(Rasterizer *render)
 	{
 		LayoutInfo *li = &frameStyle.layout;
 		bool draw = true;

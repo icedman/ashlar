@@ -2,8 +2,15 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual C++ Express 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ashlar", "ashlar.vcproj", "{3B763187-0E9C-4CED-8AFA-F2E68ACF96AC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6D1F6F67-6074-4B12-B552-1DBEC6E92D13} = {6D1F6F67-6074-4B12-B552-1DBEC6E92D13}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "js", "extern\include\js\src\js.vcproj", "{7CC94EE9-4994-48B1-A5C7-C6A09BCB15AF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dom", "dom\dom.vcproj", "{6D1F6F67-6074-4B12-B552-1DBEC6E92D13}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cairomm", "extern\include\cairomm\cairomm.vcproj", "{9FA017D1-8C7B-4D53-9DC7-D6D03A7AA1CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,6 +26,14 @@ Global
 		{7CC94EE9-4994-48B1-A5C7-C6A09BCB15AF}.Debug|Win32.Build.0 = Debug|Win32
 		{7CC94EE9-4994-48B1-A5C7-C6A09BCB15AF}.Release|Win32.ActiveCfg = Release|Win32
 		{7CC94EE9-4994-48B1-A5C7-C6A09BCB15AF}.Release|Win32.Build.0 = Release|Win32
+		{6D1F6F67-6074-4B12-B552-1DBEC6E92D13}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6D1F6F67-6074-4B12-B552-1DBEC6E92D13}.Debug|Win32.Build.0 = Debug|Win32
+		{6D1F6F67-6074-4B12-B552-1DBEC6E92D13}.Release|Win32.ActiveCfg = Release|Win32
+		{6D1F6F67-6074-4B12-B552-1DBEC6E92D13}.Release|Win32.Build.0 = Release|Win32
+		{9FA017D1-8C7B-4D53-9DC7-D6D03A7AA1CC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9FA017D1-8C7B-4D53-9DC7-D6D03A7AA1CC}.Debug|Win32.Build.0 = Debug|Win32
+		{9FA017D1-8C7B-4D53-9DC7-D6D03A7AA1CC}.Release|Win32.ActiveCfg = Release|Win32
+		{9FA017D1-8C7B-4D53-9DC7-D6D03A7AA1CC}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

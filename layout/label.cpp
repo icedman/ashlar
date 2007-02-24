@@ -24,15 +24,27 @@ using namespace Dom;
 
 namespace Layout
 {
-	bool Label::Layout()
+	Label::Label()
 	{
+		frameStyle.layout.align = ALIGN_CENTER;
+		frameStyle.layout.verticalAlign = ALIGN_MIDDLE;
+	}
+
+	bool Label::Prelayout()
+	{
+		if (frameStyle.layout.flex)
+			return true;
+
+		//frameStyle.layout.width = frameStyle.layout.presetWidth;
+		//frameStyle.layout.height = frameStyle.layout.presetHeight;
+
 		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);
 		if (w)
 		{
 			DOMString *text = GetText();
 			if (text)
 			{
-				Render::RenderEngine *r = w->GetRenderer();
+				Render::Rasterizer *r = w->GetRenderer();
 				double width, height;
 				if (r->GetTextExtents(&frameStyle, text->c_str(), width, height))
 				{
@@ -42,10 +54,24 @@ namespace Layout
 			}
 		}
 
-		return HFrame::Layout();
+		return HFrame::Prelayout();
 	}
 
-	void Label::Draw(RenderEngine *render)
+	DOMString* Label::GetText()
+	{
+		Element *e = GetElement();
+		if (e)
+		{
+			SafeNode snode(e);
+			SafeNode *label = snode.GetAttribute("value");
+			if (label->Value())
+				return label->Value();
+			return &e->nodeValue;
+		}
+		return 0;
+	}
+
+	void Label::Draw(Render::Rasterizer *render)
 	{
 		LayoutInfo *li = &frameStyle.layout;
 		bool draw = true;

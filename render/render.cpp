@@ -20,17 +20,21 @@ code.google.com/p/ashlar
 #include <render/resources.h>
 #include <layout/frametypes.h>
 #include <dom/safenode.h>
+#include <cairomm/context.h>
+#include <color.h>
+
+using namespace Ash;
 
 namespace Render
 {
 	void GetColor(long color, double &r, double &g, double &b)
 	{
-		r = (double)GetRValue(color) / 255;
-		g = (double)GetGValue(color) / 255;
-		b = (double)GetBValue(color) / 255;
+		r = (double)GetRed(color) / 255;
+		g = (double)GetGreen(color) / 255;
+		b = (double)GetBlue(color) / 255;
 	}
 
-	void RenderEngine::RoundToDevicePixels(const Rect *pRect, double &l, double &t, double &r, double &b)
+	void Rasterizer::RoundToDevicePixels(const Rect *pRect, double &l, double &t, double &r, double &b)
 	{
 		l = pRect->left;
 		t = pRect->top;
@@ -62,7 +66,7 @@ namespace Render
 		b = t + y;
 	}
 
-	bool RenderEngine::SetupBuffer(int width, int height)
+	bool Rasterizer::SetupBuffer(int width, int height)
 	{
 		DestroyBuffer();
 		img = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, width, height);
@@ -75,13 +79,13 @@ namespace Render
 		return true;
 	}
 
-	void RenderEngine::DestroyBuffer()
+	void Rasterizer::DestroyBuffer()
 	{
 		cr.clear();
 		img.clear();
 	}
 
-	bool RenderEngine::Clear()
+	bool Rasterizer::Clear()
 	{
 		if (!cr)
 			return false;
@@ -94,7 +98,7 @@ namespace Render
 		return true;
 	}
 
-	bool RenderEngine::Clear(double r, double g, double b, double a)
+	bool Rasterizer::Clear(double r, double g, double b, double a)
 	{
 		if (!cr)
 			return false;
@@ -106,7 +110,7 @@ namespace Render
 		return true;
 	}
 
-	bool RenderEngine::PaintBuffer(const Cairo::RefPtr< Cairo::Context > &cx, Rect *rc)
+	bool Rasterizer::PaintBuffer(const Cairo::RefPtr< Cairo::Context > &cx, Rect *rc)
 	{
 		if (!cr)
 			return false;
@@ -119,12 +123,15 @@ namespace Render
 		return true;
 	}
 
-	bool RenderEngine::DrawText(Font *fn, LayoutInfo *li, const char* text, double  x, double y, double x2, double y2)
+	bool Rasterizer::DrawTextLine(Font *fn, LayoutInfo *li, const char* text, double  x, double y, double x2, double y2)
 	{
-		if (!cr)
+		if (!cr || !text)
 			return false;
 
-		ResourceManager *rm = ResourceManager::GetInstance();
+		if (!strlen(text))
+			return false;
+
+		Resources *rm = Resources::GetInstance();
 		Resource *rc = rm->GetResource(fn->fontId);
 		if (!rc)
 			return false;
@@ -169,7 +176,7 @@ namespace Render
 		return true;
 	}
 
-	bool RenderEngine::DrawBorder(Borders *br, BorderStyle *bs, double  x, double y, double x2, double y2)
+	bool Rasterizer::DrawBorder(Borders *br, BorderStyle *bs, double  x, double y, double x2, double y2)
 	{
 		if (!cr)
 			return false;
@@ -214,7 +221,7 @@ namespace Render
 		return true;
 	}
 
-	bool RenderEngine::DrawGradient(Gradient *gr, double x, double y, double x2, double y2)
+	bool Rasterizer::DrawGradient(Gradient *gr, double x, double y, double x2, double y2)
 	{
 		if (!cr)
 			return false;
@@ -253,7 +260,6 @@ namespace Render
 		} else if (gr->colorCount==1) {
 			double r, g, b;
 			GetColor(gr->colors[0], r, g, b);
-			printf("%f %f %f\n", r,g,b);
 			pattern = Cairo::SolidPattern::create_rgb(r, g, b);
 		}
 
@@ -266,15 +272,18 @@ namespace Render
 		return true;
 	}
 
-	bool RenderEngine::GetTextExtents(FrameStyle *fs, const char* text, double &width, double &height)
+	bool Rasterizer::GetTextExtents(FrameStyle *fs, const char* text, double &width, double &height)
 	{
-		if (!cr)
+		if (!cr || !text)
+			return false;
+
+		if (!strlen(text))
 			return false;
 
 		width = 0;
 		height = 0;
 
-		ResourceManager *rm = ResourceManager::GetInstance();
+		Resources *rm = Resources::GetInstance();
 		Resource *rc = rm->GetResource(fs->font.fontId);
 		if (!rc)
 			return false;

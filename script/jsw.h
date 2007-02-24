@@ -56,6 +56,7 @@ Franky Braem - wxJS
 /*!
 Base class for export objects
 */
+
 template<class T_Proto, class T_Priv>
 class JSWBaseClass
 {

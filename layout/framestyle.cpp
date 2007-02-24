@@ -17,14 +17,14 @@ code.google.com/p/ashlar
 */
 
 #include <layout/framestyle.h>
+#include <memory.h>
 
 namespace Layout
 {
 
 	void SetStyleDefaults(FrameStyle &frameStyle)
 	{
-		// default style
-		ZeroMemory(&frameStyle, sizeof(FrameStyle));
+		memset(&frameStyle, 0, sizeof(FrameStyle));
 
 		// layout
 		frameStyle.layout.x = UNASSIGNED;

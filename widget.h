@@ -19,13 +19,13 @@ code.google.com/p/ashlar
 #pragma once
 
 #include <dom/document.h>
-#include <dom/stylesheet.h>
 #include <render/resources.h>
 #include <script/scriptengine.h>
 #include <script/jselement.h>
 #include <script/jsnodelist.h>
 #include <script/jsdocument.h>
 #include <layout/layout.h>
+#include <layout/stylesheet.h>
 
 using namespace Dom;
 using namespace Layout;
@@ -50,13 +50,13 @@ namespace Ash
 
 		StyleSheet* GetStyleSheet() { return &styleSheet; }
 		Document* GetDocument() { return (Document*)element; }
-		ResourceManager* GetResources() { return resources; }
+		Resources* GetResources() { return resources; }
 		ScriptEngine* GetScriptEngine() { return &scriptEngine; }
 
 	private:
 
 		StyleSheet			styleSheet;
-		ResourceManager	*resources;
+		Resources	*resources;
 		ScriptEngine		scriptEngine; 
 
 		JSDocument *jsDoc;

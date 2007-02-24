@@ -24,11 +24,7 @@
 		</background>
 		<padding>14</padding>
 	</style>
-	<style name="text">
-		<layout align="center" valign="middle"/>
-	</style>
 	<style name="button">
-		<layout align="center" valign="middle"/>
 		<font>
 			<color>#ffffff</color>
 		</font>

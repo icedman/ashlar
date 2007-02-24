@@ -29,8 +29,6 @@ code.google.com/p/ashlar
 #include <render/render.h>
 
 using namespace Ash;
-using namespace Render;
-using namespace Dom;
 
 namespace Layout
 {
@@ -46,38 +44,46 @@ namespace Layout
 		Frame();
 		virtual ~Frame();
 
+		virtual Frame* Create() { return new Frame(); }
+		virtual const char* GetName() { return "frame"; } //!< Get frame name
+		virtual bool IsType(int frameType) { return (frameType == 0); }
+
+		virtual void SetState(int state);
+		virtual int GetState() { return frameState; }
+
+		// frame tree
 		virtual bool SetParent(Frame*);		//!< Sets the parent of a frame
 		virtual Frame* GetRoot();				//!< Get root frame
 		virtual Frame* GetParent();			//!< Get parent of a frame
 		virtual Frame* GetParent(int frameType);	 //!< Get parent frame that is of given type
 		virtual bool AddFrame(Frame*);		//!< Add child frame
 		virtual bool RemoveFrame(Frame*);	//!< Remove child frame
+		FrameList* GetFrames() { return &frames; } //!< Get child frames list
+
+		// layout
 		virtual bool GetRect(Rect*);			//!< Get frame rect
 		virtual bool GetBorderRect(Rect*);	//!< Get frame border rect
 		virtual bool GetContentRect(Rect*);	//!< Get frame's content rect
 		virtual bool SetRect(const Rect*);	//!< Set frame rect
-		virtual const char* GetName() { return "frame"; } //!< Get frame name
 
-		virtual bool Layout(); //!< Layout method. Layout frames override this method
+		// layout
+		virtual bool Prelayout();	//!< Prelayout method. Child frames set their preferred dimensions
+		virtual bool Layout();		//!< Layout method. Layout frames override this method. Parent frames set child dimensions
 		virtual bool OnEvent(int eventId, void *);
-		virtual Frame* Create() { return new Frame(); }
-		virtual void SetState(int state);
-		virtual int GetState() { return frameState; }
-		virtual void Draw(RenderEngine *render);
-		virtual void DrawFrame(RenderEngine *render, double x, double y, double x2, double y2, DOMString *text = 0);
-		virtual void DrawFrameText(RenderEngine *render, DOMString *text, double x, double y, double x2, double y2);
-		virtual void DrawChildren(RenderEngine *render);
+
+		// rendering
+		virtual void Draw(Render::Rasterizer *render);
+		virtual void DrawFrame(Render::Rasterizer *render, double x, double y, double x2, double y2, Dom::DOMString *text = 0);
+		virtual void DrawFrameText(Render::Rasterizer *render, Dom::DOMString *text, double x, double y, double x2, double y2);
+		virtual void DrawChildren(Render::Rasterizer *render);
 		virtual void Redraw();
 
+		// dom element
 		virtual Dom::Element* SetElement(Dom::Element *e);
 		virtual Dom::Element* GetElement() { return element; }
 		virtual Dom::DOMString* GetText();
 
-		// frameType 0 is base FRAME
-		virtual bool IsType(int frameType) { return (frameType == 0); }
-
-		FrameList* GetFrames() { return &frames; } //!< Get child frames list
-
+		// events
 		virtual bool OnMouseEvents(int eid, void *pp);
 		virtual bool OnKeyEvents(int eid, void *pp);
 

@@ -17,26 +17,25 @@ code.google.com/p/ashlar
 */
 
 #include <widget.h>
-#include <dom/stylesheet.h>
 #include <dom/docbuilder.h>
 #include <layout/button.h>
 #include <layout/label.h>
 #include <layout/image.h>
+#include <layout/grid.h>
 #include <layout/windowframe.h>
 #include <layout/framebuilder.h>
+#include <layout/stylesheet.h>
 
 namespace Ash
 {
 
 	Widget::Widget()
 	{
-		resources = ResourceManager::GetInstance();
-		scriptEngine.Initialize();
+		resources = Resources::GetInstance();
 	}
 
 	Widget::~Widget()
 	{
-		scriptEngine.Shutdown();
 		Free();
 	}
 
@@ -58,6 +57,9 @@ namespace Ash
 		fb.Register(new Button());
 		fb.Register(new Label());
 		fb.Register(new Image());
+		fb.Register(new Grid());
+		fb.Register(new Row());
+
 		fb.Build(this, document);
 
 		// load stylesheets & resources
@@ -71,19 +73,13 @@ namespace Ash
 		// setup script engine
 		if (1)
 		{
+			scriptEngine.Initialize();
 			JSObject *go = scriptEngine.GetGlobalObject();
 			JSContext *cx = scriptEngine.GetContext();
-
 			JSElement::JSInit(cx, go);
 			JSNodeList::JSInit(cx, go);
 			JSDocument::JSInit(cx, go);
-			JSObject *obj = JS_DefineObject(cx, go, "widget", JSDocument::GetClass(), 0, JSPROP_PERMANENT);
-			if (obj)
-			{
-				JSDocument *jsd = new JSDocument();
-				jsd->SetPrivate((Document*)element, false);
-				JS_SetPrivate(cx, obj, jsd);
-			}
+			scriptEngine.DefineObject("widget", JSDocument::GetClass(), new JSDocument((Document*)element, false));
 		}
 
 		// setup windows
@@ -94,7 +90,6 @@ namespace Ash
 			WindowFrame *window = (WindowFrame*)e->GetData();
 			if (!window)
 				continue;
-
 			window->Initialize();
 		}
 		delete nl;
@@ -112,6 +107,7 @@ namespace Ash
 
 	void Widget::Free()
 	{
+		scriptEngine.Shutdown();
 		if (element)
 		{
 			delete element;

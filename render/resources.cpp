@@ -43,17 +43,17 @@ namespace Render
 	}
 
 	// resource manager
-	ResourceManager::ResourceManager()
+	Resources::Resources()
 	{
 		id = 0;
 	}
 
-	ResourceManager::~ResourceManager()
+	Resources::~Resources()
 	{
 		Free();
 	}
 
-	void ResourceManager::Free()
+	void Resources::Free()
 	{
 		Resource *r = 0;
 		while(r = GetFirst())
@@ -63,7 +63,7 @@ namespace Render
 		}
 	}
 
-	Resource* ResourceManager::AddResource(DOMString *name, DOMString* src, int type)
+	Resource* Resources::AddResource(DOMString *name, DOMString* src, int type)
 	{
 		Resource *r = GetResource(name);
 		if (r)
@@ -83,7 +83,7 @@ namespace Render
 		return r;
 	}
 
-	Resource* ResourceManager::GetResource(int id)
+	Resource* Resources::GetResource(int id)
 	{
 		Resource *r = GetFirst();
 		while(r)
@@ -95,7 +95,7 @@ namespace Render
 		return 0;
 	}
 
-	Resource* ResourceManager::GetResource(DOMString *name)
+	Resource* Resources::GetResource(DOMString *name)
 	{
 		Resource *r = GetFirst();
 		while(r)
@@ -107,7 +107,7 @@ namespace Render
 		return 0;
 	}
 
-	bool ResourceManager::Load(Element *element)
+	bool Resources::Load(Element *element)
 	{
 		// add fonts
 		NodeList2 *n = element->GetElementsByTagName(&DOMString("font"));		
@@ -157,15 +157,15 @@ namespace Render
 		return true;
 	}
 
-	ResourceManager* ResourceManager::GetInstance()
+	Resources* Resources::GetInstance()
 	{
-		static ResourceManager *r = 0;
+		static Resources *r = 0;
 		if (!r)
-			r = new ResourceManager();
+			r = new Resources();
 		return r;
 	}
 
-	void ResourceManager::Dump()
+	void Resources::Dump()
 	{
 		Resource *r = GetFirst();
 		while(r)

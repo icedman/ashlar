@@ -18,29 +18,36 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <layout/layout.h>
+#include <layout/frames.h>
 #include <layout/frametypes.h>
-#include <events/events.h>
-
-using namespace Events;
+#include <layout/layout.h>
 
 namespace Layout
 {
-	class Button : public HFrame
+	class Grid : public VFrame
 	{
 	public:
-		Button();
+		Grid();
+		virtual const char* GetName() { return "grid"; }
+		virtual Frame* Create() { return new Grid(); }
+		FRAMETYPE(GRID, VFrame)	
 
-		virtual const char* GetName() { return "button"; }
-		virtual Frame* Create() { return new Button(); }
-		FRAMETYPE(BUTTON, HFrame)
+			virtual bool Layout();
+			virtual void Draw(Render::Rasterizer *render);
 
-		virtual bool Prelayout();
-		virtual void Draw(Render::Rasterizer *render);
-		virtual Dom::DOMString* GetText();
+	protected:
 
-		virtual bool OnEvent(int eid, void *pp);
-		virtual bool RegisterEvents(EventManager *manager);
+		// utilize HFrame layout calculations
+		HFrame columns;
+
 	};
 
+	class Row : public HFrame
+	{
+	public:
+		Row();
+		virtual const char* GetName() { return "row"; }
+		virtual Frame* Create() { return new Row(); }
+		FRAMETYPE(ROW, HFrame)	
+	};
 }

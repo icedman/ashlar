@@ -26,6 +26,17 @@ using namespace Dom;
 class JSDocument : public JSWBaseClass<JSDocument, Document>
 {
 public:
+
+	JSDocument()
+	{
+		SetPrivate(0, false);
+	}
+
+	JSDocument(Document *p, bool bDelete)
+	{
+		SetPrivate(p, bDelete);
+	}
+
 	static JSBool SetProperty(Document* document, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
 	static JSBool GetProperty(Document* document, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
 

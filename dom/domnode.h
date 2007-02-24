@@ -23,8 +23,6 @@ code.google.com/p/ashlar
 #include <dom/domstring.h>
 #include <list.h>
 
-using namespace Ash;
-
 #include <vector>
 
 namespace Dom
@@ -46,7 +44,7 @@ namespace Dom
 	class DOMNode;
 
 	//! DOM NodeList class
-	class NodeList : public List<DOMNode>
+	class NodeList : public Ash::List<DOMNode>
 	{
 	public:
 		unsigned long Length() { return Size(); }
@@ -72,7 +70,7 @@ namespace Dom
 	};
 
 	//! DOM Node class
-	class DOMNode : public Node<DOMNode>
+	class DOMNode : public Ash::Node<DOMNode>
 	{
 	public:
 		DOMNode();

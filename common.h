@@ -20,8 +20,8 @@ code.google.com/p/ashlar
 
 #define STRICT
 #define WIN32_LEAN_AND_MEAN
-#define _CRT_SECURE_NO_DEPRECATE
 #define XP_WIN
+#define _CRT_SECURE_NO_DEPRECATE
 
 #include <stdio.h>
 

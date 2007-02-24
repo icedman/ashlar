@@ -1,29 +1,31 @@
 <?xml version="1.0"?>
-<window width="800" height="22">
+<window x="200" width="800" height="60">
 	<stylesheet src="style.xul">
 		<style>
 			<layout valign="middle"/>
 			<margin>2</margin>
 			<padding>2</padding>
-			<!--border><radius>0</radius></border-->
+			<border width="1"><radius>0</radius></border>
+		</style>
+		<style name="button">
+			<layout width="24" height="24"/>
+		</style>
+		<style name="label">
+			<font color="#ffffff"/>
 		</style>
 	</stylesheet>
 	<style>
-		<border>1</border>
 		<margin>0</margin>
-		<fill type="linear" x="0" y="0" x2="0" y2="255">
-			<color offset="0">#d5d5d5</color>
-			<color offset="150">#c0c0c0</color>
-			<color offset="255">#e5e5e5</color>
-		</fill>
 	</style>
 	<hbox flex="1">
-		<text width="120" height="18">Workspace 1</text>
-		<button width="18" height="18"/>
-		<button width="18" height="18"/>
-		<text flex="1" height="18" align="right">Explorer</text>
-		<button width="18" height="18"/>
-		<button width="18" height="18"/>
-		<text width="120" height="18">10:30 pm</text>
+		<label width="120" align="center">Workspace 1</label>
+		<button/>
+		<button/>
+		<hbox flex="1" align="right" height="24">
+			<label align="center">Explorer</label>
+		</hbox>
+		<button/>
+		<button/>
+		<label width="120" align="center">10:30 pm</label>
 	</hbox>
 </window>

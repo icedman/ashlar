@@ -18,29 +18,12 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <layout/layout.h>
-#include <layout/frametypes.h>
-#include <events/events.h>
-
-using namespace Events;
-
-namespace Layout
+namespace Ash
 {
-	class Button : public HFrame
-	{
-	public:
-		Button();
 
-		virtual const char* GetName() { return "button"; }
-		virtual Frame* Create() { return new Button(); }
-		FRAMETYPE(BUTTON, HFrame)
-
-		virtual bool Prelayout();
-		virtual void Draw(Render::Rasterizer *render);
-		virtual Dom::DOMString* GetText();
-
-		virtual bool OnEvent(int eid, void *pp);
-		virtual bool RegisterEvents(EventManager *manager);
-	};
+	long Rgb(short r, short g, short b);
+	long GetRed(long rgb);
+	long GetBlue(long rgb);
+	long GetGreen(long rgb);
 
 }
