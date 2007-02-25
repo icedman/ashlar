@@ -24,7 +24,7 @@ code.google.com/p/ashlar
 
 using namespace Dom;
 
-#define TRANS 0
+#define TRANS 1
 
 namespace Layout
 {

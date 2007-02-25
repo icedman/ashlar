@@ -23,7 +23,7 @@ code.google.com/p/ashlar
 
 using namespace Ash;
 
-namespace Events
+namespace _Events
 {
 	class EventManager;
 

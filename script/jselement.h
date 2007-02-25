@@ -47,7 +47,8 @@ public:
 public:
 	enum {
 		name,
-		value
+		value,
+		nodeTypes = 100
 	};
 
 	TRACE

@@ -48,8 +48,8 @@ namespace Ash
 			bool Load(const char* filename);
 		virtual void Free();
 
-		StyleSheet* GetStyleSheet() { return &styleSheet; }
 		Document* GetDocument() { return (Document*)element; }
+		StyleSheet* GetStyleSheet() { return &styleSheet; }
 		Resources* GetResources() { return resources; }
 		ScriptEngine* GetScriptEngine() { return &scriptEngine; }
 

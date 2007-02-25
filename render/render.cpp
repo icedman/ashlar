@@ -140,7 +140,8 @@ namespace Render
 
 		Cairo::TextExtents extents;
 		cr->set_font_size(fn->size);
-		cr->select_font_face(rc->GetName()->c_str(), Cairo::FONT_SLANT_NORMAL, Cairo::FONT_WEIGHT_NORMAL);
+		Cairo::FontWeight bold = (fn->weight == FONT_WEIGHT_BOLD) ? Cairo::FONT_WEIGHT_BOLD : Cairo::FONT_WEIGHT_NORMAL;
+		cr->select_font_face(rc->GetName()->c_str(), Cairo::FONT_SLANT_NORMAL, bold);
 		cr->get_text_extents(text, extents);
 
 		switch(li->align)

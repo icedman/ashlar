@@ -181,5 +181,7 @@ namespace Layout
 	Row::Row()
 	{
 		frameStyle.layout.flex = 1;
+		frameStyle.padding.width = 0;
+		frameStyle.margin.width = 0;
 	}
 }

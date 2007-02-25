@@ -94,6 +94,15 @@ namespace Ash
 		}
 		delete nl;
 
+		nl = document->GetElementsByTagName(&DOMString("script"));
+		for(int i=0; i<nl->Length(); i++)
+		{
+			Element *e = (Element*)nl->Item(i); 
+			DOMString *script = e->Value();
+			scriptEngine.RunScript(script->c_str(), script->size());
+		}
+		delete nl;
+
 		if (0)
 		{
 			Dump();

@@ -34,10 +34,10 @@ namespace Layout
 		frameStyle.layout.display = true;
 		frameStyle.layout.visible = true;
 		frameStyle.layout.align = ALIGN_LEFT;
-		frameStyle.layout.align = ALIGN_TOP;
+		frameStyle.layout.verticalAlign = ALIGN_TOP;
 
 		// margins
-		frameStyle.margin.width = 4;
+		frameStyle.margin.width = 0;
 		frameStyle.margin.left = UNASSIGNED;
 		frameStyle.margin.right = UNASSIGNED;
 		frameStyle.margin.top = UNASSIGNED;
@@ -51,7 +51,7 @@ namespace Layout
 		frameStyle.border.bottom = UNASSIGNED;
 
 		// padding
-		frameStyle.padding.width = 4;
+		frameStyle.padding.width = 0;
 		frameStyle.padding.left = UNASSIGNED;
 		frameStyle.padding.right = UNASSIGNED;
 		frameStyle.padding.top = UNASSIGNED;
