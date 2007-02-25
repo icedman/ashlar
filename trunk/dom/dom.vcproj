@@ -132,6 +132,26 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="event model"
+			>
+			<File
+				RelativePath=".\event.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\event.h"
+				>
+			</File>
+			<File
+				RelativePath=".\uievent.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\uievent.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\docbuilder.cpp"
 			>

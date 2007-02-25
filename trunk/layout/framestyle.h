@@ -51,6 +51,10 @@ namespace Layout
 	const unsigned short FILL_GRADIENT_LINEAR = 1;
 	const unsigned short FILL_GRADIENT_RADIAL = 2;
 
+	//! Font
+	const unsigned short FONT_WEIGHT_NORMAL = 0;
+	const unsigned short FONT_WEIGHT_BOLD = 1;
+
 	//! Position
 	const unsigned short POSITION_FLOW = 0;
 	const unsigned short POSITION_ABSOLUTE = 1;

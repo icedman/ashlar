@@ -74,6 +74,9 @@ namespace Layout
 			return FILL_GRADIENT_LINEAR;
 		if (str == DOMString("radial"))
 			return FILL_GRADIENT_RADIAL;
+		// font
+		if (str == DOMString("bold"))
+			return FONT_WEIGHT_BOLD;
 		// position
 		if (str == DOMString("absolute"))
 			return POSITION_ABSOLUTE;
@@ -86,6 +89,21 @@ namespace Layout
 			return EXTEND_REPEAT;
 		if (str == DOMString("hide"))
 			return EXTEND_HIDDEN;
+		// boolean
+		if (str == DOMString("no"))
+			return false;
+		if (str == DOMString("none"))
+			return false;
+		if (str == DOMString("false"))
+			return false;
+		if (str == DOMString("hidden"))
+			return false;
+		if (str == DOMString("yes"))
+			return true;
+		if (str == DOMString("true"))
+			return true;
+		if (str == DOMString("visible"))
+			return true;
 		return defaultValue;
 	}
 
@@ -135,6 +153,8 @@ namespace Layout
 		li.align = StringToAlign(snode.GetValue(&DOMString("align"))->Value(), li.align);
 		li.verticalAlign = StringToAlign(snode.GetValue(&DOMString("valign"))->Value(), li.verticalAlign);
 		li.position = StringToStyle(snode.GetValue(&DOMString("position"))->Value(), li.position);
+		li.display = StringToStyle(snode.GetValue(&DOMString("display"))->Value(), li.display);
+		li.visible = StringToStyle(snode.GetValue(&DOMString("visible"))->Value(), li.visible);
 	}
 
 	void GetBordersXml(Borders &br, DOMNode *el)
@@ -215,6 +235,7 @@ namespace Layout
 
 		fn.fontId = rc ? rc->GetId() : fn.fontId;
 		fn.size = snode.GetValue(&DOMString("size"))->ValueInt(fn.size);
+		fn.weight = StringToStyle(snode.GetValue(&DOMString("weight"))->Value(), fn.weight);
 		fn.color = StringToColor(snode.GetValue(&DOMString("color"))->Value(), fn.color);
 	}
 

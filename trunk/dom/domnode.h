@@ -21,6 +21,7 @@ code.google.com/p/ashlar
 #include <debug.h>
 #include <common.h>
 #include <dom/domstring.h>
+#include <dom/event.h>
 #include <list.h>
 
 #include <vector>
@@ -43,7 +44,7 @@ namespace Dom
 
 	class DOMNode;
 
-	//! DOM NodeList class
+	//! DOM NodeList class. This handles or modify nextSibling & previousSibling.
 	class NodeList : public Ash::List<DOMNode>
 	{
 	public:
@@ -51,6 +52,7 @@ namespace Dom
 		DOMNode* Item(unsigned long index) { return GetAt(index); }
 	};
 
+	//! DOM NodeList2. This is the NodeList exposed to js. This does not modify nextSibling & previousSibling.
 	class NodeList2: public std::vector<DOMNode*>
 	{
 	public:
@@ -70,7 +72,7 @@ namespace Dom
 	};
 
 	//! DOM Node class
-	class DOMNode : public Ash::Node<DOMNode>
+	class DOMNode : public Dom::EventTarget, public Ash::Node<DOMNode>
 	{
 	public:
 		DOMNode();

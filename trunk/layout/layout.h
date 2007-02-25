@@ -27,6 +27,7 @@ namespace Layout
 	class HFrame : public Frame
 	{
 	public:
+		HFrame() { frameStyle.layout.flex = 1; }
 		virtual ~HFrame() {}
 
 		virtual bool Layout();
@@ -39,6 +40,7 @@ namespace Layout
 	class VFrame : public Frame
 	{
 	public:
+		VFrame() { frameStyle.layout.flex = 1; }
 		virtual ~VFrame() {}
 
 		virtual bool Layout();
@@ -51,6 +53,7 @@ namespace Layout
 	class Box : public HFrame
 	{
 	public:
+		Box() { frameStyle.layout.flex = 0; }
 		virtual const char* GetName() { return "box"; }
 		virtual Frame* Create() { return new Box(); }
 		FRAMETYPE(BOX, Frame)

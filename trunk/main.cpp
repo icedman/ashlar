@@ -27,7 +27,7 @@ using namespace Ash;
 int main()
 {
 	Widget *widget = new Widget();
-	if (!widget->Load("grid.xul"))
+	if (!widget->Load("calendar.xul"))
 		PostQuitMessage(0);
 
 	printf("unfreed objects:%d\n", Ref::GetCount());

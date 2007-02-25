@@ -1,0 +1,199 @@
+﻿<?xml version="1.0"?>
+<!--
+February 24, 2007
+AxCalendar
+This is the very first useful test widget running successfully on the Ashlar Widget Engine Alpha 0.01
+-->
+<widget>
+	<stylesheet>
+		<style>
+			<border width="0" color="#e5e5e5"/>
+			<font>
+				<family>tahoma</family>
+				<size>14</size>
+				<color>#000000</color>
+			</font>
+		</style>
+		<style name="window">
+			<layout>
+				<width>200</width>
+				<height>200</height>
+			</layout>
+			<background src="frame.png">
+				<slice>
+					<center extend="stretch"/>
+					<left extend="stretch">18</left>
+					<top extend="repeat">18</top>
+					<right extend="stretch">22</right>
+					<bottom extend="repeat">22</bottom>
+				</slice>
+			</background>
+			<padding>14</padding>
+		</style>
+		<style name="label">
+			<font color="#ffffff" size="14"/>
+		</style>
+		<style name="label.dn">
+			<font color="#ffffff" size="16" weight="bold"/>
+		</style>
+		<style name="button">
+			<font color="#ffffff" size="18" weight="bold"/>
+		</style>
+	</stylesheet>
+	
+	<script>
+		<![CDATA[
+					
+  function generateDays(calendarDate) {
+    var tmp = new Date();
+    tmp.setMonth(calendarDate.getMonth());
+    tmp.setYear(calendarDate.getFullYear());
+    tmp.setDate(1);
+    
+    var start = tmp.getDay();
+	tmp.setMonth(tmp.getMonth()+1);
+	tmp.setDate(tmp.getDate()-1);
+    var end = tmp.getDate();
+
+    var labels = widget.getElementsByTagName("label");
+    var day = 1;
+	var i = 7;
+    while (i < 40) {
+      if (start < 1 && day <= end) {
+        labels.item(i).setAttribute("value", day);
+        day++;
+      } else {
+        labels.item(i).setAttribute("value", "");
+      }
+      i++;
+      start--;
+    }
+	
+	var btnMonth = widget.getElementsById("monthBtn").item(0);
+	if (btnMonth)
+	{
+		var months = new Array(
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December'
+		);
+		btnMonth.setAttribute("label", months[calendarDate.getMonth()] + ' ' + calendarDate.getFullYear());
+	}
+  }
+  
+  function previousMonth(calendarDate)
+  {
+	calendarDate.setMonth(calendarDate.getMonth()-1);
+  }
+  
+  function nextMonth(calendarDate)
+  {
+	calendarDate.setMonth(calendarDate.getMonth()+1);
+  }
+  
+  viewDate = new Date();
+  generateDays(viewDate);
+				
+		]]>
+	</script>
+	
+	<window x="400" width="360" height="220" align="center">
+		<hbox height="30">
+			<button label="&lt;" onclick="previousMonth(viewDate); generateDays(viewDate);" width="30"/>
+			<button id="monthBtn" label="February" onclick="viewDate = new Date(); generateDays(viewDate);"/>
+			<button label="&gt;" onclick="nextMonth(viewDate); generateDays(viewDate);" width="30"/>
+		</hbox>
+		<hbox height="10"/>
+		<grid name="days" width="320" display="true">
+			<rows>
+				<row height="20">
+					<label class="dn" value="Sun"/>
+					<label class="dn" value="Mon"/>
+					<label class="dn" value="Tue"/>
+					<label class="dn" value="Wed"/>
+					<label class="dn" value="Thu"/>
+					<label class="dn" value="Fri"/>
+					<label class="dn" value="Sat"/>
+				</row>
+				<row>
+					<label value="1"/>
+					<label value="2"/>
+					<label value="3"/>
+					<label value="4"/>
+					<label value="5"/>
+					<label value="6"/>
+					<label value="7"/>
+				</row>
+				<row>
+					<label value="8"/>
+					<label value="9"/>
+					<label value="10"/>
+					<label value="11"/>
+					<label value="12"/>
+					<label value="13"/>
+					<label value="14"/>
+				</row>
+				<row>
+					<label value="15"/>
+					<label value="16"/>
+					<label value="17"/>
+					<label value="18"/>
+					<label value="19"/>
+					<label value="20"/>
+					<label value="21"/>
+				</row>
+				<row>
+					<label value="22"/>
+					<label value="23"/>
+					<label value="24"/>
+					<label value="25"/>
+					<label value="26"/>
+					<label value="27"/>
+					<label value="28"/>
+				</row>
+				<row>
+					<label value="29"/>
+					<label value="30"/>
+					<label value="31"/>
+					<label value=""/>
+					<label value=""/>
+					<label value=""/>
+					<label value=""/>
+				</row>
+			</rows>
+		</grid>
+		<grid name="months" width="320" display="false">
+			<rows>
+				<row>
+					<label value="January"/>
+					<label value="February"/>
+					<label value="March"/>
+				</row>
+				<row>
+					<label value="April"/>
+					<label value="May"/>
+					<label value="June"/>
+				</row>
+				<row>
+					<label value="July"/>
+					<label value="August"/>
+					<label value="September"/>
+				</row>
+				<row>
+					<label value="October"/>
+					<label value="November"/>
+					<label value="December"/>
+				</row>
+			</rows>
+		</grid>
+	</window>
+</widget>

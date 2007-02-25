@@ -416,6 +416,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\calendar.xul"
+				>
+			</File>
+			<File
 				RelativePath=".\style.xul"
 				>
 			</File>
