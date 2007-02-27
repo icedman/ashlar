@@ -109,7 +109,7 @@ This is the very first useful test widget running successfully on the Ashlar Wid
 	<window x="400" width="360" height="220" align="center">
 		<hbox height="30">
 			<button label="&lt;" onclick="previousMonth(viewDate); generateDays(viewDate);" width="30"/>
-			<button id="monthBtn" label="February" onclick="viewDate = new Date(); generateDays(viewDate);"/>
+			<button id="monthBtn" label="" onclick="viewDate = new Date(); generateDays(viewDate);"/>
 			<button label="&gt;" onclick="nextMonth(viewDate); generateDays(viewDate);" width="30"/>
 		</hbox>
 		<hbox height="10"/>

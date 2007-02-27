@@ -16,9 +16,9 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#pragma once
-
 #include <script/jsdocument.h>
+
+using namespace Dom;
 
 JSBool JSDocument::SetProperty(Document* element, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp)
 {
@@ -74,7 +74,8 @@ JSW_CLASS_NAME(JSDocument, "Document")
 JSW_BEGIN_PROPERTY_MAP(JSDocument)
 JSW_ADD_PROPERTY("tagName", JSElement::name, JSPROP_ENUMERATE | JSPROP_READONLY)
 JSW_ADD_PROPERTY("nodeName", JSElement::name, JSPROP_ENUMERATE | JSPROP_READONLY)
-JSW_ADD_PROPERTY("nodeValue", JSElement::value, JSPROP_ENUMERATE)
+JSW_ADD_PROPERTY("nodeValue", JSElement::value, JSPROP_ENUMERATE | JSPROP_READONLY)
+JSW_ADD_PROPERTY("value", JSElement::value, JSPROP_ENUMERATE)
 JSW_END_PROPERTY_MAP
 
 JSW_BEGIN_METHOD_MAP(JSDocument)

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <widget>
 	<stylesheet src="style.xul"/>
-	<window name="tinyWindow" x="400" width="400">
+	<window id="tinyWindow" name="tinyWindow" x="400" width="400">
 		<style>
 			<margin>
 				<left>20</left>
@@ -9,16 +9,17 @@
 			</margin>
 		</style>
 		<image src="res/clouds.png" position="absolute" x="0" y="-30"/>
-		<button label="weather" position="absolute" x="250" y="80">
+		<button label="weather" position="absolute" x="100" y="100" width="150" height="50">
 			<onClick>
 				<![CDATA[
-
-			nl = widget.getElementsByTagName('window');
+			
+			//nl = widget.getElementsByTagName('window');
+			nl = widget.getElementsById("tinyWindow");
 			for(i=0; i<nl.length();i++)
 			{
 				echo(nl.item(i).getAttribute('name'));
 			}
-
+			
 			]]>
 			</onClick>
 		</button>
@@ -29,7 +30,7 @@
 				<color>#ffffff</color>
 			</fill>
 		</style>
-		<button label="button abc" width="120" height="40">
+		<button flex="0" label="button abc" height="40">
 			<onClick>
 				<![CDATA[
 			
@@ -43,14 +44,30 @@
 			]]>
 			</onClick>
 		</button>
-		<button label="button b"/>
+		<button label="button b" height="40">
+			<onClick>
+				<![CDATA[
+			
+			nl = widget.getElementsByTagName('button');
+			for(i=0; i<nl.length();i++)
+			{
+				nl.item(i).setAttribute('label', 'abc');
+				echo(nl.item(i).nodeName + ' ' + i);
+			}
+			
+			]]>
+			</onClick>
+		</button>
 		<vbox flex="1" align="right">
 			<style>
 				<padding>
 					<bottom>30</bottom>
 				</padding>
 			</style>
-			<label>hello world</label>
+			<hbox>
+				<label flex="0">hello world</label>
+				<label flex="0">ashlar</label>
+			</hbox>
 			<hbox flex="1" align="center" valign="middle">
 				<box>
 					<button label="button"/>

@@ -18,5 +18,15 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <common.h>
-#include <list.h>
+namespace Dom
+{
+
+	const unsigned int UI_EVENTS = 1;
+	const unsigned int MOUSE_EVENTS = 2;
+	const unsigned int KEY_EVENTS = 3;
+	const unsigned int MUTATION_EVENTS = 4;
+
+#define EVENTGROUP(_group) \
+	virtual unsigned int GetEventGroup() { return _group; }
+
+}

@@ -21,10 +21,7 @@ code.google.com/p/ashlar
 #include <layout/framestyle.h>
 #include <layout/windowframe.h>
 #include <layout/stylesheet.h>
-#include <events/events.h>
 #include <dom/safenode.h>
-
-using namespace Events;
 
 namespace Layout
 {
@@ -32,6 +29,7 @@ namespace Layout
 	Frame::Frame() 
 	{
 		frameState = STATE_NORMAL;
+		mouseState = STATE_NORMAL;
 		parentFrame = 0;
 		element = 0;
 		SetStyleDefaults(frameStyle);
@@ -69,7 +67,6 @@ namespace Layout
 		if (css)
 			css->ApplyStyle(element);
 
-		Redraw();
 	}
 
 	// frame tree
@@ -182,6 +179,34 @@ namespace Layout
 		frameStyle.layout.height = pRect->Height();
 		frameStyle.layout.rect = (*pRect);
 		return true;
+	}
+
+	Frame* Frame::GetFrameFromPoint(Point p)
+	{
+		Frame *f = frames.GetFirst();
+		while(f)
+		{
+			Frame *res = f->GetFrameFromPoint(p);
+			if (res)
+				return res;
+			f = f->next;
+		}
+
+		Rect r;
+		GetRect(&r);
+		if (r.Contains(p))
+			return this;
+
+		return 0;
+	}
+
+	void Frame::Relayout()
+	{
+		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);
+		if (w)
+		{
+			w->Relayout();
+		}
 	}
 
 	// render
@@ -310,78 +335,6 @@ namespace Layout
 		if (e)
 			return &e->nodeValue;
 		return 0;
-	}
-
-	// events
-	bool Frame::OnEvent(int eventId, void *)
-	{
-		return true;
-	}
-
-	bool Frame::OnMouseEvents(int eid, void *pp)
-	{
-		MouseInfo *mInfo = (MouseInfo*)pp;
-
-		Rect r;
-		GetRect(&r);
-
-		if (!r.Contains(mInfo->point))
-		{
-			if (GetState() == STATE_PRESSED || GetState() == STATE_HOVER)
-				SetState(STATE_NORMAL);
-			return true;
-		}
-
-		switch(eid)
-		{
-		case ONMOUSEMOVE:
-			{
-				if (GetState() != STATE_PRESSED && GetState() != STATE_HOVER)
-					SetState(STATE_HOVER);
-				break;
-			}
-		case ONMOUSEDOWN:
-			{
-				SetState(STATE_PRESSED);
-				break;
-			}
-		case ONMOUSEUP:
-			{
-				if (GetState() == STATE_PRESSED)
-				{
-					OnMouseEvents(ONMOUSECLICK, pp);
-				}
-				SetState(STATE_HOVER);
-				break;
-			}
-		case ONMOUSECLICK:
-			{
-				printf("unfreed objects:%d\n", Ref::GetCount());
-				SafeNode snode(GetElement());
-				DOMString *script = snode.GetValue("onClick")->Value();
-				if (script)
-				{
-					Widget *w = (Widget*)GetParent(WIDGET);
-					if (w)
-					{
-						ScriptEngine *s = w->GetScriptEngine();
-						if (s)
-							s->RunScript(script->c_str(), script->size());
-					}
-				}
-				break;
-			}
-		case ONMOUSEOUT:
-			{
-				break;
-			}
-		}
-		return true;
-	}
-
-	bool Frame::OnKeyEvents(int eid, void *pp)
-	{
-		return true;
 	}
 
 	void Frame::Free()

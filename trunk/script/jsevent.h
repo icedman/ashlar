@@ -18,5 +18,33 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <common.h>
-#include <list.h>
+#include <dom/event.h>
+#include <script/jsw.h>
+#include <debug.h>
+
+class JSEvent : public JSWBaseClass<JSEvent, Dom::Event>
+{
+public:
+
+	JSEvent()
+	{
+		SetPrivate(0, false);
+	}
+
+	JSEvent(Dom::Event *p, bool bDelete)
+	{
+		SetPrivate(p, bDelete);
+	}
+
+	static JSBool SetProperty(Dom::Event* element, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp)
+	{
+		return JS_TRUE;
+	}
+
+	static JSBool GetProperty(Dom::Event* element, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp)
+	{
+		return JS_TRUE;
+	}
+
+	TRACE
+};

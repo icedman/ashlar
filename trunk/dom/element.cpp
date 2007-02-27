@@ -18,6 +18,7 @@ code.google.com/p/ashlar
 
 #include <dom/document.h>
 #include <dom/safenode.h>
+#include <dom/mutationevent.h>
 
 namespace Dom
 {
@@ -33,6 +34,37 @@ namespace Dom
 		nodeType = ELEMENT_NODE;
 		nodeName = *tagName;
 		data = 0;
+	}
+
+	DOMNode* Element::AppendChild(DOMNode *node)
+	{
+		MutationEvent me;
+		me.InitMutationEvent(NODE_INSERTED, true, true, this, DOMString(""), node->nodeValue, node->nodeName, MUTATION_ADDITION);
+		if (!PropagateEvent(&me))
+			return 0;
+
+		return DOMNode::AppendChild(node);
+	}
+
+	DOMNode* Element::RemoveChild(DOMNode *node)
+	{
+		MutationEvent me;
+		me.InitMutationEvent(NODE_REMOVED, true, true, this, DOMString(""), node->nodeValue, node->nodeName, MUTATION_ADDITION);
+		if (!PropagateEvent(&me))
+			return 0;
+
+
+		return DOMNode::RemoveChild(node);
+	}
+
+	DOMNode* Element::InsertBefore(DOMNode *node, DOMNode *refNode)
+	{
+		MutationEvent me;
+		me.InitMutationEvent(NODE_INSERTED, true, true, this, DOMString(""), node->nodeValue, node->nodeName, MUTATION_ADDITION);
+		if (!PropagateEvent(&me))
+			return 0;
+
+		return DOMNode::InsertBefore(node, refNode);
 	}
 
 	DOMString* Element::GetAttribute(DOMString *name)
@@ -119,12 +151,34 @@ namespace Dom
 
 	DOMNode* Element::SetAttribute(DOMString *name, DOMString *value)
 	{
+		// existing attribute will be replaced (and deleted)
 		Attribute *attr = new Attribute(name, value);
-		return SetAttributeNode(attr);
+		if (SetAttributeNode(attr))
+			return attr;
+
+		delete attr;
+		return 0;
 	}
 
 	DOMNode* Element::SetAttributeNode(DOMNode *node)
 	{
+		unsigned short mod = MUTATION_ADDITION;
+
+		DOMString prev;
+		Attribute *attr = (Attribute*)GetAttributeNode(&node->nodeName);
+		if (attr)
+		{
+			mod = MUTATION_MODIFICATION;
+			prev = attr->nodeValue;
+		}
+
+		// if node->nodeValue == null (removal)
+
+		MutationEvent me;
+		me.InitMutationEvent(ATTRIBUTE_MODIFIED, true, true, this, prev, node->nodeValue, node->nodeName, mod);
+		if (!PropagateEvent(&me))
+			return 0;
+
 		return attributes.SetNamedItem(node);
 	}
 
@@ -208,6 +262,31 @@ namespace Dom
 			}
 			n = n->NextSibling();
 		}
+		return true;
+	}
+
+	DOMString* Element::SetValue(DOMString val)
+	{
+		nodeValue = val;
+		return &nodeValue;
+	}
+
+	bool Element::PropagateEvent(Event *evt)
+	{
+		EventTarget *et = (EventTarget*)this;
+		et->DispatchEvent(evt);
+
+		if (evt->bubbles)
+		{
+			Element *p = (Element*)ParentNode();
+			while(p)
+			{
+				et = (EventTarget*)p;
+				et->DispatchEvent(evt);
+				p = (Element*)p->ParentNode();
+			}
+		}
+
 		return true;
 	}
 

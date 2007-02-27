@@ -16,11 +16,11 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
+#pragma once
+
 #include <layout/frames.h>
 #include <layout/frametypes.h>
 #include <layout/layout.h>
-
-using namespace Events;
 
 namespace Layout
 {
@@ -35,5 +35,8 @@ namespace Layout
 		virtual bool Prelayout();
 		virtual Dom::DOMString* GetText();
 		virtual void Draw(Render::Rasterizer *render);
+
+		virtual bool RegisterEventListeners();
+		virtual void HandleEvent(Dom::Event *evt);
 	};
 }

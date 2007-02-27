@@ -32,6 +32,11 @@ namespace PlatformDependent
 #define LWA_ALPHA               0x00000002
 #endif
 
+#ifndef TME_LEAVE
+#define TME_LEAVE 0x00000002
+#define TME_QUERY 0x40000000
+#endif
+
 	typedef BOOL (WINAPI *lpfnSetLayeredWindowAttributes)(
 		HWND hWnd,
 		COLORREF crKey,
@@ -51,6 +56,15 @@ namespace PlatformDependent
 		DWORD dwFlags
 		);
 
+	typedef struct tagTRACKMOUSEEVENT {
+		DWORD cbSize;
+		DWORD dwFlags;
+		HWND hwndTrack;
+		DWORD dwHoverTime;
+	} TRACKMOUSEEVENT, *LPTRACKMOUSEEVENT;
+
+	typedef BOOL (WINAPI *lpfnTrackMouseEvent) ( LPTRACKMOUSEEVENT lpEventTrack );
+
 	//! Native win32 window implementation
 	class NativeWindow : public PlatformDependent::Window
 	{
@@ -64,12 +78,14 @@ namespace PlatformDependent
 			HANDLE_MSG(WM_PAINT, OnPaint)
 			HANDLE_MSG(WM_SIZE, OnSize)
 			HANDLE_MSG(WM_MOUSEMOVE, OnMouseEvent)
+			HANDLE_MSG(WM_MOUSELEAVE, OnMouseEvent)
 			HANDLE_MSG(WM_LBUTTONDOWN, OnMouseEvent)
 			HANDLE_MSG(WM_RBUTTONDOWN, OnMouseEvent)
 			HANDLE_MSG(WM_LBUTTONUP, OnMouseEvent)
 			HANDLE_MSG(WM_RBUTTONUP, OnMouseEvent)
 			HANDLE_MSG(WM_ERASEBKGND, OnEraseBackground)
 			HANDLE_MSG(WM_KEYDOWN, OnKeyEvent)
+			HANDLE_MSG(WM_TIMER, OnTimer)
 			END_MSG_HANDLER;
 
 		LRESULT OnCreate( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
@@ -78,9 +94,12 @@ namespace PlatformDependent
 		LRESULT OnSize( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
 		LRESULT OnPaint( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
 		LRESULT OnMouseEvent( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
+		LRESULT OnKeyEvent( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
+		LRESULT OnTimer( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled );
 
 		BOOL DragWindow();
 		BOOL Redraw();
+		BOOL TrackMouse();
 		BOOL SetAlphaChannel(Cairo::RefPtr<Cairo::Surface> surface, int trans = 255);
 
 	public:
@@ -89,6 +108,7 @@ namespace PlatformDependent
 		// transparency
 		lpfnSetLayeredWindowAttributes pSetLayeredWindowAttributes;
 		lpfnUpdateLayeredWindow pUpdateLayeredWindow;
+		lpfnTrackMouseEvent pTrackMouseEvent;
 
 	};
 

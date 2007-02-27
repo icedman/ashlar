@@ -19,25 +19,24 @@ code.google.com/p/ashlar
 #pragma once
 
 #include <layout/windowframe.h>
+#include <dom/uievent.h>
 #include <dom/safenode.h>
 #include <cairomm/win32_surface.h>
 
 using namespace Dom;
 
-#define TRANS 1
+#define TRANS 0
 
 namespace Layout
 {
 
 	WindowFrame::WindowFrame()
 	{
+		dirtyLayout = true;
 	}
 
 	bool WindowFrame::Initialize()
 	{
-		// register mouse events
-		RegisterEvents(this);
-
 		// init dimension
 		frameStyle.layout.x = !ISASSIGNED(frameStyle.layout.x) ? 0 : frameStyle.layout.x;
 		frameStyle.layout.y = !ISASSIGNED(frameStyle.layout.y) ? 0 : frameStyle.layout.y;
@@ -49,22 +48,8 @@ namespace Layout
 			return false;
 
 		Layout();
+		RegisterEventListeners();
 		ShowWindow(true);
-		return true;
-	}
-
-	bool WindowFrame::RegisterEvents(Frame *frame)
-	{
-		frame->RegisterEvents(&mouseEvents);
-
-		FrameList *childFrames = frame->GetFrames();
-		Frame *f = childFrames->GetFirst();
-		while(f)
-		{
-			RegisterEvents(f);
-			f = f->next;
-		}
-
 		return true;
 	}
 
@@ -118,39 +103,37 @@ namespace Layout
 		Layout();
 	}
 
-	void WindowFrame::OnKeyDown(long key)
+	void WindowFrame::OnKeyEvent(int eventId, long key)
 	{}
 
-	void WindowFrame::OnKeyUp(long key)
-	{}
-
-	void WindowFrame::OnMouseMove(Point p)
+	void WindowFrame::OnMouseEvent(int eventId, int button, Point p)
 	{
-		mouseEvents.OnMouseEvent(Events::ONMOUSEMOVE, 0, p.x, p.y);
-	}
-
-	void WindowFrame::OnMouseLeave()
-	{
-		mouseEvents.OnMouseEvent(Events::ONMOUSEOUT, 0, 0, 0);
-	}
-
-	void WindowFrame::OnMouseDown(int button, Point p)
-	{
-		if (0 && button == 1)
-		{
-			nativeWindow.DragWindow();
-			return;
-		}
-		mouseEvents.OnMouseEvent(Events::ONMOUSEDOWN, button, p.x, p.y);
-	}
-
-	void WindowFrame::OnMouseUp(int button, Point p)
-	{
-		mouseEvents.OnMouseEvent(Events::ONMOUSEUP, button, p.x, p.y);
+		MouseEvent me;
+		me.InitEvent(
+			eventId, // eventTypeArg, 
+			true, // canBubbleArg,
+			false, // cancelableArg,
+			p.x,   // screenX,
+			p.y,   // screenY,
+			p.x,   // clientX,
+			p.y,   // clientY,
+			false, // ctrlKey,
+			false, // shiftKey,
+			false, // altKey,
+			false, // metaKey,
+			button // button
+			);
+		PropagateMouseEvent(&me);
 	}
 
 	void WindowFrame::OnDraw(HDC hdc, Rect *rc)
 	{
+		if (dirtyLayout)
+		{
+			dirtyLayout = false;
+			Layout();
+		}
+
 		if (TRANS)
 		{
 			render.Clear();
@@ -165,5 +148,24 @@ namespace Layout
 			Draw(&render);
 			render.PaintBuffer(cx, rc);
 		}
+		static int i = 0;
+		printf("draw count: %d\n", i++);
 	}
+
+	void WindowFrame::Relayout()
+	{
+		dirtyLayout = true;
+		Redraw();
+	}
+
+	bool WindowFrame::RegisterEventListeners()
+	{
+		return Frame::RegisterEventListeners();
+	}
+
+	void WindowFrame::HandleEvent(Dom::Event *evt)
+	{
+		Frame::HandleEvent(evt);
+	}
+
 }

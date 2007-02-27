@@ -16,7 +16,12 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#pragma once
+#include <script/jsevent.h>
 
-#include <common.h>
-#include <list.h>
+JSW_CLASS_NAME(JSEvent, "Event")
+
+JSW_BEGIN_PROPERTY_MAP(JSEvent)
+JSW_END_PROPERTY_MAP
+
+JSW_BEGIN_METHOD_MAP(JSEvent)
+JSW_END_METHOD_MAP

@@ -56,7 +56,7 @@ namespace Ash
 	private:
 
 		StyleSheet			styleSheet;
-		Resources	*resources;
+		Resources			*resources;
 		ScriptEngine		scriptEngine; 
 
 		JSDocument *jsDoc;

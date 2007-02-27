@@ -31,6 +31,10 @@ namespace Dom
 
 		DOMString* TagName() { return &nodeName; }
 
+		DOMNode* AppendChild(DOMNode *node);
+		DOMNode* RemoveChild(DOMNode *node);
+		DOMNode* InsertBefore(DOMNode *node, DOMNode *refNode);
+
 		DOMString* GetAttribute(DOMString *name);
 		DOMNode* GetAttributeNode(DOMString *name);
 		NodeList2* GetElementsByTagName(DOMString *tagName, bool deep = false);
@@ -40,7 +44,9 @@ namespace Dom
 		bool HasAttributes() { return attributes.Length()>0; }
 		DOMNode* SetAttribute(DOMString *name, DOMString *value = 0);
 		DOMNode* SetAttributeNode(DOMNode *node);
+		
 		virtual DOMString* Value() { return &nodeValue; }
+		virtual DOMString* SetValue(DOMString val);
 
 		void* SetData(void *d) { data = d; return d; }
 		void* GetData() { return data; }
@@ -48,6 +54,8 @@ namespace Dom
 		virtual DOMNode* Clone(bool deep = false);
 		virtual bool CloneChildren(DOMNode *dst, bool deep = false);
 		virtual bool Merge(DOMNode *node);
+
+		virtual bool PropagateEvent(Event *e);
 
 	private:
 		void* data;

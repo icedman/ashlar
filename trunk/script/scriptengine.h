@@ -34,10 +34,9 @@ namespace Script
 		void Shutdown();
 
 		bool RegisterFunctions(JSFunctionSpec *funcs);
-		bool RunScript(const char *script, long len);
-		bool TestScript();
+		bool RunScript(JSObject *obj, const char *script, long len);
 
-		bool DefineObject(const char* name, JSClass *jsClass, void *priv);
+		JSObject* DefineObject(const char* name, JSClass *jsClass, void *priv, bool permanent = true);
 
 		JSRuntime* GetRuntime() { return jsRt; }
 		JSObject*  GetGlobalObject() { return jsGlobal; }

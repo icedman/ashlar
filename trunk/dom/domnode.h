@@ -85,10 +85,10 @@ namespace Dom
 		DOMNode* NextSibling() { return next; }
 		DOMNode* ParentNode() { return parentNode; }
 
-		DOMNode* AppendChild(DOMNode *node);
-		DOMNode* RemoveChild(DOMNode *node);
-		DOMNode* ReplaceChild(DOMNode *newNode, DOMNode *oldNode);
-		DOMNode* InsertBefore(DOMNode *node, DOMNode *refNode);
+		virtual DOMNode* AppendChild(DOMNode *node);
+		virtual DOMNode* RemoveChild(DOMNode *node);
+		virtual DOMNode* ReplaceChild(DOMNode *newNode, DOMNode *oldNode);
+		virtual DOMNode* InsertBefore(DOMNode *node, DOMNode *refNode);
 
 		NodeList* ChildNodes() { return &childNodes; }
 		NamedNodeMap* Attributes() { return &attributes; }

@@ -27,10 +27,8 @@ using namespace Dom;
 namespace Render
 {
 
-	const unsigned short FONT_RESOURCE = 1;
-	const unsigned short IMAGE_RESOURCE = 2;
-	const unsigned short SVG_RESOURCE = 3;
-	const unsigned short AUDIO_RESOURCE = 4;
+	const unsigned short RESOURCE_FONT	= 1;
+	const unsigned short RESOURCE_IMAGE	= 2;
 
 	class Resource : public Node<Resource>
 	{

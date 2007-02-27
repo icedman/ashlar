@@ -16,8 +16,10 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
+#include <widget.h>
 #include <layout/label.h>
 #include <layout/windowframe.h>
+#include <dom/mutationevent.h>
 #include <dom/safenode.h>
 
 using namespace Dom;
@@ -35,8 +37,19 @@ namespace Layout
 		if (frameStyle.layout.flex)
 			return true;
 
-		//frameStyle.layout.width = frameStyle.layout.presetWidth;
-		//frameStyle.layout.height = frameStyle.layout.presetHeight;
+		// reapply style
+		Widget *widget = (Widget*)GetParent(WIDGET);
+		if (widget)
+		{
+			StyleSheet *css = widget->GetStyleSheet();
+			if (css)
+			{
+				Frame *tpl = this->Create();
+				frameStyle = tpl->frameStyle;
+				css->ApplyStyle(GetElement());
+				delete tpl;
+			}
+		}
 
 		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);
 		if (w)
@@ -87,7 +100,7 @@ namespace Layout
 			return;
 
 		double x, y, x2, y2;
-		
+
 		GetBorderRect(&r);
 		x = r.left;
 		y = r.top;
@@ -96,5 +109,39 @@ namespace Layout
 
 		// draw basic frame
 		DrawFrame(render, x, y, x2, y2, GetText());
+	}
+
+	bool Label::RegisterEventListeners()
+	{
+		EventTarget *target = (EventTarget*)GetElement();
+		target->AddEventListener(MUTATION_EVENTS, ATTRIBUTE_MODIFIED, this, false);
+		return Frame::RegisterEventListeners();
+	}
+
+	void Label::HandleEvent(Event *evt)
+	{
+		switch(evt->GetEventGroup())
+		{
+		case MUTATION_EVENTS:
+			{
+				switch(evt->type)
+				{
+				case ATTRIBUTE_MODIFIED:
+					{
+						MutationEvent *me = (MutationEvent*)evt;
+						if (me->attrName == "value" || me->attrName == "label")
+						{
+							Relayout();
+						} else {
+							Redraw();
+						}
+						break;
+					}
+				}
+				break;
+			}
+		}
+
+		Frame::HandleEvent((MouseEvent*)evt);
 	}
 }

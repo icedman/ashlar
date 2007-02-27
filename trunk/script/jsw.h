@@ -196,7 +196,7 @@ JSClass JSWBaseClass<T_Proto, T_Priv>::jswClass =
 { 
 	JSWBaseClass<T_Proto, T_Priv>::jsClassName,
 	JSCLASS_HAS_PRIVATE | JSCLASS_NEW_ENUMERATE,
-	JS_PropertyStub, // JSWBaseClass<T_Proto, T_Priv>::JSAddProperty,
+	JS_PropertyStub,	// JSWBaseClass<T_Proto, T_Priv>::JSAddProperty,
 	JS_PropertyStub,
 	JSWBaseClass<T_Proto, T_Priv>::JSGetProperty,
 	JSWBaseClass<T_Proto, T_Priv>::JSSetProperty,

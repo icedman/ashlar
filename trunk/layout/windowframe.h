@@ -38,7 +38,6 @@ namespace Layout
 		FRAMETYPE(WINDOW, VFrame)
 
 		bool Initialize();
-		bool RegisterEvents(Frame *frame);
 		virtual void Redraw();
 
 		//! IWindow Interface
@@ -49,20 +48,20 @@ namespace Layout
 		virtual bool OnCreate();
 		virtual void OnDestroy();
 		virtual void OnSize(const Rect *rc);
-		virtual void OnKeyDown(long key);
-		virtual void OnKeyUp(long key);
-		virtual void OnMouseMove(Point p);
-		virtual void OnMouseLeave();
-		virtual void OnMouseDown(int button, Point p);
-		virtual void OnMouseUp(int button, Point p);
+		virtual void OnKeyEvent(int eventId, long key);
+		virtual void OnMouseEvent(int eventId, int button, Point p);
 		virtual void OnDraw(HDC hdc, Rect *rc);
 
+		virtual void Relayout();
+
+		virtual bool RegisterEventListeners();
+		virtual void HandleEvent(Dom::Event *evt);
+
 		Render::Rasterizer* GetRenderer() { return &render; }
-		Events::MouseEvents* GetMouseEvents() { return &mouseEvents; }
 
 	private:
 		Render::Rasterizer render;
-		Events::MouseEvents mouseEvents;
+		bool dirtyLayout;
 
 		PlatformDependent::NativeWindow nativeWindow;
 	};

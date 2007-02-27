@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <stylesheet>
 	<style>
-		<border width="0" color="#e5e5e5"/>
+		<border width="1" color="#e5e5e5"/>
 		<font>
 			<family>tahoma</family>
 			<size>14</size>
