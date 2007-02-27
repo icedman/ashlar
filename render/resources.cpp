@@ -71,7 +71,7 @@ namespace Render
 
 		switch(type)
 		{
-		case IMAGE_RESOURCE:
+		case RESOURCE_IMAGE:
 			r = new ImageRes(name, src, ++id);
 			break;
 		default:
@@ -117,7 +117,7 @@ namespace Render
 			DOMString *family = snode.GetValue("family")->Value();
 			if (family)
 			{
-				AddResource(family, 0, FONT_RESOURCE);
+				AddResource(family, 0, RESOURCE_FONT);
 			}
 		}
 		delete n;
@@ -133,7 +133,7 @@ namespace Render
 			{
 				if (!name)
 					name = src;
-				AddResource(name, src, IMAGE_RESOURCE);
+				AddResource(name, src, RESOURCE_IMAGE);
 			}
 		}
 		delete n;
@@ -149,7 +149,7 @@ namespace Render
 			{
 				if (!name)
 					name = src;
-				AddResource(name, src, IMAGE_RESOURCE);
+				AddResource(name, src, RESOURCE_IMAGE);
 			}
 		}
 		delete n;

@@ -17,33 +17,38 @@ code.google.com/p/ashlar
 */
 
 #include <win32/nativewindow.h>
-#include <events/events.h>
 #include <cairomm/context.h>
 #include <cairomm/win32_surface.h>
 
-
 namespace PlatformDependent
 {
+
+#define IDT_REDRAW 0xf001
+
 	LRESULT NativeWindow::OnCreate( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
 	{
 		// init transparency
 
 		pSetLayeredWindowAttributes = 0;
 		pUpdateLayeredWindow = 0;
+		pTrackMouseEvent = 0;
 
 		OSVERSIONINFO os = { sizeof(os) };
 		GetVersionEx(&os);
 		BOOL isWin2k = ( VER_PLATFORM_WIN32_NT == os.dwPlatformId && os.dwMajorVersion >= 5 ); 
+		HMODULE hUser32 = GetModuleHandle(_T("USER32.DLL"));
 
 		if (isWin2k)
 		{
-			HMODULE hUser32 = GetModuleHandle(_T("USER32.DLL"));
 			pSetLayeredWindowAttributes = (lpfnSetLayeredWindowAttributes)GetProcAddress(hUser32, 
 				"SetLayeredWindowAttributes");
 
 			pUpdateLayeredWindow = (lpfnUpdateLayeredWindow)GetProcAddress(hUser32, 
 				"UpdateLayeredWindow");
 		}
+
+		pTrackMouseEvent = (lpfnTrackMouseEvent)GetProcAddress(hUser32, 
+			"TrackMouseEvent");
 
 		if (!iwindow)
 			return 0;
@@ -102,24 +107,57 @@ namespace PlatformDependent
 		switch(msg)
 		{
 		case WM_LBUTTONDOWN:
-			iwindow->OnMouseDown(Events::LBUTTON, p);
-			break;
+			{
+				iwindow->OnMouseEvent(MOUSE_DOWN, LEFT_BUTTON, p);
+				break;
+			}
 		case WM_RBUTTONDOWN:
-			iwindow->OnMouseDown(Events::RBUTTON, p);
-			break;
+			{
+				iwindow->OnMouseEvent(MOUSE_DOWN, RIGHT_BUTTON, p);
+				break;
+			}
 		case WM_LBUTTONUP:
-			iwindow->OnMouseUp(Events::LBUTTON, p);
-			break;
+			{
+				iwindow->OnMouseEvent(MOUSE_UP, LEFT_BUTTON, p);
+				break;
+			}
 		case WM_RBUTTONUP:
-			iwindow->OnMouseUp(Events::RBUTTON, p);
-			break;
+			{
+				iwindow->OnMouseEvent(MOUSE_UP, RIGHT_BUTTON, p);
+				break;
+			}
 		case WM_MOUSELEAVE:
-			iwindow->OnMouseLeave();
-			break;
+			{
+				iwindow->OnMouseEvent(MOUSE_OUT, 0, p);
+				break;
+			}
 		case WM_MOUSEMOVE:
-			SetFocus(hWnd);
-			iwindow->OnMouseMove(p);
-			break;
+			{
+				SetActiveWindow(hWnd);
+				TrackMouse();
+				iwindow->OnMouseEvent(MOUSE_MOVE, 0, p);
+				break;
+			}
+		}
+		return 0;
+	}
+
+	LRESULT NativeWindow::OnKeyEvent( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
+	{
+		PostQuitMessage(0);
+		return 0;
+	}
+
+	LRESULT NativeWindow::OnTimer( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& bHandled )
+	{
+		switch(wparam)
+		{
+		case IDT_REDRAW:
+			{
+				RedrawWindow(hWnd, 0, 0, RDW_NOERASE | RDW_INVALIDATE | RDW_INTERNALPAINT);
+				KillTimer(hWnd, IDT_REDRAW);
+				break;
+			}
 		}
 		return 0;
 	}
@@ -132,8 +170,30 @@ namespace PlatformDependent
 
 	BOOL NativeWindow::Redraw()
 	{
-		RedrawWindow(hWnd, 0, 0, RDW_NOERASE | RDW_INVALIDATE | RDW_INTERNALPAINT);
+		//RedrawWindow(hWnd, 0, 0, RDW_NOERASE | RDW_INVALIDATE | RDW_INTERNALPAINT);
+		KillTimer(hWnd, IDT_REDRAW);
+		SetTimer(hWnd, IDT_REDRAW, 10, 0);
 		return 1;
+	}
+
+	BOOL NativeWindow::TrackMouse()
+	{
+		if (pTrackMouseEvent)
+		{
+			TRACKMOUSEEVENT tm;
+			tm.cbSize = sizeof(TRACKMOUSEEVENT);
+			tm.dwFlags = TME_QUERY;
+			tm.hwndTrack = hWnd;
+			pTrackMouseEvent(&tm);
+
+			if (!(tm.dwFlags & TME_LEAVE))
+			{
+				tm.dwFlags = TME_LEAVE;
+				tm.hwndTrack = hWnd;
+				pTrackMouseEvent(&tm);
+			}
+		}
+		return TRUE;
 	}
 
 	BOOL NativeWindow::SetAlphaChannel(Cairo::RefPtr<Cairo::Surface> alpha, int trans)

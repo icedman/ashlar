@@ -20,13 +20,22 @@ code.google.com/p/ashlar
 
 #include <script/jselement.h>
 
-using namespace Dom;
-
-class JSNodeList : public JSWBaseClass<JSNodeList, NodeList2>
+class JSNodeList : public JSWBaseClass<JSNodeList, Dom::NodeList2>
 {
 public:
-	static JSBool SetProperty(NodeList2* nodelist, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
-	static JSBool GetProperty(NodeList2* nodelist, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
+
+	JSNodeList()
+	{
+		SetPrivate(0, false);
+	}
+
+	JSNodeList(Dom::NodeList2 *p, bool bDelete)
+	{
+		SetPrivate(p, bDelete);
+	}
+
+	static JSBool SetProperty(Dom::NodeList2* nodelist, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
+	static JSBool GetProperty(Dom::NodeList2* nodelist, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
 
 	static JSBool item(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
 	static JSBool length(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);

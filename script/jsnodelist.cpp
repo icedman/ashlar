@@ -18,6 +18,8 @@ code.google.com/p/ashlar
 
 #include <script/jsnodelist.h>
 
+using namespace Dom;
+
 JSBool JSNodeList::SetProperty(NodeList2* nodelist, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp)
 {
 	return JS_TRUE;

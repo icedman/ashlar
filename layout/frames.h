@@ -25,7 +25,7 @@ code.google.com/p/ashlar
 #include <layout/framestyle.h>
 #include <dom/domstring.h>
 #include <dom/element.h>
-#include <events/events.h>
+#include <dom/uievent.h>
 #include <render/render.h>
 
 using namespace Ash;
@@ -38,7 +38,7 @@ namespace Layout
 	typedef List<Frame> FrameList;
 
 	//! Base class for all frame objects
-	class Frame : public Events::EventListener, public Node<Frame>
+	class Frame : public Node<Frame>, public Dom::EventListener
 	{
 	public:
 		Frame();
@@ -46,8 +46,9 @@ namespace Layout
 
 		virtual Frame* Create() { return new Frame(); }
 		virtual const char* GetName() { return "frame"; } //!< Get frame name
-		virtual bool IsType(int frameType) { return (frameType == 0); }
+		virtual bool IsType(unsigned int frameType) { return (frameType == 0); }
 
+		// frame visual state
 		virtual void SetState(int state);
 		virtual int GetState() { return frameState; }
 
@@ -65,11 +66,12 @@ namespace Layout
 		virtual bool GetBorderRect(Rect*);	//!< Get frame border rect
 		virtual bool GetContentRect(Rect*);	//!< Get frame's content rect
 		virtual bool SetRect(const Rect*);	//!< Set frame rect
+		virtual Frame* GetFrameFromPoint(Point p); //!< Get frame from point
 
 		// layout
 		virtual bool Prelayout();	//!< Prelayout method. Child frames set their preferred dimensions
 		virtual bool Layout();		//!< Layout method. Layout frames override this method. Parent frames set child dimensions
-		virtual bool OnEvent(int eventId, void *);
+		virtual void Relayout();
 
 		// rendering
 		virtual void Draw(Render::Rasterizer *render);
@@ -84,8 +86,12 @@ namespace Layout
 		virtual Dom::DOMString* GetText();
 
 		// events
-		virtual bool OnMouseEvents(int eid, void *pp);
-		virtual bool OnKeyEvents(int eid, void *pp);
+		virtual bool RegisterEventListeners();
+		virtual bool PropagateEvent(Dom::Event *evt);
+		virtual bool PropagateUIEvent(Dom::Event *evt);
+		virtual bool PropagateMouseEvent(Dom::MouseEvent *evt);
+		virtual bool PropagateKeyEvent(Dom::KeyEvent *evt);
+		virtual void HandleEvent(Dom::Event *evt);
 
 		virtual void Free();
 
@@ -111,7 +117,8 @@ namespace Layout
 	protected:
 		Frame *parentFrame;
 		FrameList frames;
-		int frameState;
+		unsigned short frameState;
+		unsigned short mouseState;
 
 		Dom::Element* element;
 	};

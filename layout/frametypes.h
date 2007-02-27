@@ -33,5 +33,5 @@ namespace Layout
 	const unsigned int WIDGET	= 2000;
 
 #define FRAMETYPE(_type, _super) \
-	virtual bool IsType(int frameType) { if (frameType == _type) return true; return _super::IsType(frameType); }
+	virtual bool IsType(unsigned int frameType) { if (frameType == _type) return true; return _super::IsType(frameType); }
 }

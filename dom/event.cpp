@@ -23,20 +23,20 @@ namespace Dom
 		// EventTarget
 		EventTarget::~EventTarget()
 		{
-			Free();
+			FreeEventTarget();
 		}
 
-		void EventTarget::AddEventListener(unsigned int eventTypeArg, EventListener *listener, bool capture)
+		void EventTarget::AddEventListener(unsigned int groupArg, unsigned int eventTypeArg, EventListener *listener, bool capture)
 		{
-			EventListenerNode *n = listeners.Find(eventTypeArg, listener, capture);
+			EventListenerNode *n = listeners.Find(groupArg, eventTypeArg, listener, capture);
 			if (n)
 				return;
-			listeners.Push(new EventListenerNode(eventTypeArg, listener, capture));
+			listeners.Push(new EventListenerNode(groupArg, eventTypeArg, listener, capture));
 		}
 
-		void EventTarget::RemoveEventListener(unsigned int eventTypeArg, EventListener *listener, bool capture)
+		void EventTarget::RemoveEventListener(unsigned int groupArg, unsigned int eventTypeArg, EventListener *listener, bool capture)
 		{
-			EventListenerNode *n = listeners.Find(eventTypeArg, listener, capture);
+			EventListenerNode *n = listeners.Find(groupArg, eventTypeArg, listener, capture);
 			if (!n)
 				return;
 			listeners.Remove(n);
@@ -48,7 +48,8 @@ namespace Dom
 			EventListenerNode *l = listeners.GetFirst();
 			while(l)
 			{	
-				if (l->type == evt->type)
+				if (l->type == evt->type &&
+					 l->group == evt->GetEventGroup())
 				{
 					l->listener->HandleEvent(evt);
 				}
@@ -57,7 +58,7 @@ namespace Dom
 			return true;
 		}
 
-		void EventTarget::Free()
+		void EventTarget::FreeEventTarget()
 		{
 			EventListenerNode *l = 0;
 			while(l = listeners.GetFirst())
@@ -68,20 +69,22 @@ namespace Dom
 		}
 
 		// EventListenerNode
-		EventListenerNode::EventListenerNode(unsigned int eventTypeArg, EventListener *listener, bool capture)
+		EventListenerNode::EventListenerNode(unsigned int groupArg, unsigned int eventTypeArg, EventListener *listenerArg, bool capture)
 		{
+			group = groupArg;
 			type = eventTypeArg;
-			listener = listener;
+			listener = listenerArg;
 			useCapture = capture;
 		}
 
 		// EventListenerNodeList
-		EventListenerNode* EventListenerNodeList::Find(unsigned int eventTypeArg, EventListener *listener, bool capture)
+		EventListenerNode* EventListenerNodeList::Find(unsigned int groupArg, unsigned int eventTypeArg, EventListener *listener, bool capture)
 		{
 			EventListenerNode *ln = GetFirst();
 			while(ln)
 			{
-				if (ln->type == eventTypeArg && ln->listener == listener && ln->useCapture == capture)
+				if (ln->type == eventTypeArg && ln->listener == listener && 
+					ln->group == groupArg && ln->useCapture == capture)
 					return ln;
 				ln = ln->next;
 			}
@@ -91,17 +94,20 @@ namespace Dom
 		// Event
 		void Event::StopPropagation()
 		{
+			if (cancellable)
+				isCancelled;
 		}
 
 		void Event::PreventDefault()
 		{
 		}
 
-		void Event::InitEvent(unsigned int eventTypeArg, bool canBubbleArg, bool cancelableArg)
+		void Event::InitEvent(unsigned int eventTypeArg, bool canBubbleArg, bool cancellableArg)
 		{
+			eventPhase = 0;
 			type = eventTypeArg;
 			bubbles = canBubbleArg;
-			cancelable = cancelableArg;
+			cancellable = cancellableArg;
 		}
 
 		// Event Listener

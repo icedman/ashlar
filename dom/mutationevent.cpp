@@ -16,7 +16,29 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
-#pragma once
+#include <dom/mutationevent.h>
 
-#include <common.h>
-#include <list.h>
+namespace Dom
+{
+
+	void MutationEvent::InitMutationEvent(
+		unsigned int eventTypeArg, 
+		bool canBubbleArg, 
+		bool cancellableArg, 
+		DOMNode *relatedNodeArg, 
+		DOMString prevValueArg, 
+		DOMString newValueArg, 
+		DOMString attrNameArg, 
+		unsigned short attrChangeArg)
+	{
+		type = eventTypeArg;
+		bubbles = canBubbleArg;
+		cancellable = cancellableArg;
+		relatedNode = relatedNodeArg;
+		prevValue = prevValueArg;
+		newValue = newValueArg;
+		attrName = attrNameArg;
+		attrChange = attrChangeArg;
+	}
+
+}

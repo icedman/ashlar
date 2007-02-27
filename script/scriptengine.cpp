@@ -87,14 +87,14 @@ namespace Script
 		}
 	}
 
-	bool ScriptEngine::RunScript(const char *script, long len)
+	bool ScriptEngine::RunScript(JSObject *obj, const char *script, long len)
 	{
 		// todo add error checking
 		if (!jsCx)
 			return false;
 
 		jsval rval;
-		JSBool res = JS_EvaluateScript(jsCx, jsGlobal, script, len, NULL, 0, &rval);
+		JSBool res = JS_EvaluateScript(jsCx, obj, script, len, NULL, 0, &rval);
 		if (res == JS_TRUE)
 		{
 			/*
@@ -112,23 +112,19 @@ namespace Script
 		return (res == JS_TRUE);
 	}
 
-	bool ScriptEngine::TestScript()
-	{
-		const char *script = "x = 32;";
-		return RunScript(script, 7);
-	}
-
-	bool ScriptEngine::DefineObject(const char* name, JSClass *jsClass, void *priv)
+	JSObject* ScriptEngine::DefineObject(const char* name, JSClass *jsClass, void *priv, bool permanent)
 	{
 		if (!jsCx)
-			return false;
+			return 0;
 
-		JSObject *obj = JS_DefineObject(jsCx, jsGlobal, name, jsClass, 0, JSPROP_PERMANENT);
+		JSObject *obj = JS_DefineObject(jsCx, jsGlobal, name, jsClass, 0, (permanent ? JSPROP_PERMANENT : 0));
 		if (obj)
 		{
 			JS_SetPrivate(jsCx, obj, priv);
+			return obj;
 		}
-		return true;
+
+		return 0;
 	}
 
 	bool ScriptEngine::RegisterFunctions(JSFunctionSpec *funcs)

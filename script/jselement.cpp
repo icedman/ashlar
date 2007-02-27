@@ -19,6 +19,8 @@ code.google.com/p/ashlar
 #include <script/jselement.h>
 #include <script/jsnodelist.h>
 
+using namespace Dom;
+
 JSBool JSElement::SetProperty(Element* element, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp)
 {
 	DOMString str;
@@ -29,7 +31,7 @@ JSBool JSElement::SetProperty(Element* element, JSInt16 id, JSContext *cx, JSObj
 		jstr = JS_ValueToString(cx, *vp);
 		if (jstr)
 		{
-			element->nodeValue = (char*)JS_GetStringBytes(jstr);
+			element->SetValue(DOMString((char*)JS_GetStringBytes(jstr)));
 		}
 		break;
 	}

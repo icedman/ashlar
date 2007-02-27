@@ -51,7 +51,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cairo.lib gdi32.lib user32.lib libexpat.lib js32.lib"
+				AdditionalDependencies="dom.lib cairo.lib cairomm.lib gdi32.lib user32.lib libexpat.lib js32.lib"
 				AdditionalLibraryDirectories="extern/lib, debug"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
@@ -164,6 +164,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\layout\frameEvents.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\layout\frames.cpp"
 				>
 			</File>
@@ -247,18 +251,6 @@
 					>
 				</File>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="event"
-			>
-			<File
-				RelativePath=".\events\events.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\events\events.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="ashlar"
@@ -361,6 +353,14 @@
 			</File>
 			<File
 				RelativePath=".\script\jselement.h"
+				>
+			</File>
+			<File
+				RelativePath=".\script\jsevent.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\script\jsevent.h"
 				>
 			</File>
 			<File

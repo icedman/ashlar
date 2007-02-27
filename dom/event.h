@@ -18,6 +18,7 @@ code.google.com/p/ashlar
 
 #pragma once
 
+#include <common.h>
 #include <list.h>
 
 namespace Dom
@@ -33,7 +34,8 @@ namespace Dom
 	class EventListenerNode : public Ash::Node<EventListenerNode>
 	{
 	public:
-		EventListenerNode(unsigned int type, EventListener *listener, bool useCapture);
+		EventListenerNode(unsigned int group, unsigned int type, EventListener *listener, bool useCapture);
+		unsigned int group;
 		unsigned int type;
 		bool useCapture;
 		EventListener *listener;
@@ -44,18 +46,18 @@ namespace Dom
 	public:
 		unsigned long Length() { return Size(); }
 		EventListenerNode* Item(unsigned long index) { return GetAt(index); }
-		EventListenerNode* Find(unsigned int eventTypeArg, EventListener *listener, bool useCapture);
+		EventListenerNode* Find(unsigned int groupArg, unsigned int eventTypeArg, EventListener *listener, bool useCapture);
 	};
 
 	class EventTarget
 	{
 	public:
 		virtual ~EventTarget();
-		void AddEventListener(unsigned int eventTypeArg, EventListener *listener, bool useCapture);
-		void RemoveEventListener(unsigned int eventTypeArg, EventListener *listener, bool useCapture);
-		bool DispatchEvent(Event *evt);
+		virtual void AddEventListener(unsigned int groupArg, unsigned int eventTypeArg, EventListener *listener, bool useCapture);
+		virtual void RemoveEventListener(unsigned int groupArg, unsigned int eventTypeArg, EventListener *listener, bool useCapture);
+		virtual bool DispatchEvent(Event *evt);
 
-		virtual void Free();
+		virtual void FreeEventTarget();
 
 	private:
 		EventListenerNodeList listeners; 
@@ -64,21 +66,29 @@ namespace Dom
 	class Event
 	{
 	public:
+		virtual unsigned int GetEventGroup() { return 0; }
+
+		Event() : isCancelled(0)
+		{}
+
 		void StopPropagation();
 		void PreventDefault();
-		void InitEvent(unsigned int eventTypeArg, bool canBubbleArg, bool cancelableArg);
+		void InitEvent(unsigned int eventTypeArg, bool canBubbleArg, bool cancellableArg);
 
 		unsigned int type;
-		EventTarget target;
-		EventTarget currentTarget;
+		EventTarget *target;
+		EventTarget *currentTarget;
 		unsigned short eventPhase;
 		bool bubbles;
-		bool cancelable;
+		bool cancellable;
+		bool isCancelled;
+
+		TRACE
 	};
 
 	class EventListener
 	{
 	public:
-		void HandleEvent(Event *evt);
+		virtual void HandleEvent(Event *evt);
 	};
 }

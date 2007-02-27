@@ -99,7 +99,7 @@ namespace Ash
 		{
 			Element *e = (Element*)nl->Item(i); 
 			DOMString *script = e->Value();
-			scriptEngine.RunScript(script->c_str(), script->size());
+			scriptEngine.RunScript(scriptEngine.GetGlobalObject(), script->c_str(), script->size());
 		}
 		delete nl;
 

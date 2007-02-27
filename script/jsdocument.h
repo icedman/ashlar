@@ -20,10 +20,9 @@ code.google.com/p/ashlar
 
 #include <script/jselement.h>
 #include <dom/document.h>
+\
 
-using namespace Dom;
-
-class JSDocument : public JSWBaseClass<JSDocument, Document>
+class JSDocument : public JSWBaseClass<JSDocument, Dom::Document>
 {
 public:
 
@@ -32,13 +31,13 @@ public:
 		SetPrivate(0, false);
 	}
 
-	JSDocument(Document *p, bool bDelete)
+	JSDocument(Dom::Document *p, bool bDelete)
 	{
 		SetPrivate(p, bDelete);
 	}
 
-	static JSBool SetProperty(Document* document, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
-	static JSBool GetProperty(Document* document, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
+	static JSBool SetProperty(Dom::Document* document, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
+	static JSBool GetProperty(Dom::Document* document, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
 
 	static JSBool createElement(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
 	static JSBool createAttribute(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);

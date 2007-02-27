@@ -18,6 +18,8 @@ code.google.com/p/ashlar
 
 #include <layout/button.h>
 #include <layout/windowframe.h>
+#include <layout/stylesheet.h>
+#include <dom/uievent.h>
 #include <dom/safenode.h>
 
 using namespace Dom;
@@ -29,47 +31,6 @@ namespace Layout
 	{
 		frameStyle.layout.align = ALIGN_CENTER;
 		frameStyle.layout.verticalAlign = ALIGN_MIDDLE;
-	}
-
-	bool Button::OnEvent(int eid, void *pInfo)
-	{
-		OnMouseEvents(eid, pInfo);
-		return true;
-	}
-
-	bool Button::RegisterEvents(EventManager *manager)
-	{
-		manager->AddListener(ONMOUSEDOWN, this);
-		manager->AddListener(ONMOUSEUP, this);
-		manager->AddListener(ONMOUSEMOVE, this);
-		return true;
-	}
-
-	bool Button::Prelayout()
-	{
-		if (frameStyle.layout.flex)
-			return true;
-
-		//frameStyle.layout.width = frameStyle.layout.presetWidth;
-		//frameStyle.layout.height = frameStyle.layout.presetHeight;
-
-		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);
-		if (w)
-		{
-			DOMString *text = GetText();
-			if (text)
-			{
-				Render::Rasterizer *r = w->GetRenderer();
-				double width, height;
-				if (r->GetTextExtents(&frameStyle, text->c_str(), width, height))
-				{
-					frameStyle.layout.width = ISASSIGNED(frameStyle.layout.width) ? frameStyle.layout.width : width;
-					frameStyle.layout.height = ISASSIGNED(frameStyle.layout.height) ? frameStyle.layout.height : height;
-				}
-			}
-		}
-
-		return HFrame::Prelayout();
 	}
 
 	DOMString* Button::GetText()
@@ -112,5 +73,62 @@ namespace Layout
 
 		// draw children
 		DrawChildren(render);
+	}
+
+	bool Button::RegisterEventListeners()
+	{
+		EventTarget *target = (EventTarget*)GetElement();
+		target->AddEventListener(MOUSE_EVENTS, MOUSE_CLICK, this, true);
+		target->AddEventListener(MOUSE_EVENTS, MOUSE_DOWN, this, true);
+		target->AddEventListener(MOUSE_EVENTS, MOUSE_UP, this, true);
+		target->AddEventListener(MOUSE_EVENTS, MOUSE_MOVE, this, true);
+		target->AddEventListener(MOUSE_EVENTS, MOUSE_OVER, this, true);
+		target->AddEventListener(MOUSE_EVENTS, MOUSE_OUT, this, true);
+		return Label::RegisterEventListeners();
+	}
+
+	void Button::HandleEvent(Event *evt)
+	{
+		switch(evt->GetEventGroup())
+		{
+		case MOUSE_EVENTS:
+			{
+				switch(evt->type)
+				{
+				case MOUSE_DOWN:
+					{
+						SetState(STATE_PRESSED);
+						break;
+					}
+				case MOUSE_UP:
+					{
+						SetState(STATE_NORMAL);
+						break;
+					}
+				case MOUSE_CLICK:
+					{
+						SetState(STATE_HOVER);
+						break;
+					}
+				case MOUSE_OVER:
+					{
+						SetState(STATE_HOVER);
+						break;
+					}
+				case MOUSE_MOVE:
+					{
+						break;
+					}
+				case MOUSE_OUT:
+					{
+						SetState(STATE_NORMAL);
+						break;
+					}
+				}
+				break;
+			}
+		}
+
+		Label::HandleEvent((MouseEvent*)evt);
 	}
 }

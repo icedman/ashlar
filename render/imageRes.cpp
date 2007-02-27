@@ -23,7 +23,7 @@ namespace Render
 	ImageRes::ImageRes(DOMString* n, DOMString *src, int i)
 	{
 		id = i;
-		type = IMAGE_RESOURCE;
+		type = RESOURCE_IMAGE;
 		if (n)
 		{
 			name = *n;
@@ -31,6 +31,7 @@ namespace Render
 			name = *src;
 		}
 
+		// todo: load jpg, bitmap, && gif
 		try {
 			img = Cairo::ImageSurface::create_from_png(*src);
 		} catch (Cairo::logic_error) {

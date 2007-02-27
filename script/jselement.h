@@ -22,16 +22,24 @@ code.google.com/p/ashlar
 #include <script/jsw.h>
 #include <debug.h>
 
-using namespace Dom;
-
-class JSElement : public JSWBaseClass<JSElement, Element>
+class JSElement : public JSWBaseClass<JSElement, Dom::Element>
 {
 public:
-	static JSBool SetProperty(Element* element, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
-	static JSBool GetProperty(Element* element, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
+
+	JSElement()
+	{
+		SetPrivate(0, false);
+	}
+
+	JSElement(Dom::Element *p, bool bDelete)
+	{
+		SetPrivate(p, bDelete);
+	}
+
+	static JSBool SetProperty(Dom::Element* element, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
+	static JSBool GetProperty(Dom::Element* element, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
 
 	static JSBool hasChildNodes(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
-
 	static JSBool firstChild(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
 	static JSBool lastChild(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
 	static JSBool nextSibling(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
@@ -54,15 +62,26 @@ public:
 	TRACE
 };
 
-class JSAttribute : public JSWBaseClass<JSAttribute, Element>
+class JSAttribute : public JSWBaseClass<JSAttribute, Dom::Element>
 {
 public:
-	static JSBool SetProperty(Element* element, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp)
+
+	JSAttribute()
+	{
+		SetPrivate(0, false);
+	}
+
+	JSAttribute(Dom::Element *p, bool bDelete)
+	{
+		SetPrivate(p, bDelete);
+	}
+
+	static JSBool SetProperty(Dom::Element* element, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp)
 	{
 		return JSElement::SetProperty(element, id, cx, obj, vp);
 	}
 
-	static JSBool GetProperty(Element* element, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp)
+	static JSBool GetProperty(Dom::Element* element, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp)
 	{
 		return JSElement::GetProperty(element, id, cx, obj, vp);
 	}

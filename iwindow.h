@@ -25,6 +25,17 @@ code.google.com/p/ashlar
 
 namespace Ash
 {
+	const unsigned int LEFT_BUTTON	= 1;
+	const unsigned int RIGHT_BUTTON	= 2;
+
+	// should be the same with eventtypes.h
+	const unsigned int MOUSE_CLICK	= 0;
+	const unsigned int MOUSE_DOWN		= 1;
+	const unsigned int MOUSE_UP		= 2;
+	const unsigned int MOUSE_OVER		= 3;
+	const unsigned int MOUSE_MOVE		= 4;
+	const unsigned int MOUSE_OUT		= 5;
+
 	//! IWindow abstract class
 	class IWindow
 	{
@@ -36,12 +47,8 @@ namespace Ash
 		virtual bool OnCreate() = 0;
 		virtual void OnDestroy() = 0;
 		virtual void OnSize(const Rect *rc) = 0;
-		virtual void OnKeyDown(long key) = 0;
-		virtual void OnKeyUp(long key) = 0;
-		virtual void OnMouseMove(Point p) = 0;
-		virtual void OnMouseLeave() = 0;
-		virtual void OnMouseDown(int button, Point p) = 0;
-		virtual void OnMouseUp(int button, Point p) = 0;
+		virtual void OnKeyEvent(int eventId, long key) = 0;
+		virtual void OnMouseEvent(int eventId, int button, Point p) = 0;
 		virtual void OnDraw(HDC hdc, Rect *rc) = 0;
 	};
 }
