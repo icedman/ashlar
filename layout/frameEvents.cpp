@@ -27,37 +27,8 @@ using namespace Dom;
 
 namespace Layout
 {
-	/*
-	todo: 
-	follow DOM Event Model propagation method
-	  1. find event target
-	  2. dispatch event to listeners
-	  3. bubble to ancestors or capture from ancestors
-   current method only captures events before reaching EventTargets
-	*/
-
 	bool Frame::RegisterEventListeners()
 	{
-		Frame *f = frames.GetFirst();
-		while(f)
-		{
-			f->RegisterEventListeners();
-			f = f->next;
-		}
-		return true;
-	}
-
-	bool Frame::PropagateEvent(Dom::Event *evt)
-	{	
-		Frame *f = frames.GetFirst();
-		while(f)
-		{
-			f->PropagateEvent(evt);
-			f = f->next;
-		}
-
-		EventTarget *target = (EventTarget*)GetElement();
-		target->DispatchEvent(evt);
 		return true;
 	}
 
@@ -256,9 +227,9 @@ namespace Layout
 			jsval argv[1] = { OBJECT_TO_JSVAL(eventObj) };
 
 			JS_CompileFunction(cx, targetObj, eventName->method,
-                   1, (const char**)arguments,
-                   script->c_str(), script->size(),
-                   0, 0);
+				1, (const char**)arguments,
+				script->c_str(), script->size(),
+				0, 0);
 
 			jsval rval;
 			JS_CallFunctionName(cx, targetObj,eventName->method, 1, argv, &rval);

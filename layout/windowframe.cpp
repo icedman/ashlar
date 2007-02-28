@@ -37,19 +37,17 @@ namespace Layout
 
 	bool WindowFrame::Initialize()
 	{
-		// init dimension
+		WindowFrame *parentWindow = (WindowFrame*)GetParent(WINDOW);
 		frameStyle.layout.x = !ISASSIGNED(frameStyle.layout.x) ? 0 : frameStyle.layout.x;
 		frameStyle.layout.y = !ISASSIGNED(frameStyle.layout.y) ? 0 : frameStyle.layout.y;
 		frameStyle.layout.width = !ISASSIGNED(frameStyle.layout.width) ? 100 : frameStyle.layout.width;
 		frameStyle.layout.height = !ISASSIGNED(frameStyle.layout.height) ? 100 : frameStyle.layout.height;
 
-		// title bar
-		if (!CreateNewWindow(frameStyle.layout.x, frameStyle.layout.y, frameStyle.layout.width, frameStyle.layout.height))
+		if (!CreateNewWindow(frameStyle.layout.x, frameStyle.layout.y, frameStyle.layout.width, frameStyle.layout.height, parentWindow))
 			return false;
 
-		Layout();
-		RegisterEventListeners();
-		ShowWindow(true);
+		Frame::Initialize();
+		ShowWindow(true);	
 		return true;
 	}
 
@@ -59,14 +57,23 @@ namespace Layout
 	}
 
 	// IWindow
-	bool WindowFrame::CreateNewWindow(int x, int y, int w, int h)
+	bool WindowFrame::CreateNewWindow(int x, int y, int w, int h, IWindow* parent)
 	{
-		DWORD dwStyle = WS_SIZEBOX | WS_SYSMENU;
+		// not supported for now
+		WindowFrame *parentWindow = (WindowFrame*)parent;
+		if (parentWindow)
+			return true;
+
+		DWORD dwStyle = WS_DLGFRAME | WS_SIZEBOX | WS_SYSMENU;
 		if (TRANS)
 			dwStyle = WS_POPUP;
+
+		TCHAR clsName[32] = _T("Ashlar");
+		TCHAR wndName[32] = _T("Ashlar");
+
 		nativeWindow.iwindow = static_cast<IWindow*>(this);
-		nativeWindow.RegisterClass(0, GetName());
-		if (!nativeWindow.Create(GetName(), GetName(),
+		nativeWindow.RegisterClass(0, clsName);
+		if (!nativeWindow.Create(clsName, wndName,
 			x, y, w, h, dwStyle, 0))
 			return false;
 
@@ -148,8 +155,6 @@ namespace Layout
 			Draw(&render);
 			render.PaintBuffer(cx, rc);
 		}
-		static int i = 0;
-		printf("draw count: %d\n", i++);
 	}
 
 	void WindowFrame::Relayout()
@@ -157,15 +162,4 @@ namespace Layout
 		dirtyLayout = true;
 		Redraw();
 	}
-
-	bool WindowFrame::RegisterEventListeners()
-	{
-		return Frame::RegisterEventListeners();
-	}
-
-	void WindowFrame::HandleEvent(Dom::Event *evt)
-	{
-		Frame::HandleEvent(evt);
-	}
-
 }

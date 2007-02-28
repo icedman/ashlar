@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<window x="200" width="800" height="60">
+<window x="200" width="600" height="200">
 	<stylesheet src="style.xul">
 		<style>
 			<layout valign="middle"/>

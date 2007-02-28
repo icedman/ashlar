@@ -13,18 +13,17 @@
 			<onClick>
 				<![CDATA[
 			
-			//nl = widget.getElementsByTagName('window');
-			nl = widget.getElementsById("tinyWindow");
-			for(i=0; i<nl.length();i++)
-			{
-				echo(nl.item(i).getAttribute('name'));
-			}
+			var xml = new XmlHttpRequest();
+			xml.open("GET","localhost/sample.xul");
+			xml.send();
+			
+			this.parent.appendChild(xml.responseXml);
 			
 			]]>
 			</onClick>
 		</button>
 	</window>
-	<window name="mainWindow" x="400" y="200" width="600" height="300">
+	<window name="mainWindow" x="400" y="200" width="600" height="300" align="right">
 		<style>
 			<fill>
 				<color>#ffffff</color>
@@ -48,10 +47,10 @@
 			<onClick>
 				<![CDATA[
 			
-			nl = widget.getElementsByTagName('button');
+			nl = widget.getElementsByTagName('appended');
 			for(i=0; i<nl.length();i++)
 			{
-				nl.item(i).setAttribute('label', 'abc');
+				//nl.item(i).setAttribute('label', 'abc');
 				echo(nl.item(i).nodeName + ' ' + i);
 			}
 			
@@ -91,7 +90,18 @@
 					return "test";
 				}
 				
-				echo(test());
+				var btn = widget.createElement('button');
+				btn.setAttribute('label', 'hello append');
+				btn.setAttribute('onClick', 'echo(123)');
+				this.parent.appendChild(btn);
+				//this.parent.insertBefore(btn, this);
+				
+				var child = this.parent.firstChild;
+				while(child)
+				{
+					echo(child.nodeName);
+					child = child.nextSibling;
+				}
 
 				]]>
 				</onClick>

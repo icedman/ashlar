@@ -116,7 +116,7 @@ namespace Ash
 			if (Has(n))
 				return false;
 
-			return InsertBefore(n, GetAt(index));
+			InsertBefore(n, GetAt(index));
 		}
 
 		//! Insert new item before a specified reference node
@@ -125,7 +125,9 @@ namespace Ash
 			if (Has(newn))
 				return false;
 
-			if (!refNode || !Has(refNode))
+			_Node *n = refNode;
+			
+			if (!n || !Has(refNode))
 			{
 				return Push(newn);
 			}
@@ -140,10 +142,10 @@ namespace Ash
 				return true;
 			}
 
-			newn->prev = refNode->prev;
-			newn->next = refNode;
-			newn->prev->next = newn;
-			refNode->prev = newn;
+			newn->next = n;
+			newn->prev = n->prev;
+			n->prev->next = newn;
+			n->prev = newn;
 			size++;
 
 			return true;

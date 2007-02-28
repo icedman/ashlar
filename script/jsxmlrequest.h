@@ -21,27 +21,29 @@ code.google.com/p/ashlar
 #include <common.h>
 #include <debug.h>
 #include <script/jsw.h>
-#include <script/jselement.h>
+#include <net/xmlrequest.h>
 
-class JSNodeList : public JSWBaseClass<JSNodeList, Dom::NodeList2>
+class JSXmlRequest : public JSWBaseClass<JSXmlRequest, Net::XmlRequest>
 {
 public:
 
-	JSNodeList()
+	JSXmlRequest()
 	{
 		SetPrivate(0, false);
 	}
 
-	JSNodeList(Dom::NodeList2 *p, bool bDelete)
+	JSXmlRequest(Net::XmlRequest *p, bool bDelete)
 	{
 		SetPrivate(p, bDelete);
 	}
 
-	static JSBool SetProperty(Dom::NodeList2* nodelist, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
-	static JSBool GetProperty(Dom::NodeList2* nodelist, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
+	static JSBool SetProperty(Net::XmlRequest* xmlreq, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
+	static JSBool GetProperty(Net::XmlRequest* xmlreq, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
 
-	static JSBool item(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
-	static JSBool length(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
+	static JSBool open(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
+	static JSBool send(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
 
-	TRACE
+	enum {
+		responseXml
+	};
 };

@@ -84,4 +84,13 @@ namespace Dom
 
 		return true;
 	}
+
+	bool Document::LoadXml(const char* data, int len)
+	{
+		DOMBuilder db;
+		db.Initialize(this);
+		db.Parse(data, len, true);
+		db.Shutdown();
+		return true;
+	}
 }

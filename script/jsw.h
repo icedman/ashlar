@@ -21,8 +21,7 @@ Franky Braem - wxJS
 
 #pragma once
 
-//!  Includes
-
+#include <common.h>
 #include <js/src/jsapi.h>
 
 //!  Define a global class
@@ -204,4 +203,10 @@ JSClass JSWBaseClass<T_Proto, T_Priv>::jswClass =
 	JS_ResolveStub,   // JSWBaseClass<T_Proto, T_Priv>::JSResolve,
 	JS_ConvertStub,
 	JSWBaseClass<T_Proto, T_Priv>::JSDestructor
+};
+
+class JSQueryObject : public JSWBaseClass<JSQueryObject, void*>
+{
+public:
+	static JSBool IsType(const char* name);
 };

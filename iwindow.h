@@ -40,7 +40,7 @@ namespace Ash
 	class IWindow
 	{
 	public:
-		virtual bool CreateNewWindow(int x, int y, int w, int h) = 0;
+		virtual bool CreateNewWindow(int x, int y, int w, int h, IWindow* parent) = 0;
 		virtual void DestroyWindow() = 0;
 		virtual bool SetWindowSize(int x, int y, int w, int h) = 0;
 		virtual void ShowWindow(bool show) = 0;

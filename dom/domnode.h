@@ -18,8 +18,8 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <debug.h>
 #include <common.h>
+#include <debug.h>
 #include <dom/domstring.h>
 #include <dom/event.h>
 #include <list.h>
@@ -133,4 +133,5 @@ namespace Dom
 	private:
 		DOMNode *parentNode;
 	};
+
 }

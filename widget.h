@@ -24,6 +24,7 @@ code.google.com/p/ashlar
 #include <script/jselement.h>
 #include <script/jsnodelist.h>
 #include <script/jsdocument.h>
+#include <script/jsxmlrequest.h>
 #include <layout/layout.h>
 #include <layout/stylesheet.h>
 
@@ -52,6 +53,11 @@ namespace Ash
 		StyleSheet* GetStyleSheet() { return &styleSheet; }
 		Resources* GetResources() { return resources; }
 		ScriptEngine* GetScriptEngine() { return &scriptEngine; }
+
+		bool BuildFrames(Element* doc);
+
+		virtual bool RegisterEventListeners();
+		virtual void HandleEvent(Dom::Event *evt);
 
 	private:
 

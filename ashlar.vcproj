@@ -51,7 +51,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dom.lib cairo.lib cairomm.lib gdi32.lib user32.lib libexpat.lib js32.lib"
+				AdditionalDependencies="net.lib dom.lib cairo.lib cairomm.lib gdi32.lib user32.lib libexpat.lib js32.lib curllib.lib"
 				AdditionalLibraryDirectories="extern/lib, debug"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
@@ -195,6 +195,14 @@
 				RelativePath=".\layout\stylesheet.h"
 				>
 			</File>
+			<File
+				RelativePath=".\layout\windowframe.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\layout\windowframe.h"
+				>
+			</File>
 			<Filter
 				Name="xul:Elements"
 				>
@@ -240,14 +248,6 @@
 				</File>
 				<File
 					RelativePath=".\layout\layout.h"
-					>
-				</File>
-				<File
-					RelativePath=".\layout\windowframe.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\layout\windowframe.h"
 					>
 				</File>
 			</Filter>
@@ -372,7 +372,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\script\jsw.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\script\jsw.h"
+				>
+			</File>
+			<File
+				RelativePath=".\script\jsxmlrequest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\script\jsxmlrequest.h"
 				>
 			</File>
 			<File

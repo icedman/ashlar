@@ -18,9 +18,10 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <dom/event.h>
-#include <script/jsw.h>
+#include <common.h>
 #include <debug.h>
+#include <script/jsw.h>
+#include <dom/event.h>
 
 class JSEvent : public JSWBaseClass<JSEvent, Dom::Event>
 {

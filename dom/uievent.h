@@ -24,7 +24,6 @@ code.google.com/p/ashlar
 
 namespace Dom
 {
-
 	const unsigned int FOCUS_IN  = 0;
 	const unsigned int FOCUS_OUT = 1;
 	const unsigned int FOCUS_ACTIVATE = 2;

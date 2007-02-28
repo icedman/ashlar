@@ -80,6 +80,11 @@ namespace Dom
 
 	DOMNode* DOMNode::AppendChild(DOMNode *node)
 	{
+		if (node->parentNode)
+		{
+			node->parentNode->RemoveChild(node);
+		}
+
 		if (childNodes.Push(node))
 		{
 			node->parentNode = this;
@@ -109,7 +114,10 @@ namespace Dom
 	}
 
 	DOMNode* DOMNode::InsertBefore(DOMNode *node, DOMNode *refNode)
-	{
+	{	
+		if (!refNode)
+			return 0;
+
 		if (childNodes.InsertBefore(node, refNode))
 		{
 			node->parentNode = this;
@@ -162,7 +170,7 @@ namespace Dom
 
 		for(int i = 0; i<level; i++) printf("  ");
 		printf("%s", nodeName.c_str());
-		if (attributes.Length())
+		if (0 && attributes.Length())
 		{
 			DOMNode *n = attributes.GetFirst();
 			printf(" > ");
@@ -172,7 +180,7 @@ namespace Dom
 				n = n->NextSibling();
 			}
 		}
-		if (1 && nodeValue.length())
+		if (0 && nodeValue.length())
 		{
 			printf("\n");
 			for(int i = 0; i<level; i++) printf("  ");

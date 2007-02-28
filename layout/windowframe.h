@@ -37,11 +37,11 @@ namespace Layout
 		Frame* Create() { return new WindowFrame(); }
 		FRAMETYPE(WINDOW, VFrame)
 
-		bool Initialize();
+			virtual bool Initialize();
 		virtual void Redraw();
 
 		//! IWindow Interface
-		virtual bool CreateNewWindow(int x, int y, int w, int h);
+		virtual bool CreateNewWindow(int x, int y, int w, int h, IWindow* parent = 0);
 		virtual void DestroyWindow();
 		virtual bool SetWindowSize(int x, int y, int w, int h);
 		virtual void ShowWindow(bool show);
@@ -53,9 +53,6 @@ namespace Layout
 		virtual void OnDraw(HDC hdc, Rect *rc);
 
 		virtual void Relayout();
-
-		virtual bool RegisterEventListeners();
-		virtual void HandleEvent(Dom::Event *evt);
 
 		Render::Rasterizer* GetRenderer() { return &render; }
 

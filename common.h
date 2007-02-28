@@ -18,10 +18,19 @@ code.google.com/p/ashlar
 
 #pragma once
 
+#define UNICODE
+#define _UNICODE
+
 #define STRICT
 #define WIN32_LEAN_AND_MEAN
 #define XP_WIN
 #define _CRT_SECURE_NO_DEPRECATE
+
+#ifdef DLLEXPORT
+#define ASHLAR_EXTERN  __declspec(dllexport)
+#else
+#define ASHLAR_EXTERN  __declspec(dllimport)
+#endif
 
 #include <stdio.h>
 

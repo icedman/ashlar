@@ -14,30 +14,23 @@ License.
 Copyright 2007
 Marvin Sanchez
 code.google.com/p/ashlar
+
+Credits:
+Franky Braem - wxJS
 */
 
-#pragma once
+#include <script/jsw.h>
+#include <string.h>
 
-#include <dom/element.h>
-#include <dom/xmlparser.h>
-
-namespace Dom
+JSBool JSQueryObject::IsType(const char* name)
 {
-
-	//! DOM Document class
-	class Document : public Element
-	{
-	public:
-		Document();
-		Document(DOMString *name);
-
-		virtual bool LoadFile(const char* filename);
-		virtual bool LoadXml(const char* data, int len);
-
-		Attribute* createAttribute(DOMString *name);
-		CDataSection* createCDataSection(DOMString *data);
-		Comment* createComment(DOMString *data);
-		Element* createElement(DOMString *tagName);
-		TextNode* createTextNode(DOMString *data);
-	};
+	return strcmp(JSQueryObject::GetClassName(), name);
 }
+
+JSW_CLASS_NAME(JSQueryObject, "_tmpQuery")
+
+JSW_BEGIN_PROPERTY_MAP(JSQueryObject)
+JSW_END_PROPERTY_MAP
+
+JSW_BEGIN_METHOD_MAP(JSQueryObject)
+JSW_END_METHOD_MAP

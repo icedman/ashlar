@@ -51,45 +51,6 @@ namespace Layout
 		frameTemplates.Remove(f);
 	}
 
-	Frame* FrameBuilder::Build(Frame* root, Document *doc)
-	{
-		if (!root)
-			return 0;
-
-		frameStack.Push(root);
-		BuildFrames(doc);
-
-		return root;
-	}
-
-	Frame* FrameBuilder::BuildFrames(Element *element)
-	{
-		Frame *frame = CreateFrame(element);
-		if (frame)
-		{
-			Frame *parent = frameStack.GetLast();
-			if (parent)
-			{
-				parent->AddFrame(frame);
-			}
-			frameStack.Push(frame);
-		}
-
-		Element *e = (Element*)element->FirstChild();
-		while(e)
-		{
-			BuildFrames(e);
-			e = (Element*)e->NextSibling();
-		}
-
-		if (frame)
-		{
-			frameStack.Pop();
-		}
-
-		return 0;
-	}
-
 	Frame* FrameBuilder::CreateFrame(Element *e)
 	{
 		Frame *f = frameTemplates.GetFirst();
@@ -105,6 +66,44 @@ namespace Layout
 			f = f->next;
 		}
 		return 0;
+	}
+
+	Frame* FrameBuilder::Build(Frame *root, Element *element)
+	{
+		// create element
+		Frame *frame = (Frame*)element->GetData();
+		if (!frame)
+		{
+			frame = CreateFrame(element);
+			if (frame)
+			{
+				Element *parentNode = (Element*)element->ParentNode();
+				Frame *parentFrame = 0;
+				while(parentNode)
+				{
+					parentFrame = (Frame*)parentNode->GetData();
+					if (parentFrame)
+						break;
+					parentNode = (Element*)parentNode->ParentNode();
+				}
+				if (!parentFrame)
+					parentFrame = root;
+
+				// attach to a parent
+				if (parentFrame && parentFrame != frame)
+					parentFrame->AddFrame(frame);
+			}
+
+		}
+
+		// create its child frames
+		Element *child = (Element*)element->FirstChild();
+		while(child)
+		{
+			Build(root, (Element*)child);
+			child = (Element*)child->NextSibling();
+		}
+		return frame;
 	}
 
 }

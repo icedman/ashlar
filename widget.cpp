@@ -17,7 +17,6 @@ code.google.com/p/ashlar
 */
 
 #include <widget.h>
-#include <dom/docbuilder.h>
 #include <layout/button.h>
 #include <layout/label.h>
 #include <layout/image.h>
@@ -25,6 +24,9 @@ code.google.com/p/ashlar
 #include <layout/windowframe.h>
 #include <layout/framebuilder.h>
 #include <layout/stylesheet.h>
+#include <dom/docbuilder.h>
+#include <dom/mutationevent.h>
+#include <dom/safenode.h>
 
 namespace Ash
 {
@@ -48,27 +50,14 @@ namespace Ash
 		if (!document->LoadFile(filename))
 			return false;
 
-		// build frame tree
-		FrameBuilder fb;
-		fb.Register(new Frame());
-		fb.Register(new HFrame());
-		fb.Register(new VFrame());
-		fb.Register(new WindowFrame());
-		fb.Register(new Button());
-		fb.Register(new Label());
-		fb.Register(new Image());
-		fb.Register(new Grid());
-		fb.Register(new Row());
-
-		fb.Build(this, document);
-
 		// load stylesheets & resources
 		styleSheet.Load(document);
 		resources->Load(document);
 		resources->Load(&styleSheet);
 
-		// apply style
-		styleSheet.ApplyStyle(document);
+		// build frame tree
+		BuildFrames(document);
+		Restyle();
 
 		// setup script engine
 		if (1)
@@ -79,22 +68,11 @@ namespace Ash
 			JSElement::JSInit(cx, go);
 			JSNodeList::JSInit(cx, go);
 			JSDocument::JSInit(cx, go);
+			JSXmlRequest::JSInit(cx, go);
 			scriptEngine.DefineObject("widget", JSDocument::GetClass(), new JSDocument((Document*)element, false));
 		}
 
-		// setup windows
-		NodeList2 *nl = document->GetElementsByTagName(&DOMString("window"));
-		for(int i=0; i<nl->Length(); i++)
-		{
-			Element *e = (Element*)nl->Item(i);
-			WindowFrame *window = (WindowFrame*)e->GetData();
-			if (!window)
-				continue;
-			window->Initialize();
-		}
-		delete nl;
-
-		nl = document->GetElementsByTagName(&DOMString("script"));
+		NodeList2 *nl = document->GetElementsByTagName(&DOMString("script"));
 		for(int i=0; i<nl->Length(); i++)
 		{
 			Element *e = (Element*)nl->Item(i); 
@@ -111,17 +89,77 @@ namespace Ash
 			resources->Dump();
 		}
 
+		Initialize();
+		return true;
+	}
+
+	bool Widget::BuildFrames(Element* doc)
+	{
+		FrameBuilder fb;
+		fb.Register(new Frame());
+		fb.Register(new HFrame());
+		fb.Register(new VFrame());
+		fb.Register(new WindowFrame());
+		fb.Register(new Button());
+		fb.Register(new Label());
+		fb.Register(new Image());
+		fb.Register(new Grid());
+		fb.Register(new Row());
+
+		fb.Build(this, doc);
 		return true;
 	}
 
 	void Widget::Free()
 	{
+		// GetElement()->Dump();
+
 		scriptEngine.Shutdown();
 		if (element)
 		{
 			delete element;
 			element = 0;
 		}
+
 		resources->Free();
+	}
+
+
+	bool Widget::RegisterEventListeners()
+	{
+		EventTarget *target = (EventTarget*)GetElement();
+		target->AddEventListener(MUTATION_EVENTS, NODE_INSERTED, this, false);
+		target->AddEventListener(MUTATION_EVENTS, NODE_REMOVED, this, false);
+		return Frame::RegisterEventListeners();
+	}
+
+	void Widget::HandleEvent(Dom::Event *evt)
+	{
+		switch(evt->GetEventGroup())
+		{
+		case MUTATION_EVENTS:
+			{
+				MutationEvent *me = (MutationEvent*)evt;
+				switch(evt->type)
+				{
+				case NODE_INSERTED:
+					{
+						//BuildFrames(GetElement());
+						/*
+						Frame *f = (Frame*)((Element*)me->relatedNode)->GetData();
+						if (f)
+						{
+							f->Initialize();
+						}
+						*/
+						me->relatedNode->Dump();
+						break;
+					}
+				}
+				break;
+			}
+		}
+
+		Frame::HandleEvent(evt);
 	}
 }
