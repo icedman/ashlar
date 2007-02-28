@@ -40,6 +40,22 @@ namespace Layout
 		Free();
 	}
 
+	bool Frame::Initialize()
+	{
+		RegisterEventListeners();
+
+		Restyle();
+		Relayout();
+
+		Frame *f = frames.GetFirst();
+		while(f)
+		{
+			f->Initialize();
+			f = f->next;
+		}
+		return true;
+	}
+
 	void Frame::SetState(int state)
 	{
 		if (!element || frameState == state)
@@ -200,13 +216,34 @@ namespace Layout
 		return 0;
 	}
 
+	void Frame::Restyle()
+	{
+		Widget *widget = (Widget*)GetParent(WIDGET);
+		if (widget)
+		{
+			StyleSheet *css = widget->GetStyleSheet();
+			if (css)
+			{
+				Frame *tpl = this->Create();
+				frameStyle = tpl->frameStyle;
+				css->ApplyStyle(GetElement());
+				delete tpl;
+			}
+		}
+
+		Frame *f = frames.GetFirst();
+		while(f)
+		{
+			f->Restyle();
+			f = f->next;
+		}
+	}
+
 	void Frame::Relayout()
 	{
 		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);
 		if (w)
-		{
 			w->Relayout();
-		}
 	}
 
 	// render
@@ -307,7 +344,8 @@ namespace Layout
 		Frame *f = frames.GetFirst();
 		while(f)
 		{
-			f->Draw(render);
+			if (!f->IsType(WINDOW))
+				f->Draw(render);
 			f = f->next;
 		}
 	}
@@ -363,7 +401,7 @@ namespace Layout
 		}
 
 		for(int i = 0; i<level; i++) printf("  ");
-		printf("%s %d\n", GetName(), GetElement());
+		printf("%s %d\n", GetName(), this);
 
 		f = frames.GetFirst();
 		while(f)

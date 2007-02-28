@@ -18,9 +18,11 @@ code.google.com/p/ashlar
 
 #pragma once
 
+#include <common.h>
+#include <debug.h>
+#include <script/jsw.h>
 #include <script/jselement.h>
 #include <dom/document.h>
-\
 
 class JSDocument : public JSWBaseClass<JSDocument, Dom::Document>
 {

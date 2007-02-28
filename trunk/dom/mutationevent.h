@@ -24,7 +24,6 @@ code.google.com/p/ashlar
 
 namespace Dom
 {
-
 	const unsigned short MUTATION_ADDITION = 1;
 	const unsigned short MUTATION_MODIFICATION = 2;
 	const unsigned short MUTATION_REMOVAL = 3;
@@ -57,5 +56,4 @@ namespace Dom
 		DOMString attrName;
 		unsigned short attrChange;
 	};
-
 }

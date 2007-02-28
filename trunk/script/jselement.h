@@ -18,9 +18,10 @@ code.google.com/p/ashlar
 
 #pragma once
 
-#include <dom/element.h>
-#include <script/jsw.h>
+#include <common.h>
 #include <debug.h>
+#include <script/jsw.h>
+#include <dom/element.h>
 
 class JSElement : public JSWBaseClass<JSElement, Dom::Element>
 {
@@ -39,12 +40,12 @@ public:
 	static JSBool SetProperty(Dom::Element* element, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
 	static JSBool GetProperty(Dom::Element* element, JSInt16 id, JSContext *cx, JSObject *obj, jsval *vp);
 
-	static JSBool hasChildNodes(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
-	static JSBool firstChild(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
-	static JSBool lastChild(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
-	static JSBool nextSibling(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
-	static JSBool previousSibling(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
+	static JSBool appendChild(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
+	static JSBool removeChild(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
+	static JSBool replaceChild(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
+	static JSBool insertBefore(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
 
+	static JSBool hasChildNodes(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
 	static JSBool hasAttribute(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
 	static JSBool getAttribute(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
 	static JSBool setAttribute(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
@@ -56,6 +57,11 @@ public:
 	enum {
 		name,
 		value,
+		parent,
+		firstChild,
+		lastChild,
+		nextSibling,
+		previousSibling,
 		nodeTypes = 100
 	};
 

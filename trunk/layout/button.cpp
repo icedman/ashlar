@@ -107,7 +107,6 @@ namespace Layout
 					}
 				case MOUSE_CLICK:
 					{
-						SetState(STATE_HOVER);
 						break;
 					}
 				case MOUSE_OVER:
@@ -129,6 +128,6 @@ namespace Layout
 			}
 		}
 
-		Label::HandleEvent((MouseEvent*)evt);
+		Label::HandleEvent(evt);
 	}
 }

@@ -133,7 +133,6 @@ namespace PlatformDependent
 			}
 		case WM_MOUSEMOVE:
 			{
-				SetActiveWindow(hWnd);
 				TrackMouse();
 				iwindow->OnMouseEvent(MOUSE_MOVE, 0, p);
 				break;

@@ -19,6 +19,7 @@ code.google.com/p/ashlar
 #pragma once
 
 #include <common.h>
+#include <debug.h>
 #include <list.h>
 
 namespace Dom

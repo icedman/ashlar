@@ -48,6 +48,8 @@ namespace Layout
 		virtual const char* GetName() { return "frame"; } //!< Get frame name
 		virtual bool IsType(unsigned int frameType) { return (frameType == 0); }
 
+		virtual bool Initialize();
+
 		// frame visual state
 		virtual void SetState(int state);
 		virtual int GetState() { return frameState; }
@@ -71,7 +73,8 @@ namespace Layout
 		// layout
 		virtual bool Prelayout();	//!< Prelayout method. Child frames set their preferred dimensions
 		virtual bool Layout();		//!< Layout method. Layout frames override this method. Parent frames set child dimensions
-		virtual void Relayout();
+		virtual void Relayout();	//!< Tells root window to recalculate layout
+		virtual void Restyle();		//!< Reapplies the stylesheet of the frame
 
 		// rendering
 		virtual void Draw(Render::Rasterizer *render);
@@ -87,7 +90,6 @@ namespace Layout
 
 		// events
 		virtual bool RegisterEventListeners();
-		virtual bool PropagateEvent(Dom::Event *evt);
 		virtual bool PropagateUIEvent(Dom::Event *evt);
 		virtual bool PropagateMouseEvent(Dom::MouseEvent *evt);
 		virtual bool PropagateKeyEvent(Dom::KeyEvent *evt);

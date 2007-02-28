@@ -2,9 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="dom"
-	ProjectGUID="{6D1F6F67-6074-4B12-B552-1DBEC6E92D13}"
-	RootNamespace="dom"
+	Name="net"
+	ProjectGUID="{3A5D2B4A-3CD4-4955-9CD5-C0C20E0F1CD4}"
 	>
 	<Platforms>
 		<Platform
@@ -38,7 +37,6 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../,../extern/include"
-				DebugInformationFormat="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -51,7 +49,6 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				IgnoreAllDefaultLibraries="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -71,10 +68,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="4"
-			UseOfMFC="0"
+			ConfigurationType="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -93,7 +88,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../,../extern/include"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -105,11 +99,13 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\$(ProjectName).lib"
+				Name="VCLinkerTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -121,6 +117,12 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -128,104 +130,12 @@
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="event model"
-			>
-			<File
-				RelativePath=".\event.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\event.h"
-				>
-			</File>
-			<File
-				RelativePath=".\eventnames.h"
-				>
-			</File>
-			<File
-				RelativePath=".\eventtypes.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mutationevent.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mutationevent.h"
-				>
-			</File>
-			<File
-				RelativePath=".\uievent.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\uievent.h"
-				>
-			</File>
-		</Filter>
 		<File
-			RelativePath="..\common.h"
+			RelativePath=".\xmlrequest.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\debug.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\debug.h"
-			>
-		</File>
-		<File
-			RelativePath=".\docbuilder.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\docbuilder.h"
-			>
-		</File>
-		<File
-			RelativePath=".\document.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\document.h"
-			>
-		</File>
-		<File
-			RelativePath=".\domnode.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\domnode.h"
-			>
-		</File>
-		<File
-			RelativePath=".\domstring.h"
-			>
-		</File>
-		<File
-			RelativePath=".\element.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\element.h"
-			>
-		</File>
-		<File
-			RelativePath=".\safenode.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\safenode.h"
-			>
-		</File>
-		<File
-			RelativePath=".\xmlparser.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\xmlparser.h"
+			RelativePath=".\xmlrequest.h"
 			>
 		</File>
 	</Files>

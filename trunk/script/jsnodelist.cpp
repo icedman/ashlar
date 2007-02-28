@@ -32,6 +32,8 @@ JSBool JSNodeList::GetProperty(NodeList2* nodelist, JSInt16 id, JSContext *cx, J
 
 JSBool JSNodeList::item(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 {
+	*rval = BOOLEAN_TO_JSVAL(JS_FALSE);
+
 	if (argc != 1)
 		return JS_TRUE;
 
@@ -50,6 +52,8 @@ JSBool JSNodeList::item(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 
 JSBool JSNodeList::length(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 {
+	*rval = BOOLEAN_TO_JSVAL(JS_FALSE);
+
 	if (argc != 0)
 		return JS_TRUE;
 

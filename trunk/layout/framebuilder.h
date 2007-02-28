@@ -19,7 +19,7 @@ code.google.com/p/ashlar
 #pragma once
 
 #include <layout/frames.h>
-#include <dom/document.h>
+#include <dom/element.h>
 
 using namespace Dom;
 
@@ -35,9 +35,8 @@ namespace Layout
 		void Unregister(Frame* f);
 		void Free();
 
-		Frame* Build(Frame* root, Document *doc);
-		Frame* BuildFrames(Element *element);
 		Frame* CreateFrame(Element *element);
+		Frame* Build(Frame *root, Element *element);
 
 		FrameList frameTemplates;
 		FrameList frameStack;

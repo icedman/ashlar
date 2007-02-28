@@ -19,6 +19,7 @@ code.google.com/p/ashlar
 #pragma once
 
 #include <dom/domnode.h>
+#include <debug.h>
 
 namespace Dom
 {
@@ -44,7 +45,7 @@ namespace Dom
 		bool HasAttributes() { return attributes.Length()>0; }
 		DOMNode* SetAttribute(DOMString *name, DOMString *value = 0);
 		DOMNode* SetAttributeNode(DOMNode *node);
-		
+
 		virtual DOMString* Value() { return &nodeValue; }
 		virtual DOMString* SetValue(DOMString val);
 

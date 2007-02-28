@@ -25,6 +25,7 @@ code.google.com/p/ashlar
 namespace Dom
 {
 	//! An Xml parser wrapped around expat
+
 	class XmlParser
 	{
 	public:
@@ -48,4 +49,5 @@ namespace Dom
 	public:
 		XML_Parser parser;
 	};
+
 }

@@ -37,19 +37,8 @@ namespace Layout
 		if (frameStyle.layout.flex)
 			return true;
 
-		// reapply style
-		Widget *widget = (Widget*)GetParent(WIDGET);
-		if (widget)
-		{
-			StyleSheet *css = widget->GetStyleSheet();
-			if (css)
-			{
-				Frame *tpl = this->Create();
-				frameStyle = tpl->frameStyle;
-				css->ApplyStyle(GetElement());
-				delete tpl;
-			}
-		}
+		if (ISASSIGNED(frameStyle.layout.width) && ISASSIGNED(frameStyle.layout.height))
+			return true;
 
 		WindowFrame *w = (WindowFrame*)GetParent(WINDOW);
 		if (w)
@@ -129,11 +118,15 @@ namespace Layout
 				case ATTRIBUTE_MODIFIED:
 					{
 						MutationEvent *me = (MutationEvent*)evt;
-						if (me->attrName == "value" || me->attrName == "label")
+						if (me->relatedNode == GetElement())
 						{
-							Relayout();
-						} else {
-							Redraw();
+							if (me->attrName == "value" || me->attrName == "label")
+							{
+								Restyle();
+								Relayout();
+							} else {
+								Redraw();
+							}
 						}
 						break;
 					}
@@ -142,6 +135,6 @@ namespace Layout
 			}
 		}
 
-		Frame::HandleEvent((MouseEvent*)evt);
+		Frame::HandleEvent(evt);
 	}
 }

@@ -38,33 +38,52 @@ namespace Dom
 
 	DOMNode* Element::AppendChild(DOMNode *node)
 	{
-		MutationEvent me;
-		me.InitMutationEvent(NODE_INSERTED, true, true, this, DOMString(""), node->nodeValue, node->nodeName, MUTATION_ADDITION);
-		if (!PropagateEvent(&me))
-			return 0;
-
-		return DOMNode::AppendChild(node);
+		/*
+		todo: dom 2 specs says event is fired before insertion
+		*/
+		Element *newNode = (Element*)DOMNode::AppendChild(node);
+		if (newNode)
+		{
+			MutationEvent me;
+			me.InitMutationEvent(NODE_INSERTED, true, true, this, DOMString(""), node->nodeValue, node->nodeName, MUTATION_ADDITION);
+			if (!newNode->PropagateEvent(&me))
+				return 0;
+		}
+		return newNode;
 	}
 
 	DOMNode* Element::RemoveChild(DOMNode *node)
 	{
-		MutationEvent me;
-		me.InitMutationEvent(NODE_REMOVED, true, true, this, DOMString(""), node->nodeValue, node->nodeName, MUTATION_ADDITION);
-		if (!PropagateEvent(&me))
-			return 0;
+		Element *oldNode = (Element*)DOMNode::RemoveChild(node);
+		if (oldNode)
+		{
+			MutationEvent me;
+			me.InitMutationEvent(NODE_REMOVED, true, true, this, DOMString(""), node->nodeValue, node->nodeName, MUTATION_ADDITION);
+			if (!oldNode->PropagateEvent(&me))
+				return 0;
+		}
 
-
-		return DOMNode::RemoveChild(node);
+		return oldNode;
 	}
 
 	DOMNode* Element::InsertBefore(DOMNode *node, DOMNode *refNode)
 	{
-		MutationEvent me;
-		me.InitMutationEvent(NODE_INSERTED, true, true, this, DOMString(""), node->nodeValue, node->nodeName, MUTATION_ADDITION);
-		if (!PropagateEvent(&me))
+		return AppendChild(node);
+
+		// bug!
+		if (!refNode)
 			return 0;
 
-		return DOMNode::InsertBefore(node, refNode);
+		Element *newNode = (Element*)DOMNode::InsertBefore(node, refNode);
+		if (newNode)
+		{
+			MutationEvent me;
+			me.InitMutationEvent(NODE_INSERTED, true, true, this, DOMString(""), node->nodeValue, node->nodeName, MUTATION_ADDITION);
+			if (!newNode->PropagateEvent(&me))
+				return 0;
+		}
+
+		return newNode;
 	}
 
 	DOMString* Element::GetAttribute(DOMString *name)

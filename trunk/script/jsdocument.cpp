@@ -32,6 +32,8 @@ JSBool JSDocument::GetProperty(Document* element, JSInt16 id, JSContext *cx, JSO
 
 JSBool JSDocument::createElement(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 {
+	*rval = BOOLEAN_TO_JSVAL(JS_FALSE);
+
 	if (argc != 1)
 		return JS_TRUE;
 	JSElement *p = (JSElement*) JS_GetPrivate(cx, obj);
@@ -50,21 +52,29 @@ JSBool JSDocument::createElement(JSContext *cx, JSObject *obj, uintN argc, jsval
 
 JSBool JSDocument::createAttribute(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 {
+	*rval = BOOLEAN_TO_JSVAL(JS_FALSE);
+
 	return JS_TRUE;
 }
 
 JSBool JSDocument::createTextNode(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 {
+	*rval = BOOLEAN_TO_JSVAL(JS_FALSE);
+
 	return JS_TRUE;
 }
 
 JSBool JSDocument::createComment(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)	
 {
+	*rval = BOOLEAN_TO_JSVAL(JS_FALSE);
+
 	return JS_TRUE;
 }
 
 JSBool JSDocument::createCDataSection(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)	
 {
+	*rval = BOOLEAN_TO_JSVAL(JS_FALSE);
+
 	return JS_TRUE;
 }
 
@@ -73,6 +83,8 @@ JSW_CLASS_NAME(JSDocument, "Document")
 
 JSW_BEGIN_PROPERTY_MAP(JSDocument)
 JSW_ADD_PROPERTY("tagName", JSElement::name, JSPROP_ENUMERATE | JSPROP_READONLY)
+JSW_ADD_PROPERTY("firstChild", JSElement::firstChild, JSPROP_ENUMERATE | JSPROP_READONLY)
+JSW_ADD_PROPERTY("lastChild", JSElement::lastChild, JSPROP_ENUMERATE | JSPROP_READONLY)
 JSW_ADD_PROPERTY("nodeName", JSElement::name, JSPROP_ENUMERATE | JSPROP_READONLY)
 JSW_ADD_PROPERTY("nodeValue", JSElement::value, JSPROP_ENUMERATE | JSPROP_READONLY)
 JSW_ADD_PROPERTY("value", JSElement::value, JSPROP_ENUMERATE)
@@ -80,19 +92,17 @@ JSW_END_PROPERTY_MAP
 
 JSW_BEGIN_METHOD_MAP(JSDocument)
 JSW_ADD_METHOD("hasChildNodes", JSElement::hasChildNodes, 0)
-JSW_ADD_METHOD("firstChild", JSElement::firstChild, 0)
-JSW_ADD_METHOD("lastChild", JSElement::lastChild, 0)
-JSW_ADD_METHOD("nextSibling", JSElement::nextSibling, 0)
-JSW_ADD_METHOD("previousSibling", JSElement::previousSibling, 0)
 JSW_ADD_METHOD("hasAttribute", JSElement::getAttribute, 1)
 JSW_ADD_METHOD("getAttribute", JSElement::getAttribute, 1)
 JSW_ADD_METHOD("setAttribute", JSElement::setAttribute, 2)
 JSW_ADD_METHOD("getElementsByTagName", JSElement::getElementsByTagName, 1)
 JSW_ADD_METHOD("getElementsById", JSElement::getElementsById, 1)
 JSW_ADD_METHOD("createElement", createElement, 1)
+/*
 JSW_ADD_METHOD("createAttribute", createAttribute, 1)
 JSW_ADD_METHOD("createTextNode", createTextNode, 1)
 JSW_ADD_METHOD("createComment", createComment, 1)
 JSW_ADD_METHOD("createCDataSection", createCDataSection, 1)
+*/
 JSW_END_METHOD_MAP
 
