@@ -41,7 +41,7 @@ namespace Layout
 		virtual void Redraw();
 
 		//! IWindow Interface
-		virtual bool CreateNewWindow(int x, int y, int w, int h, IWindow* parent = 0);
+		virtual bool CreateNewWindow(int x, int y, int w, int h);
 		virtual void DestroyWindow();
 		virtual bool SetWindowSize(int x, int y, int w, int h);
 		virtual void ShowWindow(bool show);
