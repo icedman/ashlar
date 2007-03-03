@@ -144,15 +144,12 @@ namespace Ash
 				{
 				case NODE_INSERTED:
 					{
-						//BuildFrames(GetElement());
-						/*
+						BuildFrames(GetElement());
 						Frame *f = (Frame*)((Element*)me->relatedNode)->GetData();
 						if (f)
 						{
 							f->Initialize();
 						}
-						*/
-						me->relatedNode->Dump();
 						break;
 					}
 				}

@@ -38,6 +38,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="./, extern/include,extern/include/cairo"
 				PreprocessorDefinitions="CAIRO_HAS_PNG_FUNCTIONS"
+				RuntimeLibrary="0"
 				DebugInformationFormat="1"
 			/>
 			<Tool

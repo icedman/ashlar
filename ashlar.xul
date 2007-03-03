@@ -9,19 +9,20 @@
 			</margin>
 		</style>
 		<image src="res/clouds.png" position="absolute" x="0" y="-30"/>
-		<button label="weather" position="absolute" x="100" y="100" width="150" height="50">
+		<button label="weather" width="150" height="50">
 			<onClick>
-				<![CDATA[
-			
-			var xml = new XmlHttpRequest();
-			xml.open("GET","localhost/sample.xul");
-			xml.send();
-			
-			this.parent.appendChild(xml.responseXml);
-			
+			<![CDATA[
+						
+						var xml = new XmlHttpRequest();
+						xml.open("GET","localhost/sample.xul");
+						xml.send();
+						
+						this.parent.appendChild(xml.responseXml.firstChild);
+						
 			]]>
 			</onClick>
 		</button>
+		<hbox></hbox>
 	</window>
 	<window name="mainWindow" x="400" y="200" width="600" height="300" align="right">
 		<style>
@@ -31,7 +32,7 @@
 		</style>
 		<button flex="0" label="button abc" height="40">
 			<onClick>
-				<![CDATA[
+			<![CDATA[
 			
 			nl = widget.getElementsByTagName('button');
 			for(i=0; i<nl.length();i++)
@@ -45,7 +46,7 @@
 		</button>
 		<button label="button b" height="40">
 			<onClick>
-				<![CDATA[
+			<![CDATA[
 			
 			nl = widget.getElementsByTagName('appended');
 			for(i=0; i<nl.length();i++)
@@ -83,7 +84,7 @@
 					</fill>
 				</style>
 				<onClick>
-					<![CDATA[
+				<![CDATA[
 
 				function test()
 				{

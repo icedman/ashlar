@@ -16,6 +16,9 @@ Marvin Sanchez
 code.google.com/p/ashlar
 */
 
+#include <crtdbg.h>
+#define LEAK_TRACE { _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF); }
+
 #include <common.h>
 #include <widget.h>
 #include <render/resources.h>
@@ -26,6 +29,8 @@ using namespace Ash;
 
 int main()
 {
+	LEAK_TRACE
+
 	Widget *widget = new Widget();
 	if (!widget->Load("ashlar.xul"))
 		PostQuitMessage(0);
@@ -45,5 +50,7 @@ int main()
 	delete widget;
 
 	printf("unfreed objects:%d\n", Ref::GetCount());
+
+	new char[32];
 	return 0;
 }

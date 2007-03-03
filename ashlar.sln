@@ -13,11 +13,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dom", "dom\dom.vcproj", "{6
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cairomm", "extern\include\cairomm\cairomm.vcproj", "{9FA017D1-8C7B-4D53-9DC7-D6D03A7AA1CC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "..\test\test.vcproj", "{570101AD-BC6C-461D-B13C-C8698F8EE656}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3A5D2B4A-3CD4-4955-9CD5-C0C20E0F1CD4} = {3A5D2B4A-3CD4-4955-9CD5-C0C20E0F1CD4}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "net", "net\net.vcproj", "{3A5D2B4A-3CD4-4955-9CD5-C0C20E0F1CD4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6D1F6F67-6074-4B12-B552-1DBEC6E92D13} = {6D1F6F67-6074-4B12-B552-1DBEC6E92D13}
@@ -49,10 +44,6 @@ Global
 		{9FA017D1-8C7B-4D53-9DC7-D6D03A7AA1CC}.Debug|Win32.Build.0 = Debug|Win32
 		{9FA017D1-8C7B-4D53-9DC7-D6D03A7AA1CC}.Release|Win32.ActiveCfg = Release|Win32
 		{9FA017D1-8C7B-4D53-9DC7-D6D03A7AA1CC}.Release|Win32.Build.0 = Release|Win32
-		{570101AD-BC6C-461D-B13C-C8698F8EE656}.Debug|Win32.ActiveCfg = Debug|Win32
-		{570101AD-BC6C-461D-B13C-C8698F8EE656}.Debug|Win32.Build.0 = Debug|Win32
-		{570101AD-BC6C-461D-B13C-C8698F8EE656}.Release|Win32.ActiveCfg = Release|Win32
-		{570101AD-BC6C-461D-B13C-C8698F8EE656}.Release|Win32.Build.0 = Release|Win32
 		{3A5D2B4A-3CD4-4955-9CD5-C0C20E0F1CD4}.Debug|Win32.ActiveCfg = Debug|Win32
 		{3A5D2B4A-3CD4-4955-9CD5-C0C20E0F1CD4}.Debug|Win32.Build.0 = Debug|Win32
 		{3A5D2B4A-3CD4-4955-9CD5-C0C20E0F1CD4}.Release|Win32.ActiveCfg = Release|Win32

@@ -26,6 +26,7 @@ code.google.com/p/ashlar
 using namespace Dom;
 
 #define TRANS 0
+#define WINDOW_CLASS _T("Ashlar")
 
 namespace Layout
 {
@@ -37,17 +38,18 @@ namespace Layout
 
 	bool WindowFrame::Initialize()
 	{
-		WindowFrame *parentWindow = (WindowFrame*)GetParent(WINDOW);
-		frameStyle.layout.x = !ISASSIGNED(frameStyle.layout.x) ? 0 : frameStyle.layout.x;
-		frameStyle.layout.y = !ISASSIGNED(frameStyle.layout.y) ? 0 : frameStyle.layout.y;
-		frameStyle.layout.width = !ISASSIGNED(frameStyle.layout.width) ? 100 : frameStyle.layout.width;
-		frameStyle.layout.height = !ISASSIGNED(frameStyle.layout.height) ? 100 : frameStyle.layout.height;
+		LayoutInfo *li = &frameStyle.layout;
+		li->x = !ISASSIGNED(li->x) ? 0 : li->x;
+		li->y = !ISASSIGNED(li->y) ? 0 : li->y;
+		li->width = !ISASSIGNED(li->width) ? 100 : li->width;
+		li->height = !ISASSIGNED(li->height) ? 100 : li->height;
 
-		if (!CreateNewWindow(frameStyle.layout.x, frameStyle.layout.y, frameStyle.layout.width, frameStyle.layout.height, parentWindow))
+		if (!CreateNewWindow(li->x, li->y, li->width, li->height))
 			return false;
 
 		Frame::Initialize();
 		ShowWindow(true);	
+		
 		return true;
 	}
 
@@ -57,23 +59,18 @@ namespace Layout
 	}
 
 	// IWindow
-	bool WindowFrame::CreateNewWindow(int x, int y, int w, int h, IWindow* parent)
+	bool WindowFrame::CreateNewWindow(int x, int y, int w, int h)
 	{
-		// not supported for now
-		WindowFrame *parentWindow = (WindowFrame*)parent;
-		if (parentWindow)
+		if (nativeWindow.hWnd)
 			return true;
 
-		DWORD dwStyle = WS_DLGFRAME | WS_SIZEBOX | WS_SYSMENU;
+		DWORD dwStyle = WS_SIZEBOX | WS_SYSMENU;
 		if (TRANS)
 			dwStyle = WS_POPUP;
 
-		TCHAR clsName[32] = _T("Ashlar");
-		TCHAR wndName[32] = _T("Ashlar");
-
 		nativeWindow.iwindow = static_cast<IWindow*>(this);
-		nativeWindow.RegisterClass(0, clsName);
-		if (!nativeWindow.Create(clsName, wndName,
+		nativeWindow.RegisterClass(0, WINDOW_CLASS);
+		if (!nativeWindow.Create(WINDOW_CLASS, WINDOW_CLASS,
 			x, y, w, h, dwStyle, 0))
 			return false;
 
@@ -155,6 +152,8 @@ namespace Layout
 			Draw(&render);
 			render.PaintBuffer(cx, rc);
 		}
+
+		printf(".");
 	}
 
 	void WindowFrame::Relayout()

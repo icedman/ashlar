@@ -58,7 +58,7 @@ namespace Dom
 		if (oldNode)
 		{
 			MutationEvent me;
-			me.InitMutationEvent(NODE_REMOVED, true, true, this, DOMString(""), node->nodeValue, node->nodeName, MUTATION_ADDITION);
+			me.InitMutationEvent(NODE_REMOVED, true, true, this, DOMString(""), node->nodeValue, node->nodeName, MUTATION_REMOVAL);
 			if (!oldNode->PropagateEvent(&me))
 				return 0;
 		}
